@@ -4,21 +4,21 @@
 
 
 // line 102 "model.ump"
-// line 204 "model.ump"
-public class Reviews
+// line 227 "model.ump"
+public class Review
 {
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
-  //Reviews Attributes
+  //Review Attributes
   private int reviewID;
   private rating rating;
   private String description;
   private Customer customerDetails;
 
-  //Reviews Associations
+  //Review Associations
   private Game game;
   private Customer customer;
 
@@ -26,7 +26,7 @@ public class Reviews
   // CONSTRUCTOR
   //------------------------
 
-  public Reviews(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Game aGame, Customer aCustomer)
+  public Review(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Game aGame, Customer aCustomer)
   {
     reviewID = aReviewID;
     rating = aRating;

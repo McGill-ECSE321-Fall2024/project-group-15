@@ -29,7 +29,7 @@ public class Game
   private Wishlist wishlist;
   private Order order;
   private List<Cart> carts;
-  private List<Reviews> reviews;
+  private List<Review> reviews;
   private Category category;
   private GameArchive gameArchive;
 
@@ -64,7 +64,7 @@ public class Game
       throw new RuntimeException("Unable to create game due to order. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     carts = new ArrayList<Cart>();
-    reviews = new ArrayList<Reviews>();
+    reviews = new ArrayList<Review>();
     boolean didAddCategory = setCategory(aCategory);
     if (!didAddCategory)
     {
@@ -253,15 +253,15 @@ public class Game
     return index;
   }
   /* Code from template association_GetMany */
-  public Reviews getReview(int index)
+  public Review getReview(int index)
   {
-    Reviews aReview = reviews.get(index);
+    Review aReview = reviews.get(index);
     return aReview;
   }
 
-  public List<Reviews> getReviews()
+  public List<Review> getReviews()
   {
-    List<Reviews> newReviews = Collections.unmodifiableList(reviews);
+    List<Review> newReviews = Collections.unmodifiableList(reviews);
     return newReviews;
   }
 
@@ -277,7 +277,7 @@ public class Game
     return has;
   }
 
-  public int indexOfReview(Reviews aReview)
+  public int indexOfReview(Review aReview)
   {
     int index = reviews.indexOf(aReview);
     return index;
@@ -437,12 +437,12 @@ public class Game
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Reviews addReview(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Customer aCustomer)
+  public Review addReview(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Customer aCustomer)
   {
-    return new Reviews(aReviewID, aRating, aDescription, aCustomerDetails, this, aCustomer);
+    return new Review(aReviewID, aRating, aDescription, aCustomerDetails, this, aCustomer);
   }
 
-  public boolean addReview(Reviews aReview)
+  public boolean addReview(Review aReview)
   {
     boolean wasAdded = false;
     if (reviews.contains(aReview)) { return false; }
@@ -460,7 +460,7 @@ public class Game
     return wasAdded;
   }
 
-  public boolean removeReview(Reviews aReview)
+  public boolean removeReview(Review aReview)
   {
     boolean wasRemoved = false;
     //Unable to remove aReview, as it must always have a game
@@ -472,7 +472,7 @@ public class Game
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
-  public boolean addReviewAt(Reviews aReview, int index)
+  public boolean addReviewAt(Review aReview, int index)
   {  
     boolean wasAdded = false;
     if(addReview(aReview))
@@ -486,7 +486,7 @@ public class Game
     return wasAdded;
   }
 
-  public boolean addOrMoveReviewAt(Reviews aReview, int index)
+  public boolean addOrMoveReviewAt(Review aReview, int index)
   {
     boolean wasAdded = false;
     if(reviews.contains(aReview))
@@ -570,7 +570,7 @@ public class Game
     }
     for(int i=reviews.size(); i > 0; i--)
     {
-      Reviews aReview = reviews.get(i - 1);
+      Review aReview = reviews.get(i - 1);
       aReview.delete();
     }
     Category placeholderCategory = category;
