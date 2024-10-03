@@ -24,7 +24,7 @@ public class Customer extends Person
 
   //Customer Associations
   private List<PaymentInfo> paymentInfos;
-  private List<Reviews> reviews;
+  private List<Review> reviews;
   private List<Order> orders;
   private Cart cart;
 
@@ -42,7 +42,7 @@ public class Customer extends Person
     purchaseHistory = aPurchaseHistory;
     savedPaymentInfo = aSavedPaymentInfo;
     paymentInfos = new ArrayList<PaymentInfo>();
-    reviews = new ArrayList<Reviews>();
+    reviews = new ArrayList<Review>();
     orders = new ArrayList<Order>();
     if (aCart == null || aCart.getCustomer() != null)
     {
@@ -61,7 +61,7 @@ public class Customer extends Person
     purchaseHistory = aPurchaseHistory;
     savedPaymentInfo = aSavedPaymentInfo;
     paymentInfos = new ArrayList<PaymentInfo>();
-    reviews = new ArrayList<Reviews>();
+    reviews = new ArrayList<Review>();
     orders = new ArrayList<Order>();
     cart = new Cart(aCartIDForCart, aTotalPriceForCart, this, aPromotionForCart);
   }
@@ -178,15 +178,15 @@ public class Customer extends Person
     return index;
   }
   /* Code from template association_GetMany */
-  public Reviews getReview(int index)
+  public Review getReview(int index)
   {
-    Reviews aReview = reviews.get(index);
+    Review aReview = reviews.get(index);
     return aReview;
   }
 
-  public List<Reviews> getReviews()
+  public List<Review> getReviews()
   {
-    List<Reviews> newReviews = Collections.unmodifiableList(reviews);
+    List<Review> newReviews = Collections.unmodifiableList(reviews);
     return newReviews;
   }
 
@@ -202,7 +202,7 @@ public class Customer extends Person
     return has;
   }
 
-  public int indexOfReview(Reviews aReview)
+  public int indexOfReview(Review aReview)
   {
     int index = reviews.indexOf(aReview);
     return index;
@@ -320,12 +320,12 @@ public class Customer extends Person
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Reviews addReview(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Game aGame)
+  public Review addReview(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Game aGame)
   {
-    return new Reviews(aReviewID, aRating, aDescription, aCustomerDetails, aGame, this);
+    return new Review(aReviewID, aRating, aDescription, aCustomerDetails, aGame, this);
   }
 
-  public boolean addReview(Reviews aReview)
+  public boolean addReview(Review aReview)
   {
     boolean wasAdded = false;
     if (reviews.contains(aReview)) { return false; }
@@ -343,7 +343,7 @@ public class Customer extends Person
     return wasAdded;
   }
 
-  public boolean removeReview(Reviews aReview)
+  public boolean removeReview(Review aReview)
   {
     boolean wasRemoved = false;
     //Unable to remove aReview, as it must always have a customer
@@ -355,7 +355,7 @@ public class Customer extends Person
     return wasRemoved;
   }
   /* Code from template association_AddIndexControlFunctions */
-  public boolean addReviewAt(Reviews aReview, int index)
+  public boolean addReviewAt(Review aReview, int index)
   {  
     boolean wasAdded = false;
     if(addReview(aReview))
@@ -369,7 +369,7 @@ public class Customer extends Person
     return wasAdded;
   }
 
-  public boolean addOrMoveReviewAt(Reviews aReview, int index)
+  public boolean addOrMoveReviewAt(Review aReview, int index)
   {
     boolean wasAdded = false;
     if(reviews.contains(aReview))
@@ -468,7 +468,7 @@ public class Customer extends Person
     }
     for(int i=reviews.size(); i > 0; i--)
     {
-      Reviews aReview = reviews.get(i - 1);
+      Review aReview = reviews.get(i - 1);
       aReview.delete();
     }
     for(int i=orders.size(); i > 0; i--)

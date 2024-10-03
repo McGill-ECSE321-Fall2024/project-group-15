@@ -5,7 +5,7 @@
 import java.util.*;
 
 // line 122 "model.ump"
-// line 222 "model.ump"
+// line 216 "model.ump"
 public class Wishlist
 {
 
