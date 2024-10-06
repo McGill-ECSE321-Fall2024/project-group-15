@@ -4,8 +4,17 @@
 
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
 // line 114 "model.ump"
 // line 209 "model.ump"
+
+@Entity
 public class Category
 {
 
@@ -14,11 +23,17 @@ public class Category
   //------------------------
 
   //Category Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int categoryID;
+  
+  @Id
   private String name;
 
   //Category Associations
+  @OneToMany
   private List<Game> games;
+  @ManyToOne
   private Manager manager;
 
   //------------------------

@@ -5,6 +5,11 @@
 
 // line 2 "model.ump"
 // line 140 "model.ump"
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Person
 {
 
@@ -13,6 +18,7 @@ public class Person
   //------------------------
 
   //Person Attributes
+  @Id
   private String username;
   private String password;
   private String email;

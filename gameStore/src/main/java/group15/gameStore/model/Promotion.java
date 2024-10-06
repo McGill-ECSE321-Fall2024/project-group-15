@@ -4,8 +4,16 @@
 
 import java.sql.Date;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+
 // line 85 "model.ump"
 // line 190 "model.ump"
+@Entity
 public class Promotion
 {
 
@@ -14,14 +22,22 @@ public class Promotion
   //------------------------
 
   //Promotion Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int promotionID;
+
+  @Id
   private String promotionCode;
   private double discountPercentage;
   private Date validUntil;
 
   //Promotion Associations
+
+  @OneToOne
   private Cart cart;
+  @ManyToOne
   private Manager manager;
+  @ManyToOne
   private StoreInfo storeInfo;
 
   //------------------------

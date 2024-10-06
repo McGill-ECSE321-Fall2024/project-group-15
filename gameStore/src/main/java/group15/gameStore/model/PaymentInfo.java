@@ -4,8 +4,16 @@
 
 import java.sql.Date;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+
 // line 48 "model.ump"
 // line 164 "model.ump"
+@Entity
 public class PaymentInfo
 {
 
@@ -14,14 +22,20 @@ public class PaymentInfo
   //------------------------
 
   //PaymentInfo Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int paymentinfoID;
+  
+  @Id
   private String cardNumber;
   private Date expiryDate;
   private int cvv;
   private String billingAddress;
 
   //PaymentInfo Associations
+  @ManyToOne
   private Customer customer;
+  @OneToOne
   private Order order;
 
   //------------------------

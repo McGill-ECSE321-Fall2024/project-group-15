@@ -3,10 +3,22 @@
 
 
 import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 import java.sql.Date;
 
 // line 9 "model.ump"
 // line 145 "model.ump"
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Customer extends Person
 {
 
@@ -15,7 +27,11 @@ public class Customer extends Person
   //------------------------
 
   //Customer Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int customerID;
+  
+  @Id
   private String address;
   private String phoneNumber;
   private Wishlist wishList;
@@ -23,9 +39,13 @@ public class Customer extends Person
   private PaymentInfo savedPaymentInfo;
 
   //Customer Associations
+  @OneToMany
   private List<PaymentInfo> paymentInfos;
+  @OneToMany
   private List<Review> reviews;
+  @OneToMany
   private List<Order> orders;
+  @OneToOne
   private Cart cart;
 
   //------------------------

@@ -3,10 +3,19 @@
 
 
 import java.util.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
+
 import java.sql.Date;
 
 // line 95 "model.ump"
 // line 197 "model.ump"
+@Entity
 public class Cart
 {
 
@@ -15,12 +24,19 @@ public class Cart
   //------------------------
 
   //Cart Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int cartID;
+
+  @Id
   private double totalPrice;
 
   //Cart Associations
+  @OneToOne
   private Customer customer;
+  @ManyToMany
   private List<Game> games;
+  @OneToOne
   private Promotion promotion;
 
   //------------------------

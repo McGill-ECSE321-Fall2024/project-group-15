@@ -4,8 +4,20 @@
 
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 // line 41 "model.ump"
 // line 159 "model.ump"
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Employee extends Person
 {
 
@@ -14,11 +26,17 @@ public class Employee extends Person
   //------------------------
 
   //Employee Attributes
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int employeeID;
+  
+  @Id
   private boolean status;
 
   //Employee Associations
+  @OneToMany
   private List<Game> games;
+  @OneToOne
   private List<Order> orders;
 
   //------------------------
