@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 114 "model.ump"
-// line 209 "model.ump"
+// line 103 "model.ump"
+// line 180 "model.ump"
 public class Category
 {
 
@@ -19,22 +19,16 @@ public class Category
 
   //Category Associations
   private List<Game> games;
-  private Manager manager;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Category(int aCategoryID, String aName, Manager aManager)
+  public Category(int aCategoryID, String aName)
   {
     categoryID = aCategoryID;
     name = aName;
     games = new ArrayList<Game>();
-    boolean didAddManager = setManager(aManager);
-    if (!didAddManager)
-    {
-      throw new RuntimeException("Unable to create category due to manager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
   }
 
   //------------------------
@@ -96,48 +90,53 @@ public class Category
     int index = games.indexOf(aGame);
     return index;
   }
-  /* Code from template association_GetOne */
-  public Manager getManager()
-  {
-    return manager;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames()
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Game addGame(int aGameID, String aTitle, String aDescription, String aCategoryName, double aPrice, int aStock, String aImage, boolean aArchived, boolean aManagerApproval, Employee aEmployee, Wishlist aWishlist, Order aOrder, GameArchive aGameArchive)
-  {
-    return new Game(aGameID, aTitle, aDescription, aCategoryName, aPrice, aStock, aImage, aArchived, aManagerApproval, aEmployee, aWishlist, aOrder, this, aGameArchive);
-  }
-
+  /* Code from template association_AddManyToManyMethod */
   public boolean addGame(Game aGame)
   {
     boolean wasAdded = false;
     if (games.contains(aGame)) { return false; }
-    Category existingCategory = aGame.getCategory();
-    boolean isNewCategory = existingCategory != null && !this.equals(existingCategory);
-    if (isNewCategory)
+    games.add(aGame);
+    if (aGame.indexOfCategory(this) != -1)
     {
-      aGame.setCategory(this);
+      wasAdded = true;
     }
     else
     {
-      games.add(aGame);
+      wasAdded = aGame.addCategory(this);
+      if (!wasAdded)
+      {
+        games.remove(aGame);
+      }
     }
-    wasAdded = true;
     return wasAdded;
   }
-
+  /* Code from template association_RemoveMany */
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    //Unable to remove aGame, as it must always have a category
-    if (!this.equals(aGame.getCategory()))
+    if (!games.contains(aGame))
     {
-      games.remove(aGame);
+      return wasRemoved;
+    }
+
+    int oldIndex = games.indexOf(aGame);
+    games.remove(oldIndex);
+    if (aGame.indexOfCategory(this) == -1)
+    {
       wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aGame.removeCategory(this);
+      if (!wasRemoved)
+      {
+        games.add(oldIndex,aGame);
+      }
     }
     return wasRemoved;
   }
@@ -173,38 +172,21 @@ public class Category
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
-  public boolean setManager(Manager aManager)
-  {
-    boolean wasSet = false;
-    if (aManager == null)
-    {
-      return wasSet;
-    }
-
-    Manager existingManager = manager;
-    manager = aManager;
-    if (existingManager != null && !existingManager.equals(aManager))
-    {
-      existingManager.removeCategory(this);
-    }
-    manager.addCategory(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
-    for(int i=games.size(); i > 0; i--)
+    ArrayList<Game> copyOfGames = new ArrayList<Game>(games);
+    games.clear();
+    for(Game aGame : copyOfGames)
     {
-      Game aGame = games.get(i - 1);
-      aGame.delete();
-    }
-    Manager placeholderManager = manager;
-    this.manager = null;
-    if(placeholderManager != null)
-    {
-      placeholderManager.removeCategory(this);
+      if (aGame.numberOfCategories() <= Game.minimumNumberOfCategories())
+      {
+        aGame.delete();
+      }
+      else
+      {
+        aGame.removeCategory(this);
+      }
     }
   }
 
@@ -213,7 +195,6 @@ public class Category
   {
     return super.toString() + "["+
             "categoryID" + ":" + getCategoryID()+ "," +
-            "name" + ":" + getName()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null");
+            "name" + ":" + getName()+ "]";
   }
 }

@@ -3,12 +3,17 @@
 
 
 import java.util.*;
-import java.sql.Date;
 
-// line 63 "model.ump"
-// line 174 "model.ump"
+// line 64 "model.ump"
+// line 158 "model.ump"
 public class Order
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<int, Order> ordersByOrderID = new HashMap<int, Order>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -17,13 +22,11 @@ public class Order
   //Order Attributes
   private int orderID;
   private String orderNumber;
-  private Customer customerDetails;
   private Status orderStatus;
+  private double price;
 
   //Order Associations
   private List<Game> games;
-  private PaymentInfo paymentInfo;
-  private PurchaseHistory purchaseHistory;
   private Customer customer;
   private List<Employee> employees;
 
@@ -31,44 +34,16 @@ public class Order
   // CONSTRUCTOR
   //------------------------
 
-  public Order(int aOrderID, String aOrderNumber, Customer aCustomerDetails, Status aOrderStatus, PaymentInfo aPaymentInfo, PurchaseHistory aPurchaseHistory, Customer aCustomer)
+  public Order(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice, Customer aCustomer)
   {
-    orderID = aOrderID;
     orderNumber = aOrderNumber;
-    customerDetails = aCustomerDetails;
     orderStatus = aOrderStatus;
+    price = aPrice;
+    if (!setOrderID(aOrderID))
+    {
+      throw new RuntimeException("Cannot create due to duplicate orderID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     games = new ArrayList<Game>();
-    if (aPaymentInfo == null || aPaymentInfo.getOrder() != null)
-    {
-      throw new RuntimeException("Unable to create Order due to aPaymentInfo. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    paymentInfo = aPaymentInfo;
-    boolean didAddPurchaseHistory = setPurchaseHistory(aPurchaseHistory);
-    if (!didAddPurchaseHistory)
-    {
-      throw new RuntimeException("Unable to create order due to purchaseHistory. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    boolean didAddCustomer = setCustomer(aCustomer);
-    if (!didAddCustomer)
-    {
-      throw new RuntimeException("Unable to create order due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    employees = new ArrayList<Employee>();
-  }
-
-  public Order(int aOrderID, String aOrderNumber, Customer aCustomerDetails, Status aOrderStatus, int aPaymentinfoIDForPaymentInfo, String aCardNumberForPaymentInfo, Date aExpiryDateForPaymentInfo, int aCvvForPaymentInfo, String aBillingAddressForPaymentInfo, Customer aCustomerForPaymentInfo, PurchaseHistory aPurchaseHistory, Customer aCustomer)
-  {
-    orderID = aOrderID;
-    orderNumber = aOrderNumber;
-    customerDetails = aCustomerDetails;
-    orderStatus = aOrderStatus;
-    games = new ArrayList<Game>();
-    paymentInfo = new PaymentInfo(aPaymentinfoIDForPaymentInfo, aCardNumberForPaymentInfo, aExpiryDateForPaymentInfo, aCvvForPaymentInfo, aBillingAddressForPaymentInfo, aCustomerForPaymentInfo, this);
-    boolean didAddPurchaseHistory = setPurchaseHistory(aPurchaseHistory);
-    if (!didAddPurchaseHistory)
-    {
-      throw new RuntimeException("Unable to create order due to purchaseHistory. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
     boolean didAddCustomer = setCustomer(aCustomer);
     if (!didAddCustomer)
     {
@@ -84,8 +59,19 @@ public class Order
   public boolean setOrderID(int aOrderID)
   {
     boolean wasSet = false;
+    int anOldOrderID = getOrderID();
+    if (anOldOrderID != null && anOldOrderID.equals(aOrderID)) {
+      return true;
+    }
+    if (hasWithOrderID(aOrderID)) {
+      return wasSet;
+    }
     orderID = aOrderID;
     wasSet = true;
+    if (anOldOrderID != null) {
+      ordersByOrderID.remove(anOldOrderID);
+    }
+    ordersByOrderID.put(aOrderID, this);
     return wasSet;
   }
 
@@ -93,14 +79,6 @@ public class Order
   {
     boolean wasSet = false;
     orderNumber = aOrderNumber;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setCustomerDetails(Customer aCustomerDetails)
-  {
-    boolean wasSet = false;
-    customerDetails = aCustomerDetails;
     wasSet = true;
     return wasSet;
   }
@@ -113,9 +91,27 @@ public class Order
     return wasSet;
   }
 
+  public boolean setPrice(double aPrice)
+  {
+    boolean wasSet = false;
+    price = aPrice;
+    wasSet = true;
+    return wasSet;
+  }
+
   public int getOrderID()
   {
     return orderID;
+  }
+  /* Code from template attribute_GetUnique */
+  public static Order getWithOrderID(int aOrderID)
+  {
+    return ordersByOrderID.get(aOrderID);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithOrderID(int aOrderID)
+  {
+    return getWithOrderID(aOrderID) != null;
   }
 
   public String getOrderNumber()
@@ -123,14 +119,14 @@ public class Order
     return orderNumber;
   }
 
-  public Customer getCustomerDetails()
-  {
-    return customerDetails;
-  }
-
   public Status getOrderStatus()
   {
     return orderStatus;
+  }
+
+  public double getPrice()
+  {
+    return price;
   }
   /* Code from template association_GetMany */
   public Game getGame(int index)
@@ -161,16 +157,6 @@ public class Order
   {
     int index = games.indexOf(aGame);
     return index;
-  }
-  /* Code from template association_GetOne */
-  public PaymentInfo getPaymentInfo()
-  {
-    return paymentInfo;
-  }
-  /* Code from template association_GetOne */
-  public PurchaseHistory getPurchaseHistory()
-  {
-    return purchaseHistory;
   }
   /* Code from template association_GetOne */
   public Customer getCustomer()
@@ -212,38 +198,48 @@ public class Order
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Game addGame(int aGameID, String aTitle, String aDescription, String aCategoryName, double aPrice, int aStock, String aImage, boolean aArchived, boolean aManagerApproval, Employee aEmployee, Wishlist aWishlist, Category aCategory, GameArchive aGameArchive)
-  {
-    return new Game(aGameID, aTitle, aDescription, aCategoryName, aPrice, aStock, aImage, aArchived, aManagerApproval, aEmployee, aWishlist, this, aCategory, aGameArchive);
-  }
-
+  /* Code from template association_AddManyToManyMethod */
   public boolean addGame(Game aGame)
   {
     boolean wasAdded = false;
     if (games.contains(aGame)) { return false; }
-    Order existingOrder = aGame.getOrder();
-    boolean isNewOrder = existingOrder != null && !this.equals(existingOrder);
-    if (isNewOrder)
+    games.add(aGame);
+    if (aGame.indexOfOrder(this) != -1)
     {
-      aGame.setOrder(this);
+      wasAdded = true;
     }
     else
     {
-      games.add(aGame);
+      wasAdded = aGame.addOrder(this);
+      if (!wasAdded)
+      {
+        games.remove(aGame);
+      }
     }
-    wasAdded = true;
     return wasAdded;
   }
-
+  /* Code from template association_RemoveMany */
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    //Unable to remove aGame, as it must always have a order
-    if (!this.equals(aGame.getOrder()))
+    if (!games.contains(aGame))
     {
-      games.remove(aGame);
+      return wasRemoved;
+    }
+
+    int oldIndex = games.indexOf(aGame);
+    games.remove(oldIndex);
+    if (aGame.indexOfOrder(this) == -1)
+    {
       wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aGame.removeOrder(this);
+      if (!wasRemoved)
+      {
+        games.add(oldIndex,aGame);
+      }
     }
     return wasRemoved;
   }
@@ -278,25 +274,6 @@ public class Order
       wasAdded = addGameAt(aGame, index);
     }
     return wasAdded;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setPurchaseHistory(PurchaseHistory aPurchaseHistory)
-  {
-    boolean wasSet = false;
-    if (aPurchaseHistory == null)
-    {
-      return wasSet;
-    }
-
-    PurchaseHistory existingPurchaseHistory = purchaseHistory;
-    purchaseHistory = aPurchaseHistory;
-    if (existingPurchaseHistory != null && !existingPurchaseHistory.equals(aPurchaseHistory))
-    {
-      existingPurchaseHistory.removeOrder(this);
-    }
-    purchaseHistory.addOrder(this);
-    wasSet = true;
-    return wasSet;
   }
   /* Code from template association_SetOneToMany */
   public boolean setCustomer(Customer aCustomer)
@@ -402,22 +379,12 @@ public class Order
 
   public void delete()
   {
-    for(int i=games.size(); i > 0; i--)
+    ordersByOrderID.remove(getOrderID());
+    ArrayList<Game> copyOfGames = new ArrayList<Game>(games);
+    games.clear();
+    for(Game aGame : copyOfGames)
     {
-      Game aGame = games.get(i - 1);
-      aGame.delete();
-    }
-    PaymentInfo existingPaymentInfo = paymentInfo;
-    paymentInfo = null;
-    if (existingPaymentInfo != null)
-    {
-      existingPaymentInfo.delete();
-    }
-    PurchaseHistory placeholderPurchaseHistory = purchaseHistory;
-    this.purchaseHistory = null;
-    if(placeholderPurchaseHistory != null)
-    {
-      placeholderPurchaseHistory.removeOrder(this);
+      aGame.removeOrder(this);
     }
     Customer placeholderCustomer = customer;
     this.customer = null;
@@ -438,11 +405,9 @@ public class Order
   {
     return super.toString() + "["+
             "orderID" + ":" + getOrderID()+ "," +
-            "orderNumber" + ":" + getOrderNumber()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "customerDetails" + "=" + (getCustomerDetails() != null ? !getCustomerDetails().equals(this)  ? getCustomerDetails().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "orderNumber" + ":" + getOrderNumber()+ "," +
+            "price" + ":" + getPrice()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "orderStatus" + "=" + (getOrderStatus() != null ? !getOrderStatus().equals(this)  ? getOrderStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "paymentInfo = "+(getPaymentInfo()!=null?Integer.toHexString(System.identityHashCode(getPaymentInfo())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "purchaseHistory = "+(getPurchaseHistory()!=null?Integer.toHexString(System.identityHashCode(getPurchaseHistory())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
   }
 }

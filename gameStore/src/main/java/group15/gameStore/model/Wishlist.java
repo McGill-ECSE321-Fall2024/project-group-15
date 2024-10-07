@@ -3,9 +3,10 @@
 
 
 import java.util.*;
+import java.sql.Date;
 
-// line 122 "model.ump"
-// line 216 "model.ump"
+// line 112 "model.ump"
+// line 187 "model.ump"
 public class Wishlist
 {
 
@@ -15,14 +16,20 @@ public class Wishlist
 
   //Wishlist Associations
   private List<Game> games;
+  private Customer customer;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Wishlist()
+  public Wishlist(Customer aCustomer)
   {
     games = new ArrayList<Game>();
+    boolean didAddCustomer = setCustomer(aCustomer);
+    if (!didAddCustomer)
+    {
+      throw new RuntimeException("Unable to create wishlist due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
   }
 
   //------------------------
@@ -58,15 +65,20 @@ public class Wishlist
     int index = games.indexOf(aGame);
     return index;
   }
+  /* Code from template association_GetOne */
+  public Customer getCustomer()
+  {
+    return customer;
+  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Game addGame(int aGameID, String aTitle, String aDescription, String aCategoryName, double aPrice, int aStock, String aImage, boolean aArchived, boolean aManagerApproval, Employee aEmployee, Order aOrder, Category aCategory, GameArchive aGameArchive)
+  public Game addGame(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Manager aManager, Category... allCategories)
   {
-    return new Game(aGameID, aTitle, aDescription, aCategoryName, aPrice, aStock, aImage, aArchived, aManagerApproval, aEmployee, this, aOrder, aCategory, aGameArchive);
+    return new Game(aGameID, aTitle, aDescription, aPrice, aStock, aImage, aIsApproved, aManager, this, allCategories);
   }
 
   public boolean addGame(Game aGame)
@@ -130,6 +142,34 @@ public class Wishlist
     }
     return wasAdded;
   }
+  /* Code from template association_SetOneToOptionalOne */
+  public boolean setCustomer(Customer aNewCustomer)
+  {
+    boolean wasSet = false;
+    if (aNewCustomer == null)
+    {
+      //Unable to setCustomer to null, as wishlist must always be associated to a customer
+      return wasSet;
+    }
+    
+    Wishlist existingWishlist = aNewCustomer.getWishlist();
+    if (existingWishlist != null && !equals(existingWishlist))
+    {
+      //Unable to setCustomer, the current customer already has a wishlist, which would be orphaned if it were re-assigned
+      return wasSet;
+    }
+    
+    Customer anOldCustomer = customer;
+    customer = aNewCustomer;
+    customer.setWishlist(this);
+
+    if (anOldCustomer != null)
+    {
+      anOldCustomer.setWishlist(null);
+    }
+    wasSet = true;
+    return wasSet;
+  }
 
   public void delete()
   {
@@ -137,6 +177,12 @@ public class Wishlist
     {
       Game aGame = games.get(i - 1);
       aGame.delete();
+    }
+    Customer existingCustomer = customer;
+    customer = null;
+    if (existingCustomer != null)
+    {
+      existingCustomer.setWishlist(null);
     }
   }
 

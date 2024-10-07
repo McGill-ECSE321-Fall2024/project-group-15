@@ -2,12 +2,19 @@
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
 
+import java.util.*;
 import java.sql.Date;
 
-// line 85 "model.ump"
-// line 190 "model.ump"
+// line 83 "model.ump"
+// line 174 "model.ump"
 public class Promotion
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<int, Promotion> promotionsByPromotionID = new HashMap<int, Promotion>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -20,54 +27,28 @@ public class Promotion
   private Date validUntil;
 
   //Promotion Associations
-  private Cart cart;
   private Manager manager;
-  private StoreInfo storeInfo;
+  private List<Game> games;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Promotion(int aPromotionID, String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Cart aCart, Manager aManager, StoreInfo aStoreInfo)
+  public Promotion(int aPromotionID, String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Manager aManager)
   {
-    promotionID = aPromotionID;
     promotionCode = aPromotionCode;
     discountPercentage = aDiscountPercentage;
     validUntil = aValidUntil;
-    if (aCart == null || aCart.getPromotion() != null)
+    if (!setPromotionID(aPromotionID))
     {
-      throw new RuntimeException("Unable to create Promotion due to aCart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Cannot create due to duplicate promotionID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    cart = aCart;
     boolean didAddManager = setManager(aManager);
     if (!didAddManager)
     {
       throw new RuntimeException("Unable to create promotion due to manager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
-    boolean didAddStoreInfo = setStoreInfo(aStoreInfo);
-    if (!didAddStoreInfo)
-    {
-      throw new RuntimeException("Unable to create promotion due to storeInfo. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-  }
-
-  public Promotion(int aPromotionID, String aPromotionCode, double aDiscountPercentage, Date aValidUntil, int aCartIDForCart, double aTotalPriceForCart, Customer aCustomerForCart, Manager aManager, StoreInfo aStoreInfo)
-  {
-    promotionID = aPromotionID;
-    promotionCode = aPromotionCode;
-    discountPercentage = aDiscountPercentage;
-    validUntil = aValidUntil;
-    cart = new Cart(aCartIDForCart, aTotalPriceForCart, aCustomerForCart, this);
-    boolean didAddManager = setManager(aManager);
-    if (!didAddManager)
-    {
-      throw new RuntimeException("Unable to create promotion due to manager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    boolean didAddStoreInfo = setStoreInfo(aStoreInfo);
-    if (!didAddStoreInfo)
-    {
-      throw new RuntimeException("Unable to create promotion due to storeInfo. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
+    games = new ArrayList<Game>();
   }
 
   //------------------------
@@ -77,8 +58,19 @@ public class Promotion
   public boolean setPromotionID(int aPromotionID)
   {
     boolean wasSet = false;
+    int anOldPromotionID = getPromotionID();
+    if (anOldPromotionID != null && anOldPromotionID.equals(aPromotionID)) {
+      return true;
+    }
+    if (hasWithPromotionID(aPromotionID)) {
+      return wasSet;
+    }
     promotionID = aPromotionID;
     wasSet = true;
+    if (anOldPromotionID != null) {
+      promotionsByPromotionID.remove(anOldPromotionID);
+    }
+    promotionsByPromotionID.put(aPromotionID, this);
     return wasSet;
   }
 
@@ -110,6 +102,16 @@ public class Promotion
   {
     return promotionID;
   }
+  /* Code from template attribute_GetUnique */
+  public static Promotion getWithPromotionID(int aPromotionID)
+  {
+    return promotionsByPromotionID.get(aPromotionID);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithPromotionID(int aPromotionID)
+  {
+    return getWithPromotionID(aPromotionID) != null;
+  }
 
   public String getPromotionCode()
   {
@@ -126,19 +128,39 @@ public class Promotion
     return validUntil;
   }
   /* Code from template association_GetOne */
-  public Cart getCart()
-  {
-    return cart;
-  }
-  /* Code from template association_GetOne */
   public Manager getManager()
   {
     return manager;
   }
-  /* Code from template association_GetOne */
-  public StoreInfo getStoreInfo()
+  /* Code from template association_GetMany */
+  public Game getGame(int index)
   {
-    return storeInfo;
+    Game aGame = games.get(index);
+    return aGame;
+  }
+
+  public List<Game> getGames()
+  {
+    List<Game> newGames = Collections.unmodifiableList(games);
+    return newGames;
+  }
+
+  public int numberOfGames()
+  {
+    int number = games.size();
+    return number;
+  }
+
+  public boolean hasGames()
+  {
+    boolean has = games.size() > 0;
+    return has;
+  }
+
+  public int indexOfGame(Game aGame)
+  {
+    int index = games.indexOf(aGame);
+    return index;
   }
   /* Code from template association_SetOneToMany */
   public boolean setManager(Manager aManager)
@@ -159,45 +181,92 @@ public class Promotion
     wasSet = true;
     return wasSet;
   }
-  /* Code from template association_SetOneToMany */
-  public boolean setStoreInfo(StoreInfo aStoreInfo)
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfGames()
   {
-    boolean wasSet = false;
-    if (aStoreInfo == null)
+    return 0;
+  }
+  /* Code from template association_AddManyToOptionalOne */
+  public boolean addGame(Game aGame)
+  {
+    boolean wasAdded = false;
+    if (games.contains(aGame)) { return false; }
+    Promotion existingPromotion = aGame.getPromotion();
+    if (existingPromotion == null)
     {
-      return wasSet;
+      aGame.setPromotion(this);
     }
+    else if (!this.equals(existingPromotion))
+    {
+      existingPromotion.removeGame(aGame);
+      addGame(aGame);
+    }
+    else
+    {
+      games.add(aGame);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
 
-    StoreInfo existingStoreInfo = storeInfo;
-    storeInfo = aStoreInfo;
-    if (existingStoreInfo != null && !existingStoreInfo.equals(aStoreInfo))
+  public boolean removeGame(Game aGame)
+  {
+    boolean wasRemoved = false;
+    if (games.contains(aGame))
     {
-      existingStoreInfo.removePromotion(this);
+      games.remove(aGame);
+      aGame.setPromotion(null);
+      wasRemoved = true;
     }
-    storeInfo.addPromotion(this);
-    wasSet = true;
-    return wasSet;
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addGameAt(Game aGame, int index)
+  {  
+    boolean wasAdded = false;
+    if(addGame(aGame))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfGames()) { index = numberOfGames() - 1; }
+      games.remove(aGame);
+      games.add(index, aGame);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveGameAt(Game aGame, int index)
+  {
+    boolean wasAdded = false;
+    if(games.contains(aGame))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfGames()) { index = numberOfGames() - 1; }
+      games.remove(aGame);
+      games.add(index, aGame);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addGameAt(aGame, index);
+    }
+    return wasAdded;
   }
 
   public void delete()
   {
-    Cart existingCart = cart;
-    cart = null;
-    if (existingCart != null)
-    {
-      existingCart.delete();
-    }
+    promotionsByPromotionID.remove(getPromotionID());
     Manager placeholderManager = manager;
     this.manager = null;
     if(placeholderManager != null)
     {
       placeholderManager.removePromotion(this);
     }
-    StoreInfo placeholderStoreInfo = storeInfo;
-    this.storeInfo = null;
-    if(placeholderStoreInfo != null)
+    while( !game.isEmpty() )
     {
-      placeholderStoreInfo.removePromotion(this);
+      Game aGame = game.get(0);
+      aGame.setPromotion(null);
+      game.remove(aGame);
     }
   }
 
@@ -209,8 +278,6 @@ public class Promotion
             "promotionCode" + ":" + getPromotionCode()+ "," +
             "discountPercentage" + ":" + getDiscountPercentage()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "validUntil" + "=" + (getValidUntil() != null ? !getValidUntil().equals(this)  ? getValidUntil().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "cart = "+(getCart()!=null?Integer.toHexString(System.identityHashCode(getCart())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "storeInfo = "+(getStoreInfo()!=null?Integer.toHexString(System.identityHashCode(getStoreInfo())):"null");
+            "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null");
   }
 }

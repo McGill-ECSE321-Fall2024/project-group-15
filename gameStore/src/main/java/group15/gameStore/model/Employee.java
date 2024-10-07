@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 41 "model.ump"
-// line 159 "model.ump"
+// line 42 "model.ump"
+// line 143 "model.ump"
 public class Employee extends Person
 {
 
@@ -14,8 +14,7 @@ public class Employee extends Person
   //------------------------
 
   //Employee Attributes
-  private int employeeID;
-  private boolean status;
+  private boolean isActive;
 
   //Employee Associations
   private List<Game> games;
@@ -25,11 +24,10 @@ public class Employee extends Person
   // CONSTRUCTOR
   //------------------------
 
-  public Employee(String aUsername, String aPassword, String aEmail, int aEmployeeID, boolean aStatus)
+  public Employee(int aUserID, String aUsername, String aPassword, String aEmail, boolean aIsActive)
   {
-    super(aUsername, aPassword, aEmail);
-    employeeID = aEmployeeID;
-    status = aStatus;
+    super(aUserID, aUsername, aPassword, aEmail);
+    isActive = aIsActive;
     games = new ArrayList<Game>();
     orders = new ArrayList<Order>();
   }
@@ -38,35 +36,22 @@ public class Employee extends Person
   // INTERFACE
   //------------------------
 
-  public boolean setEmployeeID(int aEmployeeID)
+  public boolean setIsActive(boolean aIsActive)
   {
     boolean wasSet = false;
-    employeeID = aEmployeeID;
+    isActive = aIsActive;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setStatus(boolean aStatus)
+  public boolean getIsActive()
   {
-    boolean wasSet = false;
-    status = aStatus;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public int getEmployeeID()
-  {
-    return employeeID;
-  }
-
-  public boolean getStatus()
-  {
-    return status;
+    return isActive;
   }
   /* Code from template attribute_IsBoolean */
-  public boolean isStatus()
+  public boolean isIsActive()
   {
-    return status;
+    return isActive;
   }
   /* Code from template association_GetMany */
   public Game getGame(int index)
@@ -133,26 +118,12 @@ public class Employee extends Person
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Game addGame(int aGameID, String aTitle, String aDescription, String aCategoryName, double aPrice, int aStock, String aImage, boolean aArchived, boolean aManagerApproval, Wishlist aWishlist, Order aOrder, Category aCategory, GameArchive aGameArchive)
-  {
-    return new Game(aGameID, aTitle, aDescription, aCategoryName, aPrice, aStock, aImage, aArchived, aManagerApproval, this, aWishlist, aOrder, aCategory, aGameArchive);
-  }
-
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addGame(Game aGame)
   {
     boolean wasAdded = false;
     if (games.contains(aGame)) { return false; }
-    Employee existingEmployee = aGame.getEmployee();
-    boolean isNewEmployee = existingEmployee != null && !this.equals(existingEmployee);
-    if (isNewEmployee)
-    {
-      aGame.setEmployee(this);
-    }
-    else
-    {
-      games.add(aGame);
-    }
+    games.add(aGame);
     wasAdded = true;
     return wasAdded;
   }
@@ -160,8 +131,7 @@ public class Employee extends Person
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    //Unable to remove aGame, as it must always have a employee
-    if (!this.equals(aGame.getEmployee()))
+    if (games.contains(aGame))
     {
       games.remove(aGame);
       wasRemoved = true;
@@ -285,11 +255,7 @@ public class Employee extends Person
 
   public void delete()
   {
-    for(int i=games.size(); i > 0; i--)
-    {
-      Game aGame = games.get(i - 1);
-      aGame.delete();
-    }
+    games.clear();
     ArrayList<Order> copyOfOrders = new ArrayList<Order>(orders);
     orders.clear();
     for(Order aOrder : copyOfOrders)
@@ -303,7 +269,6 @@ public class Employee extends Person
   public String toString()
   {
     return super.toString() + "["+
-            "employeeID" + ":" + getEmployeeID()+ "," +
-            "status" + ":" + getStatus()+ "]";
+            "isActive" + ":" + getIsActive()+ "]";
   }
 }

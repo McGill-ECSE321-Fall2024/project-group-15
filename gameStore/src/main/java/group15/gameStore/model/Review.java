@@ -3,8 +3,8 @@
 
 
 
-// line 102 "model.ump"
-// line 227 "model.ump"
+// line 94 "model.ump"
+// line 193 "model.ump"
 public class Review
 {
 
@@ -14,9 +14,8 @@ public class Review
 
   //Review Attributes
   private int reviewID;
-  private rating rating;
+  private Rating rating;
   private String description;
-  private Customer customerDetails;
 
   //Review Associations
   private Game game;
@@ -26,12 +25,11 @@ public class Review
   // CONSTRUCTOR
   //------------------------
 
-  public Review(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Game aGame, Customer aCustomer)
+  public Review(int aReviewID, Rating aRating, String aDescription, Game aGame, Customer aCustomer)
   {
     reviewID = aReviewID;
     rating = aRating;
     description = aDescription;
-    customerDetails = aCustomerDetails;
     boolean didAddGame = setGame(aGame);
     if (!didAddGame)
     {
@@ -56,7 +54,7 @@ public class Review
     return wasSet;
   }
 
-  public boolean setRating(rating aRating)
+  public boolean setRating(Rating aRating)
   {
     boolean wasSet = false;
     rating = aRating;
@@ -72,20 +70,12 @@ public class Review
     return wasSet;
   }
 
-  public boolean setCustomerDetails(Customer aCustomerDetails)
-  {
-    boolean wasSet = false;
-    customerDetails = aCustomerDetails;
-    wasSet = true;
-    return wasSet;
-  }
-
   public int getReviewID()
   {
     return reviewID;
   }
 
-  public rating getRating()
+  public Rating getRating()
   {
     return rating;
   }
@@ -93,11 +83,6 @@ public class Review
   public String getDescription()
   {
     return description;
-  }
-
-  public Customer getCustomerDetails()
-  {
-    return customerDetails;
   }
   /* Code from template association_GetOne */
   public Game getGame()
@@ -171,7 +156,6 @@ public class Review
             "reviewID" + ":" + getReviewID()+ "," +
             "description" + ":" + getDescription()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "rating" + "=" + (getRating() != null ? !getRating().equals(this)  ? getRating().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "customerDetails" + "=" + (getCustomerDetails() != null ? !getCustomerDetails().equals(this)  ? getCustomerDetails().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "game = "+(getGame()!=null?Integer.toHexString(System.identityHashCode(getGame())):"null") + System.getProperties().getProperty("line.separator") +
             "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
   }

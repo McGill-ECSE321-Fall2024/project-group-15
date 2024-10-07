@@ -2,12 +2,19 @@
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
 
+import java.util.*;
 import java.sql.Date;
 
-// line 48 "model.ump"
-// line 164 "model.ump"
+// line 50 "model.ump"
+// line 148 "model.ump"
 public class PaymentInfo
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<int, PaymentInfo> paymentinfosByPaymentinfoID = new HashMap<int, PaymentInfo>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -22,44 +29,26 @@ public class PaymentInfo
 
   //PaymentInfo Associations
   private Customer customer;
-  private Order order;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public PaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer, Order aOrder)
+  public PaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer)
   {
-    paymentinfoID = aPaymentinfoID;
     cardNumber = aCardNumber;
     expiryDate = aExpiryDate;
     cvv = aCvv;
     billingAddress = aBillingAddress;
+    if (!setPaymentinfoID(aPaymentinfoID))
+    {
+      throw new RuntimeException("Cannot create due to duplicate paymentinfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     boolean didAddCustomer = setCustomer(aCustomer);
     if (!didAddCustomer)
     {
       throw new RuntimeException("Unable to create paymentInfo due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
-    if (aOrder == null || aOrder.getPaymentInfo() != null)
-    {
-      throw new RuntimeException("Unable to create PaymentInfo due to aOrder. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    order = aOrder;
-  }
-
-  public PaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer, int aOrderIDForOrder, String aOrderNumberForOrder, Customer aCustomerDetailsForOrder, Status aOrderStatusForOrder, PurchaseHistory aPurchaseHistoryForOrder, Customer aCustomerForOrder)
-  {
-    paymentinfoID = aPaymentinfoID;
-    cardNumber = aCardNumber;
-    expiryDate = aExpiryDate;
-    cvv = aCvv;
-    billingAddress = aBillingAddress;
-    boolean didAddCustomer = setCustomer(aCustomer);
-    if (!didAddCustomer)
-    {
-      throw new RuntimeException("Unable to create paymentInfo due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    order = new Order(aOrderIDForOrder, aOrderNumberForOrder, aCustomerDetailsForOrder, aOrderStatusForOrder, this, aPurchaseHistoryForOrder, aCustomerForOrder);
   }
 
   //------------------------
@@ -69,8 +58,19 @@ public class PaymentInfo
   public boolean setPaymentinfoID(int aPaymentinfoID)
   {
     boolean wasSet = false;
+    int anOldPaymentinfoID = getPaymentinfoID();
+    if (anOldPaymentinfoID != null && anOldPaymentinfoID.equals(aPaymentinfoID)) {
+      return true;
+    }
+    if (hasWithPaymentinfoID(aPaymentinfoID)) {
+      return wasSet;
+    }
     paymentinfoID = aPaymentinfoID;
     wasSet = true;
+    if (anOldPaymentinfoID != null) {
+      paymentinfosByPaymentinfoID.remove(anOldPaymentinfoID);
+    }
+    paymentinfosByPaymentinfoID.put(aPaymentinfoID, this);
     return wasSet;
   }
 
@@ -110,6 +110,16 @@ public class PaymentInfo
   {
     return paymentinfoID;
   }
+  /* Code from template attribute_GetUnique */
+  public static PaymentInfo getWithPaymentinfoID(int aPaymentinfoID)
+  {
+    return paymentinfosByPaymentinfoID.get(aPaymentinfoID);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithPaymentinfoID(int aPaymentinfoID)
+  {
+    return getWithPaymentinfoID(aPaymentinfoID) != null;
+  }
 
   public String getCardNumber()
   {
@@ -135,11 +145,6 @@ public class PaymentInfo
   {
     return customer;
   }
-  /* Code from template association_GetOne */
-  public Order getOrder()
-  {
-    return order;
-  }
   /* Code from template association_SetOneToMany */
   public boolean setCustomer(Customer aCustomer)
   {
@@ -162,17 +167,12 @@ public class PaymentInfo
 
   public void delete()
   {
+    paymentinfosByPaymentinfoID.remove(getPaymentinfoID());
     Customer placeholderCustomer = customer;
     this.customer = null;
     if(placeholderCustomer != null)
     {
       placeholderCustomer.removePaymentInfo(this);
-    }
-    Order existingOrder = order;
-    order = null;
-    if (existingOrder != null)
-    {
-      existingOrder.delete();
     }
   }
 
@@ -185,7 +185,6 @@ public class PaymentInfo
             "cvv" + ":" + getCvv()+ "," +
             "billingAddress" + ":" + getBillingAddress()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "expiryDate" + "=" + (getExpiryDate() != null ? !getExpiryDate().equals(this)  ? getExpiryDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "order = "+(getOrder()!=null?Integer.toHexString(System.identityHashCode(getOrder())):"null");
+            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
   }
 }

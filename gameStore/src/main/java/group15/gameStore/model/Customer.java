@@ -5,8 +5,8 @@
 import java.util.*;
 import java.sql.Date;
 
-// line 9 "model.ump"
-// line 145 "model.ump"
+// line 10 "model.ump"
+// line 125 "model.ump"
 public class Customer extends Person
 {
 
@@ -15,68 +15,38 @@ public class Customer extends Person
   //------------------------
 
   //Customer Attributes
-  private int customerID;
   private String address;
   private String phoneNumber;
   private Wishlist wishList;
   private PurchaseHistory purchaseHistory;
-  private PaymentInfo savedPaymentInfo;
+  private boolean isPaymentInfoSaved;
 
   //Customer Associations
   private List<PaymentInfo> paymentInfos;
   private List<Review> reviews;
+  private Wishlist wishlist;
   private List<Order> orders;
-  private Cart cart;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(String aUsername, String aPassword, String aEmail, int aCustomerID, String aAddress, String aPhoneNumber, Wishlist aWishList, PurchaseHistory aPurchaseHistory, PaymentInfo aSavedPaymentInfo, Cart aCart)
+  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, Wishlist aWishList, PurchaseHistory aPurchaseHistory, boolean aIsPaymentInfoSaved)
   {
-    super(aUsername, aPassword, aEmail);
-    customerID = aCustomerID;
+    super(aUserID, aUsername, aPassword, aEmail);
     address = aAddress;
     phoneNumber = aPhoneNumber;
     wishList = aWishList;
     purchaseHistory = aPurchaseHistory;
-    savedPaymentInfo = aSavedPaymentInfo;
+    isPaymentInfoSaved = aIsPaymentInfoSaved;
     paymentInfos = new ArrayList<PaymentInfo>();
     reviews = new ArrayList<Review>();
     orders = new ArrayList<Order>();
-    if (aCart == null || aCart.getCustomer() != null)
-    {
-      throw new RuntimeException("Unable to create Customer due to aCart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    cart = aCart;
-  }
-
-  public Customer(String aUsername, String aPassword, String aEmail, int aCustomerID, String aAddress, String aPhoneNumber, Wishlist aWishList, PurchaseHistory aPurchaseHistory, PaymentInfo aSavedPaymentInfo, int aCartIDForCart, double aTotalPriceForCart, Promotion aPromotionForCart)
-  {
-    super(aUsername, aPassword, aEmail);
-    customerID = aCustomerID;
-    address = aAddress;
-    phoneNumber = aPhoneNumber;
-    wishList = aWishList;
-    purchaseHistory = aPurchaseHistory;
-    savedPaymentInfo = aSavedPaymentInfo;
-    paymentInfos = new ArrayList<PaymentInfo>();
-    reviews = new ArrayList<Review>();
-    orders = new ArrayList<Order>();
-    cart = new Cart(aCartIDForCart, aTotalPriceForCart, this, aPromotionForCart);
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setCustomerID(int aCustomerID)
-  {
-    boolean wasSet = false;
-    customerID = aCustomerID;
-    wasSet = true;
-    return wasSet;
-  }
 
   public boolean setAddress(String aAddress)
   {
@@ -110,17 +80,12 @@ public class Customer extends Person
     return wasSet;
   }
 
-  public boolean setSavedPaymentInfo(PaymentInfo aSavedPaymentInfo)
+  public boolean setIsPaymentInfoSaved(boolean aIsPaymentInfoSaved)
   {
     boolean wasSet = false;
-    savedPaymentInfo = aSavedPaymentInfo;
+    isPaymentInfoSaved = aIsPaymentInfoSaved;
     wasSet = true;
     return wasSet;
-  }
-
-  public int getCustomerID()
-  {
-    return customerID;
   }
 
   public String getAddress()
@@ -143,9 +108,14 @@ public class Customer extends Person
     return purchaseHistory;
   }
 
-  public PaymentInfo getSavedPaymentInfo()
+  public boolean getIsPaymentInfoSaved()
   {
-    return savedPaymentInfo;
+    return isPaymentInfoSaved;
+  }
+  /* Code from template attribute_IsBoolean */
+  public boolean isIsPaymentInfoSaved()
+  {
+    return isPaymentInfoSaved;
   }
   /* Code from template association_GetMany */
   public PaymentInfo getPaymentInfo(int index)
@@ -207,6 +177,17 @@ public class Customer extends Person
     int index = reviews.indexOf(aReview);
     return index;
   }
+  /* Code from template association_GetOne */
+  public Wishlist getWishlist()
+  {
+    return wishlist;
+  }
+
+  public boolean hasWishlist()
+  {
+    boolean has = wishlist != null;
+    return has;
+  }
   /* Code from template association_GetMany */
   public Order getOrder(int index)
   {
@@ -237,20 +218,15 @@ public class Customer extends Person
     int index = orders.indexOf(aOrder);
     return index;
   }
-  /* Code from template association_GetOne */
-  public Cart getCart()
-  {
-    return cart;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfPaymentInfos()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public PaymentInfo addPaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Order aOrder)
+  public PaymentInfo addPaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress)
   {
-    return new PaymentInfo(aPaymentinfoID, aCardNumber, aExpiryDate, aCvv, aBillingAddress, this, aOrder);
+    return new PaymentInfo(aPaymentinfoID, aCardNumber, aExpiryDate, aCvv, aBillingAddress, this);
   }
 
   public boolean addPaymentInfo(PaymentInfo aPaymentInfo)
@@ -320,9 +296,9 @@ public class Customer extends Person
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Review addReview(int aReviewID, rating aRating, String aDescription, Customer aCustomerDetails, Game aGame)
+  public Review addReview(int aReviewID, Rating aRating, String aDescription, Game aGame)
   {
-    return new Review(aReviewID, aRating, aDescription, aCustomerDetails, aGame, this);
+    return new Review(aReviewID, aRating, aDescription, aGame, this);
   }
 
   public boolean addReview(Review aReview)
@@ -386,15 +362,42 @@ public class Customer extends Person
     }
     return wasAdded;
   }
+  /* Code from template association_SetOptionalOneToOne */
+  public boolean setWishlist(Wishlist aNewWishlist)
+  {
+    boolean wasSet = false;
+    if (wishlist != null && !wishlist.equals(aNewWishlist) && equals(wishlist.getCustomer()))
+    {
+      //Unable to setWishlist, as existing wishlist would become an orphan
+      return wasSet;
+    }
+
+    wishlist = aNewWishlist;
+    Customer anOldCustomer = aNewWishlist != null ? aNewWishlist.getCustomer() : null;
+
+    if (!this.equals(anOldCustomer))
+    {
+      if (anOldCustomer != null)
+      {
+        anOldCustomer.wishlist = null;
+      }
+      if (wishlist != null)
+      {
+        wishlist.setCustomer(this);
+      }
+    }
+    wasSet = true;
+    return wasSet;
+  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfOrders()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Order addOrder(int aOrderID, String aOrderNumber, Customer aCustomerDetails, Status aOrderStatus, PaymentInfo aPaymentInfo, PurchaseHistory aPurchaseHistory)
+  public Order addOrder(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice)
   {
-    return new Order(aOrderID, aOrderNumber, aCustomerDetails, aOrderStatus, aPaymentInfo, aPurchaseHistory, this);
+    return new Order(aOrderID, aOrderNumber, aOrderStatus, aPrice, this);
   }
 
   public boolean addOrder(Order aOrder)
@@ -471,16 +474,16 @@ public class Customer extends Person
       Review aReview = reviews.get(i - 1);
       aReview.delete();
     }
+    Wishlist existingWishlist = wishlist;
+    wishlist = null;
+    if (existingWishlist != null)
+    {
+      existingWishlist.delete();
+    }
     for(int i=orders.size(); i > 0; i--)
     {
       Order aOrder = orders.get(i - 1);
       aOrder.delete();
-    }
-    Cart existingCart = cart;
-    cart = null;
-    if (existingCart != null)
-    {
-      existingCart.delete();
     }
     super.delete();
   }
@@ -489,12 +492,11 @@ public class Customer extends Person
   public String toString()
   {
     return super.toString() + "["+
-            "customerID" + ":" + getCustomerID()+ "," +
             "address" + ":" + getAddress()+ "," +
-            "phoneNumber" + ":" + getPhoneNumber()+ "]" + System.getProperties().getProperty("line.separator") +
+            "phoneNumber" + ":" + getPhoneNumber()+ "," +
+            "isPaymentInfoSaved" + ":" + getIsPaymentInfoSaved()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "wishList" + "=" + (getWishList() != null ? !getWishList().equals(this)  ? getWishList().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "purchaseHistory" + "=" + (getPurchaseHistory() != null ? !getPurchaseHistory().equals(this)  ? getPurchaseHistory().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "savedPaymentInfo" + "=" + (getSavedPaymentInfo() != null ? !getSavedPaymentInfo().equals(this)  ? getSavedPaymentInfo().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "cart = "+(getCart()!=null?Integer.toHexString(System.identityHashCode(getCart())):"null");
+            "  " + "wishlist = "+(getWishlist()!=null?Integer.toHexString(System.identityHashCode(getWishlist())):"null");
   }
 }

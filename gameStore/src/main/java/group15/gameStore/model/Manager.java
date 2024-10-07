@@ -5,8 +5,8 @@
 import java.util.*;
 import java.sql.Date;
 
-// line 57 "model.ump"
-// line 169 "model.ump"
+// line 59 "model.ump"
+// line 153 "model.ump"
 public class Manager extends Employee
 {
 
@@ -14,10 +14,8 @@ public class Manager extends Employee
   // MEMBER VARIABLES
   //------------------------
 
-  //Manager Attributes
-  private int managerID;
-
   //Manager Associations
+  private List<Game> games;
   private List<Promotion> promotions;
   private List<Category> categories;
 
@@ -25,10 +23,10 @@ public class Manager extends Employee
   // CONSTRUCTOR
   //------------------------
 
-  public Manager(String aUsername, String aPassword, String aEmail, int aEmployeeID, boolean aStatus, int aManagerID)
+  public Manager(int aUserID, String aUsername, String aPassword, String aEmail, boolean aIsActive)
   {
-    super(aUsername, aPassword, aEmail, aEmployeeID, aStatus);
-    managerID = aManagerID;
+    super(aUserID, aUsername, aPassword, aEmail, aIsActive);
+    games = new ArrayList<Game>();
     promotions = new ArrayList<Promotion>();
     categories = new ArrayList<Category>();
   }
@@ -36,18 +34,35 @@ public class Manager extends Employee
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setManagerID(int aManagerID)
+  /* Code from template association_GetMany */
+  public Game getGame(int index)
   {
-    boolean wasSet = false;
-    managerID = aManagerID;
-    wasSet = true;
-    return wasSet;
+    Game aGame = games.get(index);
+    return aGame;
   }
 
-  public int getManagerID()
+  public List<Game> getGames()
   {
-    return managerID;
+    List<Game> newGames = Collections.unmodifiableList(games);
+    return newGames;
+  }
+
+  public int numberOfGames()
+  {
+    int number = games.size();
+    return number;
+  }
+
+  public boolean hasGames()
+  {
+    boolean has = games.size() > 0;
+    return has;
+  }
+
+  public int indexOfGame(Game aGame)
+  {
+    int index = games.indexOf(aGame);
+    return index;
   }
   /* Code from template association_GetMany */
   public Promotion getPromotion(int index)
@@ -110,14 +125,86 @@ public class Manager extends Employee
     return index;
   }
   /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfGames()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToOne */
+  public Game addGame(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Wishlist aWishlist, Category... allCategories)
+  {
+    return new Game(aGameID, aTitle, aDescription, aPrice, aStock, aImage, aIsApproved, this, aWishlist, allCategories);
+  }
+
+  public boolean addGame(Game aGame)
+  {
+    boolean wasAdded = false;
+    if (games.contains(aGame)) { return false; }
+    Manager existingManager = aGame.getManager();
+    boolean isNewManager = existingManager != null && !this.equals(existingManager);
+    if (isNewManager)
+    {
+      aGame.setManager(this);
+    }
+    else
+    {
+      games.add(aGame);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeGame(Game aGame)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aGame, as it must always have a manager
+    if (!this.equals(aGame.getManager()))
+    {
+      games.remove(aGame);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addGameAt(Game aGame, int index)
+  {  
+    boolean wasAdded = false;
+    if(addGame(aGame))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfGames()) { index = numberOfGames() - 1; }
+      games.remove(aGame);
+      games.add(index, aGame);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveGameAt(Game aGame, int index)
+  {
+    boolean wasAdded = false;
+    if(games.contains(aGame))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfGames()) { index = numberOfGames() - 1; }
+      games.remove(aGame);
+      games.add(index, aGame);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addGameAt(aGame, index);
+    }
+    return wasAdded;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfPromotions()
   {
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Promotion addPromotion(int aPromotionID, String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Cart aCart, StoreInfo aStoreInfo)
+  public Promotion addPromotion(int aPromotionID, String aPromotionCode, double aDiscountPercentage, Date aValidUntil)
   {
-    return new Promotion(aPromotionID, aPromotionCode, aDiscountPercentage, aValidUntil, aCart, this, aStoreInfo);
+    return new Promotion(aPromotionID, aPromotionCode, aDiscountPercentage, aValidUntil, this);
   }
 
   public boolean addPromotion(Promotion aPromotion)
@@ -186,26 +273,12 @@ public class Manager extends Employee
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Category addCategory(int aCategoryID, String aName)
-  {
-    return new Category(aCategoryID, aName, this);
-  }
-
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addCategory(Category aCategory)
   {
     boolean wasAdded = false;
     if (categories.contains(aCategory)) { return false; }
-    Manager existingManager = aCategory.getManager();
-    boolean isNewManager = existingManager != null && !this.equals(existingManager);
-    if (isNewManager)
-    {
-      aCategory.setManager(this);
-    }
-    else
-    {
-      categories.add(aCategory);
-    }
+    categories.add(aCategory);
     wasAdded = true;
     return wasAdded;
   }
@@ -213,8 +286,7 @@ public class Manager extends Employee
   public boolean removeCategory(Category aCategory)
   {
     boolean wasRemoved = false;
-    //Unable to remove aCategory, as it must always have a manager
-    if (!this.equals(aCategory.getManager()))
+    if (categories.contains(aCategory))
     {
       categories.remove(aCategory);
       wasRemoved = true;
@@ -256,23 +328,18 @@ public class Manager extends Employee
 
   public void delete()
   {
+    for(int i=games.size(); i > 0; i--)
+    {
+      Game aGame = games.get(i - 1);
+      aGame.delete();
+    }
     for(int i=promotions.size(); i > 0; i--)
     {
       Promotion aPromotion = promotions.get(i - 1);
       aPromotion.delete();
     }
-    for(int i=categories.size(); i > 0; i--)
-    {
-      Category aCategory = categories.get(i - 1);
-      aCategory.delete();
-    }
+    categories.clear();
     super.delete();
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+
-            "managerID" + ":" + getManagerID()+ "]";
-  }
 }
