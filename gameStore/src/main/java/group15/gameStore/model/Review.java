@@ -1,12 +1,19 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
+import java.util.*;
 
 // line 94 "model.ump"
-// line 193 "model.ump"
+// line 201 "model.ump"
 public class Review
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<int, Review> reviewsByReviewID = new HashMap<int, Review>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -27,9 +34,12 @@ public class Review
 
   public Review(int aReviewID, Rating aRating, String aDescription, Game aGame, Customer aCustomer)
   {
-    reviewID = aReviewID;
     rating = aRating;
     description = aDescription;
+    if (!setReviewID(aReviewID))
+    {
+      throw new RuntimeException("Cannot create due to duplicate reviewID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     boolean didAddGame = setGame(aGame);
     if (!didAddGame)
     {
@@ -49,8 +59,19 @@ public class Review
   public boolean setReviewID(int aReviewID)
   {
     boolean wasSet = false;
+    int anOldReviewID = getReviewID();
+    if (anOldReviewID != null && anOldReviewID.equals(aReviewID)) {
+      return true;
+    }
+    if (hasWithReviewID(aReviewID)) {
+      return wasSet;
+    }
     reviewID = aReviewID;
     wasSet = true;
+    if (anOldReviewID != null) {
+      reviewsByReviewID.remove(anOldReviewID);
+    }
+    reviewsByReviewID.put(aReviewID, this);
     return wasSet;
   }
 
@@ -73,6 +94,16 @@ public class Review
   public int getReviewID()
   {
     return reviewID;
+  }
+  /* Code from template attribute_GetUnique */
+  public static Review getWithReviewID(int aReviewID)
+  {
+    return reviewsByReviewID.get(aReviewID);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithReviewID(int aReviewID)
+  {
+    return getWithReviewID(aReviewID) != null;
   }
 
   public Rating getRating()
@@ -135,6 +166,7 @@ public class Review
 
   public void delete()
   {
+    reviewsByReviewID.remove(getReviewID());
     Game placeholderGame = game;
     this.game = null;
     if(placeholderGame != null)

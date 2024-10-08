@@ -1,12 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
 import java.util.*;
 import java.sql.Date;
 
 // line 50 "model.ump"
-// line 148 "model.ump"
+// line 155 "model.ump"
 public class PaymentInfo
 {
 
@@ -14,7 +14,7 @@ public class PaymentInfo
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, PaymentInfo> paymentinfosByPaymentinfoID = new HashMap<Integer, PaymentInfo>();
+  private static Map<int, PaymentInfo> paymentinfosByPaymentinfoID = new HashMap<int, PaymentInfo>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -59,7 +59,7 @@ public class PaymentInfo
   {
     boolean wasSet = false;
     int anOldPaymentinfoID = getPaymentinfoID();
-    if (anOldPaymentinfoID == aPaymentinfoID) {
+    if (anOldPaymentinfoID != null && anOldPaymentinfoID.equals(aPaymentinfoID)) {
       return true;
     }
     if (hasWithPaymentinfoID(aPaymentinfoID)) {
@@ -67,7 +67,9 @@ public class PaymentInfo
     }
     paymentinfoID = aPaymentinfoID;
     wasSet = true;
-    paymentinfosByPaymentinfoID.remove(anOldPaymentinfoID);
+    if (anOldPaymentinfoID != null) {
+      paymentinfosByPaymentinfoID.remove(anOldPaymentinfoID);
+    }
     paymentinfosByPaymentinfoID.put(aPaymentinfoID, this);
     return wasSet;
   }

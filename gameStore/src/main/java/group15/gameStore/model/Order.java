@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
 import java.util.*;
 
 // line 64 "model.ump"
-// line 158 "model.ump"
+// line 165 "model.ump"
 public class Order
 {
 
@@ -13,7 +13,7 @@ public class Order
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Order> ordersByOrderID = new HashMap<Integer, Order>();
+  private static Map<int, Order> ordersByOrderID = new HashMap<int, Order>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -60,7 +60,7 @@ public class Order
   {
     boolean wasSet = false;
     int anOldOrderID = getOrderID();
-    if (anOldOrderID == aOrderID) {
+    if (anOldOrderID != null && anOldOrderID.equals(aOrderID)) {
       return true;
     }
     if (hasWithOrderID(aOrderID)) {
@@ -68,7 +68,7 @@ public class Order
     }
     orderID = aOrderID;
     wasSet = true;
-    if (anOldOrderID != 0) {
+    if (anOldOrderID != null) {
       ordersByOrderID.remove(anOldOrderID);
     }
     ordersByOrderID.put(aOrderID, this);

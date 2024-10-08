@@ -1,12 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
 import java.util.*;
 import java.sql.Date;
 
-// line 25 "model.ump"
-// line 135 "model.ump"
+// line 23 "model.ump"
+// line 141 "model.ump"
 public class Game
 {
 
@@ -14,7 +14,7 @@ public class Game
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Game> gamesByGameID = new HashMap<Integer, Game>();
+  private static Map<int, Game> gamesByGameID = new HashMap<int, Game>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -36,13 +36,12 @@ public class Game
   private List<Order> orders;
   private List<Review> reviews;
   private List<Category> categories;
-  private Wishlist wishlist;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Game(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Manager aManager, Wishlist aWishlist, Category... allCategories)
+  public Game(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Manager aManager, Category... allCategories)
   {
     title = aTitle;
     description = aDescription;
@@ -68,11 +67,6 @@ public class Game
     {
       throw new RuntimeException("Unable to create Game, must have at least 1 categories. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
-    boolean didAddWishlist = setWishlist(aWishlist);
-    if (!didAddWishlist)
-    {
-      throw new RuntimeException("Unable to create game due to wishlist. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
   }
 
   //------------------------
@@ -83,7 +77,7 @@ public class Game
   {
     boolean wasSet = false;
     int anOldGameID = getGameID();
-    if (anOldGameID == aGameID) {
+    if (anOldGameID != null && anOldGameID.equals(aGameID)) {
       return true;
     }
     if (hasWithGameID(aGameID)) {
@@ -91,7 +85,9 @@ public class Game
     }
     gameID = aGameID;
     wasSet = true;
-    gamesByGameID.remove(anOldGameID);
+    if (anOldGameID != null) {
+      gamesByGameID.remove(anOldGameID);
+    }
     gamesByGameID.put(aGameID, this);
     return wasSet;
   }
@@ -311,11 +307,6 @@ public class Game
   {
     int index = categories.indexOf(aCategory);
     return index;
-  }
-  /* Code from template association_GetOne */
-  public Wishlist getWishlist()
-  {
-    return wishlist;
   }
   /* Code from template association_SetOneToMany */
   public boolean setManager(Manager aManager)
@@ -641,25 +632,6 @@ public class Game
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
-  public boolean setWishlist(Wishlist aWishlist)
-  {
-    boolean wasSet = false;
-    if (aWishlist == null)
-    {
-      return wasSet;
-    }
-
-    Wishlist existingWishlist = wishlist;
-    wishlist = aWishlist;
-    if (existingWishlist != null && !existingWishlist.equals(aWishlist))
-    {
-      existingWishlist.removeGame(this);
-    }
-    wishlist.addGame(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
@@ -695,12 +667,6 @@ public class Game
     {
       aCategory.removeGame(this);
     }
-    Wishlist placeholderWishlist = wishlist;
-    this.wishlist = null;
-    if(placeholderWishlist != null)
-    {
-      placeholderWishlist.removeGame(this);
-    }
   }
 
 
@@ -716,7 +682,6 @@ public class Game
             "isApproved" + ":" + getIsApproved()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "archivedDate" + "=" + (getArchivedDate() != null ? !getArchivedDate().equals(this)  ? getArchivedDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
             "  " + "manager = "+(getManager()!=null?Integer.toHexString(System.identityHashCode(getManager())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "promotion = "+(getPromotion()!=null?Integer.toHexString(System.identityHashCode(getPromotion())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "wishlist = "+(getWishlist()!=null?Integer.toHexString(System.identityHashCode(getWishlist())):"null");
+            "  " + "promotion = "+(getPromotion()!=null?Integer.toHexString(System.identityHashCode(getPromotion())):"null");
   }
 }

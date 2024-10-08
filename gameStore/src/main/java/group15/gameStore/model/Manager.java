@@ -1,12 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
 import java.util.*;
 import java.sql.Date;
 
 // line 59 "model.ump"
-// line 153 "model.ump"
+// line 160 "model.ump"
 public class Manager extends Employee
 {
 
@@ -23,9 +23,9 @@ public class Manager extends Employee
   // CONSTRUCTOR
   //------------------------
 
-  public Manager(int aUserID, String aUsername, String aPassword, String aEmail, boolean aIsActive)
+  public Manager(int aUserID, String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
   {
-    super(aUserID, aUsername, aPassword, aEmail, aIsActive);
+    super(aUserID, aUsername, aPassword, aEmail, aIsActive, aIsManager);
     games = new ArrayList<Game>();
     promotions = new ArrayList<Promotion>();
     categories = new ArrayList<Category>();
@@ -130,9 +130,9 @@ public class Manager extends Employee
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Game addGame(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Wishlist aWishlist, Category... allCategories)
+  public Game addGame(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Category... allCategories)
   {
-    return new Game(aGameID, aTitle, aDescription, aPrice, aStock, aImage, aIsApproved, this, aWishlist, allCategories);
+    return new Game(aGameID, aTitle, aDescription, aPrice, aStock, aImage, aIsApproved, this, allCategories);
   }
 
   public boolean addGame(Game aGame)

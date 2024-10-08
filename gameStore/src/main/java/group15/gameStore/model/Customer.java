@@ -1,12 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
 import java.util.*;
 import java.sql.Date;
 
 // line 10 "model.ump"
-// line 125 "model.ump"
+// line 131 "model.ump"
 public class Customer extends Person
 {
 
@@ -17,30 +17,27 @@ public class Customer extends Person
   //Customer Attributes
   private String address;
   private String phoneNumber;
-  private Wishlist wishList;
-  private PurchaseHistory purchaseHistory;
   private boolean isPaymentInfoSaved;
 
   //Customer Associations
   private List<PaymentInfo> paymentInfos;
   private List<Review> reviews;
-  private Wishlist wishlist;
+  private List<Wishlist> wishlists;
   private List<Order> orders;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, Wishlist aWishList, PurchaseHistory aPurchaseHistory, boolean aIsPaymentInfoSaved)
+  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, boolean aIsPaymentInfoSaved)
   {
     super(aUserID, aUsername, aPassword, aEmail);
     address = aAddress;
     phoneNumber = aPhoneNumber;
-    wishList = aWishList;
-    purchaseHistory = aPurchaseHistory;
     isPaymentInfoSaved = aIsPaymentInfoSaved;
     paymentInfos = new ArrayList<PaymentInfo>();
     reviews = new ArrayList<Review>();
+    wishlists = new ArrayList<Wishlist>();
     orders = new ArrayList<Order>();
   }
 
@@ -64,22 +61,6 @@ public class Customer extends Person
     return wasSet;
   }
 
-  public boolean setWishList(Wishlist aWishList)
-  {
-    boolean wasSet = false;
-    wishList = aWishList;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setPurchaseHistory(PurchaseHistory aPurchaseHistory)
-  {
-    boolean wasSet = false;
-    purchaseHistory = aPurchaseHistory;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setIsPaymentInfoSaved(boolean aIsPaymentInfoSaved)
   {
     boolean wasSet = false;
@@ -96,16 +77,6 @@ public class Customer extends Person
   public String getPhoneNumber()
   {
     return phoneNumber;
-  }
-
-  public Wishlist getWishList()
-  {
-    return wishList;
-  }
-
-  public PurchaseHistory getPurchaseHistory()
-  {
-    return purchaseHistory;
   }
 
   public boolean getIsPaymentInfoSaved()
@@ -177,16 +148,35 @@ public class Customer extends Person
     int index = reviews.indexOf(aReview);
     return index;
   }
-  /* Code from template association_GetOne */
-  public Wishlist getWishlist()
+  /* Code from template association_GetMany */
+  public Wishlist getWishlist(int index)
   {
-    return wishlist;
+    Wishlist aWishlist = wishlists.get(index);
+    return aWishlist;
   }
 
-  public boolean hasWishlist()
+  public List<Wishlist> getWishlists()
   {
-    boolean has = wishlist != null;
+    List<Wishlist> newWishlists = Collections.unmodifiableList(wishlists);
+    return newWishlists;
+  }
+
+  public int numberOfWishlists()
+  {
+    int number = wishlists.size();
+    return number;
+  }
+
+  public boolean hasWishlists()
+  {
+    boolean has = wishlists.size() > 0;
     return has;
+  }
+
+  public int indexOfWishlist(Wishlist aWishlist)
+  {
+    int index = wishlists.indexOf(aWishlist);
+    return index;
   }
   /* Code from template association_GetMany */
   public Order getOrder(int index)
@@ -362,32 +352,77 @@ public class Customer extends Person
     }
     return wasAdded;
   }
-  /* Code from template association_SetOptionalOneToOne */
-  public boolean setWishlist(Wishlist aNewWishlist)
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfWishlists()
   {
-    boolean wasSet = false;
-    if (wishlist != null && !wishlist.equals(aNewWishlist) && equals(wishlist.getCustomer()))
-    {
-      //Unable to setWishlist, as existing wishlist would become an orphan
-      return wasSet;
-    }
+    return 0;
+  }
+  /* Code from template association_AddManyToOne */
+  public Wishlist addWishlist(int aWishListId, String aWishListName)
+  {
+    return new Wishlist(aWishListId, aWishListName, this);
+  }
 
-    wishlist = aNewWishlist;
-    Customer anOldCustomer = aNewWishlist != null ? aNewWishlist.getCustomer() : null;
-
-    if (!this.equals(anOldCustomer))
+  public boolean addWishlist(Wishlist aWishlist)
+  {
+    boolean wasAdded = false;
+    if (wishlists.contains(aWishlist)) { return false; }
+    Customer existingCustomer = aWishlist.getCustomer();
+    boolean isNewCustomer = existingCustomer != null && !this.equals(existingCustomer);
+    if (isNewCustomer)
     {
-      if (anOldCustomer != null)
-      {
-        anOldCustomer.wishlist = null;
-      }
-      if (wishlist != null)
-      {
-        wishlist.setCustomer(this);
-      }
+      aWishlist.setCustomer(this);
     }
-    wasSet = true;
-    return wasSet;
+    else
+    {
+      wishlists.add(aWishlist);
+    }
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeWishlist(Wishlist aWishlist)
+  {
+    boolean wasRemoved = false;
+    //Unable to remove aWishlist, as it must always have a customer
+    if (!this.equals(aWishlist.getCustomer()))
+    {
+      wishlists.remove(aWishlist);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addWishlistAt(Wishlist aWishlist, int index)
+  {  
+    boolean wasAdded = false;
+    if(addWishlist(aWishlist))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfWishlists()) { index = numberOfWishlists() - 1; }
+      wishlists.remove(aWishlist);
+      wishlists.add(index, aWishlist);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveWishlistAt(Wishlist aWishlist, int index)
+  {
+    boolean wasAdded = false;
+    if(wishlists.contains(aWishlist))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfWishlists()) { index = numberOfWishlists() - 1; }
+      wishlists.remove(aWishlist);
+      wishlists.add(index, aWishlist);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addWishlistAt(aWishlist, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfOrders()
@@ -474,11 +509,10 @@ public class Customer extends Person
       Review aReview = reviews.get(i - 1);
       aReview.delete();
     }
-    Wishlist existingWishlist = wishlist;
-    wishlist = null;
-    if (existingWishlist != null)
+    for(int i=wishlists.size(); i > 0; i--)
     {
-      existingWishlist.delete();
+      Wishlist aWishlist = wishlists.get(i - 1);
+      aWishlist.delete();
     }
     for(int i=orders.size(); i > 0; i--)
     {
@@ -494,9 +528,6 @@ public class Customer extends Person
     return super.toString() + "["+
             "address" + ":" + getAddress()+ "," +
             "phoneNumber" + ":" + getPhoneNumber()+ "," +
-            "isPaymentInfoSaved" + ":" + getIsPaymentInfoSaved()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "wishList" + "=" + (getWishList() != null ? !getWishList().equals(this)  ? getWishList().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "purchaseHistory" + "=" + (getPurchaseHistory() != null ? !getPurchaseHistory().equals(this)  ? getPurchaseHistory().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "wishlist = "+(getWishlist()!=null?Integer.toHexString(System.identityHashCode(getWishlist())):"null");
+            "isPaymentInfoSaved" + ":" + getIsPaymentInfoSaved()+ "]";
   }
 }

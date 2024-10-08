@@ -1,13 +1,19 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-package group15.gameStore.model;
+
 import java.util.*;
 
 // line 103 "model.ump"
-// line 180 "model.ump"
+// line 187 "model.ump"
 public class Category
 {
+
+  //------------------------
+  // STATIC VARIABLES
+  //------------------------
+
+  private static Map<int, Category> categorysByCategoryID = new HashMap<int, Category>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -26,8 +32,11 @@ public class Category
 
   public Category(int aCategoryID, String aName)
   {
-    categoryID = aCategoryID;
     name = aName;
+    if (!setCategoryID(aCategoryID))
+    {
+      throw new RuntimeException("Cannot create due to duplicate categoryID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+    }
     games = new ArrayList<Game>();
   }
 
@@ -38,8 +47,19 @@ public class Category
   public boolean setCategoryID(int aCategoryID)
   {
     boolean wasSet = false;
+    int anOldCategoryID = getCategoryID();
+    if (anOldCategoryID != null && anOldCategoryID.equals(aCategoryID)) {
+      return true;
+    }
+    if (hasWithCategoryID(aCategoryID)) {
+      return wasSet;
+    }
     categoryID = aCategoryID;
     wasSet = true;
+    if (anOldCategoryID != null) {
+      categorysByCategoryID.remove(anOldCategoryID);
+    }
+    categorysByCategoryID.put(aCategoryID, this);
     return wasSet;
   }
 
@@ -54,6 +74,16 @@ public class Category
   public int getCategoryID()
   {
     return categoryID;
+  }
+  /* Code from template attribute_GetUnique */
+  public static Category getWithCategoryID(int aCategoryID)
+  {
+    return categorysByCategoryID.get(aCategoryID);
+  }
+  /* Code from template attribute_HasUnique */
+  public static boolean hasWithCategoryID(int aCategoryID)
+  {
+    return getWithCategoryID(aCategoryID) != null;
   }
 
   public String getName()
@@ -175,6 +205,7 @@ public class Category
 
   public void delete()
   {
+    categorysByCategoryID.remove(getCategoryID());
     ArrayList<Game> copyOfGames = new ArrayList<Game>(games);
     games.clear();
     for(Game aGame : copyOfGames)
