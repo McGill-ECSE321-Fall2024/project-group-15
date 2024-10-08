@@ -1,7 +1,7 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-
+package group15.gameStore.model;
 import java.util.*;
 import java.sql.Date;
 
@@ -14,7 +14,7 @@ public class Game
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, Game> gamesByGameID = new HashMap<int, Game>();
+  private static Map<Integer, Game> gamesByGameID = new HashMap<Integer, Game>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -83,7 +83,7 @@ public class Game
   {
     boolean wasSet = false;
     int anOldGameID = getGameID();
-    if (anOldGameID != null && anOldGameID.equals(aGameID)) {
+    if (anOldGameID == aGameID) {
       return true;
     }
     if (hasWithGameID(aGameID)) {
@@ -91,9 +91,7 @@ public class Game
     }
     gameID = aGameID;
     wasSet = true;
-    if (anOldGameID != null) {
-      gamesByGameID.remove(anOldGameID);
-    }
+    gamesByGameID.remove(anOldGameID);
     gamesByGameID.put(aGameID, this);
     return wasSet;
   }

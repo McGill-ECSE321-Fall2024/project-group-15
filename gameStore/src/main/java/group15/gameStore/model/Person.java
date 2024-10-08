@@ -1,11 +1,14 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-
+package group15.gameStore.model;
 import java.util.*;
+
+import jakarta.persistence.MappedSuperclass;
 
 // line 2 "model.ump"
 // line 120 "model.ump"
+@MappedSuperclass
 public abstract class Person
 {
 
@@ -13,7 +16,7 @@ public abstract class Person
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, Person> personsByUserID = new HashMap<int, Person>();
+  private static Map<Integer, Person> personsByUserID = new HashMap<Integer, Person>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -48,7 +51,7 @@ public abstract class Person
   {
     boolean wasSet = false;
     int anOldUserID = getUserID();
-    if (anOldUserID != null && anOldUserID.equals(aUserID)) {
+    if (anOldUserID == aUserID) {
       return true;
     }
     if (hasWithUserID(aUserID)) {
@@ -56,12 +59,11 @@ public abstract class Person
     }
     userID = aUserID;
     wasSet = true;
-    if (anOldUserID != null) {
-      personsByUserID.remove(anOldUserID);
-    }
+    personsByUserID.remove(anOldUserID);
     personsByUserID.put(aUserID, this);
     return wasSet;
   }
+
 
   public boolean setUsername(String aUsername)
   {

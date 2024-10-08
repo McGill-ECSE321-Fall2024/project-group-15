@@ -1,3 +1,5 @@
+package group15.gameStore.model;
+
 public enum Rating {
     ONE_STAR,
     TWO_STAR,

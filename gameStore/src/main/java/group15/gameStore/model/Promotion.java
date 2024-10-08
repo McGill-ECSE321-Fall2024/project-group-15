@@ -1,7 +1,7 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
-
+package group15.gameStore.model;
 import java.util.*;
 import java.sql.Date;
 
@@ -14,7 +14,7 @@ public class Promotion
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, Promotion> promotionsByPromotionID = new HashMap<int, Promotion>();
+  private static Map<Integer, Promotion> promotionsByPromotionID = new HashMap<Integer, Promotion>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -59,7 +59,7 @@ public class Promotion
   {
     boolean wasSet = false;
     int anOldPromotionID = getPromotionID();
-    if (anOldPromotionID != null && anOldPromotionID.equals(aPromotionID)) {
+    if (anOldPromotionID == aPromotionID) {
       return true;
     }
     if (hasWithPromotionID(aPromotionID)) {
@@ -67,9 +67,8 @@ public class Promotion
     }
     promotionID = aPromotionID;
     wasSet = true;
-    if (anOldPromotionID != null) {
-      promotionsByPromotionID.remove(anOldPromotionID);
-    }
+  
+    promotionsByPromotionID.remove(anOldPromotionID);
     promotionsByPromotionID.put(aPromotionID, this);
     return wasSet;
   }
