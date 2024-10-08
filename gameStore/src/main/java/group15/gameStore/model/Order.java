@@ -2,10 +2,11 @@
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
 package group15.gameStore.model;
+
 import java.util.*;
 
-// line 64 "model.ump"
-// line 158 "model.ump"
+// line 66 "model.ump"
+// line 166 "model.ump"
 public class Order
 {
 
@@ -13,7 +14,7 @@ public class Order
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, Order> ordersByOrderID = new HashMap<Integer, Order>();
+  private static Map<int, Order> ordersByOrderID = new HashMap<int, Order>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -29,12 +30,13 @@ public class Order
   private List<Game> games;
   private Customer customer;
   private List<Employee> employees;
+  private PurchaseHistory purchaseHistory;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Order(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice, Customer aCustomer)
+  public Order(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice, Customer aCustomer, PurchaseHistory aPurchaseHistory)
   {
     orderNumber = aOrderNumber;
     orderStatus = aOrderStatus;
@@ -50,6 +52,11 @@ public class Order
       throw new RuntimeException("Unable to create order due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     employees = new ArrayList<Employee>();
+    boolean didAddPurchaseHistory = setPurchaseHistory(aPurchaseHistory);
+    if (!didAddPurchaseHistory)
+    {
+      throw new RuntimeException("Unable to create order due to purchaseHistory. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
   }
 
   //------------------------
@@ -60,7 +67,7 @@ public class Order
   {
     boolean wasSet = false;
     int anOldOrderID = getOrderID();
-    if (anOldOrderID == aOrderID) {
+    if (anOldOrderID != null && anOldOrderID.equals(aOrderID)) {
       return true;
     }
     if (hasWithOrderID(aOrderID)) {
@@ -68,7 +75,7 @@ public class Order
     }
     orderID = aOrderID;
     wasSet = true;
-    if (anOldOrderID != 0) {
+    if (anOldOrderID != null) {
       ordersByOrderID.remove(anOldOrderID);
     }
     ordersByOrderID.put(aOrderID, this);
@@ -192,6 +199,11 @@ public class Order
   {
     int index = employees.indexOf(aEmployee);
     return index;
+  }
+  /* Code from template association_GetOne */
+  public PurchaseHistory getPurchaseHistory()
+  {
+    return purchaseHistory;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames()
@@ -376,6 +388,25 @@ public class Order
     }
     return wasAdded;
   }
+  /* Code from template association_SetOneToMany */
+  public boolean setPurchaseHistory(PurchaseHistory aPurchaseHistory)
+  {
+    boolean wasSet = false;
+    if (aPurchaseHistory == null)
+    {
+      return wasSet;
+    }
+
+    PurchaseHistory existingPurchaseHistory = purchaseHistory;
+    purchaseHistory = aPurchaseHistory;
+    if (existingPurchaseHistory != null && !existingPurchaseHistory.equals(aPurchaseHistory))
+    {
+      existingPurchaseHistory.removeOrder(this);
+    }
+    purchaseHistory.addOrder(this);
+    wasSet = true;
+    return wasSet;
+  }
 
   public void delete()
   {
@@ -398,6 +429,12 @@ public class Order
     {
       aEmployee.removeOrder(this);
     }
+    PurchaseHistory placeholderPurchaseHistory = purchaseHistory;
+    this.purchaseHistory = null;
+    if(placeholderPurchaseHistory != null)
+    {
+      placeholderPurchaseHistory.removeOrder(this);
+    }
   }
 
 
@@ -408,6 +445,7 @@ public class Order
             "orderNumber" + ":" + getOrderNumber()+ "," +
             "price" + ":" + getPrice()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "orderStatus" + "=" + (getOrderStatus() != null ? !getOrderStatus().equals(this)  ? getOrderStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
+            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "purchaseHistory = "+(getPurchaseHistory()!=null?Integer.toHexString(System.identityHashCode(getPurchaseHistory())):"null");
   }
 }

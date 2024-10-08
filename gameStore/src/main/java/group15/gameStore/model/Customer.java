@@ -2,11 +2,12 @@
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
 package group15.gameStore.model;
+
 import java.util.*;
 import java.sql.Date;
 
 // line 10 "model.ump"
-// line 125 "model.ump"
+// line 133 "model.ump"
 public class Customer extends Person
 {
 
@@ -18,30 +19,50 @@ public class Customer extends Person
   private String address;
   private String phoneNumber;
   private Wishlist wishList;
-  private PurchaseHistory purchaseHistory;
   private boolean isPaymentInfoSaved;
+  private PurchaseHistory customerPurchaseHistory;
 
   //Customer Associations
   private List<PaymentInfo> paymentInfos;
   private List<Review> reviews;
   private Wishlist wishlist;
   private List<Order> orders;
+  private PurchaseHistory purchaseHistory;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, Wishlist aWishList, PurchaseHistory aPurchaseHistory, boolean aIsPaymentInfoSaved)
+  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, Wishlist aWishList, boolean aIsPaymentInfoSaved, PurchaseHistory aCustomerPurchaseHistory, PurchaseHistory aPurchaseHistory)
   {
     super(aUserID, aUsername, aPassword, aEmail);
     address = aAddress;
     phoneNumber = aPhoneNumber;
     wishList = aWishList;
-    purchaseHistory = aPurchaseHistory;
     isPaymentInfoSaved = aIsPaymentInfoSaved;
+    customerPurchaseHistory = aCustomerPurchaseHistory;
     paymentInfos = new ArrayList<PaymentInfo>();
     reviews = new ArrayList<Review>();
     orders = new ArrayList<Order>();
+    if (aPurchaseHistory == null || aPurchaseHistory.getCustomer() != null)
+    {
+      throw new RuntimeException("Unable to create Customer due to aPurchaseHistory. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    }
+    purchaseHistory = aPurchaseHistory;
+  }
+
+  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, Wishlist aWishList, boolean aIsPaymentInfoSaved, PurchaseHistory aCustomerPurchaseHistory)
+  {
+    super(aUserID, aUsername, aPassword, aEmail);
+    address = aAddress;
+    phoneNumber = aPhoneNumber;
+    wishList = aWishList;
+    isPaymentInfoSaved = aIsPaymentInfoSaved;
+    customerPurchaseHistory = aCustomerPurchaseHistory;
+    paymentInfos = new ArrayList<PaymentInfo>();
+    reviews = new ArrayList<Review>();
+    orders = new ArrayList<Order>();
+    purchaseHistory = new PurchaseHistory(this);
   }
 
   //------------------------
@@ -72,18 +93,18 @@ public class Customer extends Person
     return wasSet;
   }
 
-  public boolean setPurchaseHistory(PurchaseHistory aPurchaseHistory)
-  {
-    boolean wasSet = false;
-    purchaseHistory = aPurchaseHistory;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setIsPaymentInfoSaved(boolean aIsPaymentInfoSaved)
   {
     boolean wasSet = false;
     isPaymentInfoSaved = aIsPaymentInfoSaved;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setCustomerPurchaseHistory(PurchaseHistory aCustomerPurchaseHistory)
+  {
+    boolean wasSet = false;
+    customerPurchaseHistory = aCustomerPurchaseHistory;
     wasSet = true;
     return wasSet;
   }
@@ -103,14 +124,14 @@ public class Customer extends Person
     return wishList;
   }
 
-  public PurchaseHistory getPurchaseHistory()
-  {
-    return purchaseHistory;
-  }
-
   public boolean getIsPaymentInfoSaved()
   {
     return isPaymentInfoSaved;
+  }
+
+  public PurchaseHistory getCustomerPurchaseHistory()
+  {
+    return customerPurchaseHistory;
   }
   /* Code from template attribute_IsBoolean */
   public boolean isIsPaymentInfoSaved()
@@ -217,6 +238,11 @@ public class Customer extends Person
   {
     int index = orders.indexOf(aOrder);
     return index;
+  }
+  /* Code from template association_GetOne */
+  public PurchaseHistory getPurchaseHistory()
+  {
+    return purchaseHistory;
   }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfPaymentInfos()
@@ -395,9 +421,9 @@ public class Customer extends Person
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Order addOrder(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice)
+  public Order addOrder(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice, PurchaseHistory aPurchaseHistory)
   {
-    return new Order(aOrderID, aOrderNumber, aOrderStatus, aPrice, this);
+    return new Order(aOrderID, aOrderNumber, aOrderStatus, aPrice, this, aPurchaseHistory);
   }
 
   public boolean addOrder(Order aOrder)
@@ -485,6 +511,12 @@ public class Customer extends Person
       Order aOrder = orders.get(i - 1);
       aOrder.delete();
     }
+    PurchaseHistory existingPurchaseHistory = purchaseHistory;
+    purchaseHistory = null;
+    if (existingPurchaseHistory != null)
+    {
+      existingPurchaseHistory.delete();
+    }
     super.delete();
   }
 
@@ -496,7 +528,8 @@ public class Customer extends Person
             "phoneNumber" + ":" + getPhoneNumber()+ "," +
             "isPaymentInfoSaved" + ":" + getIsPaymentInfoSaved()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "wishList" + "=" + (getWishList() != null ? !getWishList().equals(this)  ? getWishList().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "purchaseHistory" + "=" + (getPurchaseHistory() != null ? !getPurchaseHistory().equals(this)  ? getPurchaseHistory().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "wishlist = "+(getWishlist()!=null?Integer.toHexString(System.identityHashCode(getWishlist())):"null");
+            "  " + "customerPurchaseHistory" + "=" + (getCustomerPurchaseHistory() != null ? !getCustomerPurchaseHistory().equals(this)  ? getCustomerPurchaseHistory().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
+            "  " + "wishlist = "+(getWishlist()!=null?Integer.toHexString(System.identityHashCode(getWishlist())):"null") + System.getProperties().getProperty("line.separator") +
+            "  " + "purchaseHistory = "+(getPurchaseHistory()!=null?Integer.toHexString(System.identityHashCode(getPurchaseHistory())):"null");
   }
 }
