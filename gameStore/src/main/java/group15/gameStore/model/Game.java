@@ -6,7 +6,7 @@ import java.util.*;
 import java.sql.Date;
 
 // line 23 "model.ump"
-// line 141 "model.ump"
+// line 142 "model.ump"
 public class Game
 {
 
@@ -32,6 +32,7 @@ public class Game
 
   //Game Associations
   private Manager manager;
+  private List<Employee> employees;
   private Promotion promotion;
   private List<Order> orders;
   private List<Review> reviews;
@@ -59,6 +60,7 @@ public class Game
     {
       throw new RuntimeException("Unable to create game due to manager. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
+    employees = new ArrayList<Employee>();
     orders = new ArrayList<Order>();
     reviews = new ArrayList<Review>();
     categories = new ArrayList<Category>();
@@ -207,6 +209,36 @@ public class Game
   {
     return manager;
   }
+  /* Code from template association_GetMany */
+  public Employee getEmployee(int index)
+  {
+    Employee aEmployee = employees.get(index);
+    return aEmployee;
+  }
+
+  public List<Employee> getEmployees()
+  {
+    List<Employee> newEmployees = Collections.unmodifiableList(employees);
+    return newEmployees;
+  }
+
+  public int numberOfEmployees()
+  {
+    int number = employees.size();
+    return number;
+  }
+
+  public boolean hasEmployees()
+  {
+    boolean has = employees.size() > 0;
+    return has;
+  }
+
+  public int indexOfEmployee(Employee aEmployee)
+  {
+    int index = employees.indexOf(aEmployee);
+    return index;
+  }
   /* Code from template association_GetOne */
   public Promotion getPromotion()
   {
@@ -326,6 +358,88 @@ public class Game
     manager.addGame(this);
     wasSet = true;
     return wasSet;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfEmployees()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToManyMethod */
+  public boolean addEmployee(Employee aEmployee)
+  {
+    boolean wasAdded = false;
+    if (employees.contains(aEmployee)) { return false; }
+    employees.add(aEmployee);
+    if (aEmployee.indexOfGame(this) != -1)
+    {
+      wasAdded = true;
+    }
+    else
+    {
+      wasAdded = aEmployee.addGame(this);
+      if (!wasAdded)
+      {
+        employees.remove(aEmployee);
+      }
+    }
+    return wasAdded;
+  }
+  /* Code from template association_RemoveMany */
+  public boolean removeEmployee(Employee aEmployee)
+  {
+    boolean wasRemoved = false;
+    if (!employees.contains(aEmployee))
+    {
+      return wasRemoved;
+    }
+
+    int oldIndex = employees.indexOf(aEmployee);
+    employees.remove(oldIndex);
+    if (aEmployee.indexOfGame(this) == -1)
+    {
+      wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aEmployee.removeGame(this);
+      if (!wasRemoved)
+      {
+        employees.add(oldIndex,aEmployee);
+      }
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addEmployeeAt(Employee aEmployee, int index)
+  {  
+    boolean wasAdded = false;
+    if(addEmployee(aEmployee))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfEmployees()) { index = numberOfEmployees() - 1; }
+      employees.remove(aEmployee);
+      employees.add(index, aEmployee);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveEmployeeAt(Employee aEmployee, int index)
+  {
+    boolean wasAdded = false;
+    if(employees.contains(aEmployee))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfEmployees()) { index = numberOfEmployees() - 1; }
+      employees.remove(aEmployee);
+      employees.add(index, aEmployee);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addEmployeeAt(aEmployee, index);
+    }
+    return wasAdded;
   }
   /* Code from template association_SetOptionalOneToMany */
   public boolean setPromotion(Promotion aPromotion)
@@ -641,6 +755,12 @@ public class Game
     if(placeholderManager != null)
     {
       placeholderManager.removeGame(this);
+    }
+    ArrayList<Employee> copyOfEmployees = new ArrayList<Employee>(employees);
+    employees.clear();
+    for(Employee aEmployee : copyOfEmployees)
+    {
+      aEmployee.removeGame(this);
     }
     Promotion existingPromotion = promotion;
     promotion = null;

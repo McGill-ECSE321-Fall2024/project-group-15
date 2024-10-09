@@ -5,8 +5,8 @@
 import java.util.*;
 import java.sql.Date;
 
-// line 50 "model.ump"
-// line 155 "model.ump"
+// line 52 "model.ump"
+// line 158 "model.ump"
 public class PaymentInfo
 {
 

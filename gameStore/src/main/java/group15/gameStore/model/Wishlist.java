@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 112 "model.ump"
-// line 194 "model.ump"
+// line 113 "model.ump"
+// line 197 "model.ump"
 public class Wishlist
 {
 

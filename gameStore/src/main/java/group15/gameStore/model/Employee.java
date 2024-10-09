@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 40 "model.ump"
-// line 149 "model.ump"
+// line 41 "model.ump"
+// line 151 "model.ump"
 public class Employee extends Person
 {
 
@@ -18,6 +18,7 @@ public class Employee extends Person
   private boolean isManager;
 
   //Employee Associations
+  private List<Category> categories;
   private List<Game> games;
   private List<Order> orders;
   private List<Wishlist> wishlists;
@@ -31,6 +32,7 @@ public class Employee extends Person
     super(aUserID, aUsername, aPassword, aEmail);
     isActive = aIsActive;
     isManager = aIsManager;
+    categories = new ArrayList<Category>();
     games = new ArrayList<Game>();
     orders = new ArrayList<Order>();
     wishlists = new ArrayList<Wishlist>();
@@ -74,6 +76,36 @@ public class Employee extends Person
   public boolean isIsManager()
   {
     return isManager;
+  }
+  /* Code from template association_GetMany */
+  public Category getCategory(int index)
+  {
+    Category aCategory = categories.get(index);
+    return aCategory;
+  }
+
+  public List<Category> getCategories()
+  {
+    List<Category> newCategories = Collections.unmodifiableList(categories);
+    return newCategories;
+  }
+
+  public int numberOfCategories()
+  {
+    int number = categories.size();
+    return number;
+  }
+
+  public boolean hasCategories()
+  {
+    boolean has = categories.size() > 0;
+    return has;
+  }
+
+  public int indexOfCategory(Category aCategory)
+  {
+    int index = categories.indexOf(aCategory);
+    return index;
   }
   /* Code from template association_GetMany */
   public Game getGame(int index)
@@ -166,27 +198,109 @@ public class Employee extends Person
     return index;
   }
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfGames()
+  public static int minimumNumberOfCategories()
   {
     return 0;
   }
   /* Code from template association_AddUnidirectionalMany */
+  public boolean addCategory(Category aCategory)
+  {
+    boolean wasAdded = false;
+    if (categories.contains(aCategory)) { return false; }
+    categories.add(aCategory);
+    wasAdded = true;
+    return wasAdded;
+  }
+
+  public boolean removeCategory(Category aCategory)
+  {
+    boolean wasRemoved = false;
+    if (categories.contains(aCategory))
+    {
+      categories.remove(aCategory);
+      wasRemoved = true;
+    }
+    return wasRemoved;
+  }
+  /* Code from template association_AddIndexControlFunctions */
+  public boolean addCategoryAt(Category aCategory, int index)
+  {  
+    boolean wasAdded = false;
+    if(addCategory(aCategory))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfCategories()) { index = numberOfCategories() - 1; }
+      categories.remove(aCategory);
+      categories.add(index, aCategory);
+      wasAdded = true;
+    }
+    return wasAdded;
+  }
+
+  public boolean addOrMoveCategoryAt(Category aCategory, int index)
+  {
+    boolean wasAdded = false;
+    if(categories.contains(aCategory))
+    {
+      if(index < 0 ) { index = 0; }
+      if(index > numberOfCategories()) { index = numberOfCategories() - 1; }
+      categories.remove(aCategory);
+      categories.add(index, aCategory);
+      wasAdded = true;
+    } 
+    else 
+    {
+      wasAdded = addCategoryAt(aCategory, index);
+    }
+    return wasAdded;
+  }
+  /* Code from template association_MinimumNumberOfMethod */
+  public static int minimumNumberOfGames()
+  {
+    return 0;
+  }
+  /* Code from template association_AddManyToManyMethod */
   public boolean addGame(Game aGame)
   {
     boolean wasAdded = false;
     if (games.contains(aGame)) { return false; }
     games.add(aGame);
-    wasAdded = true;
+    if (aGame.indexOfEmployee(this) != -1)
+    {
+      wasAdded = true;
+    }
+    else
+    {
+      wasAdded = aGame.addEmployee(this);
+      if (!wasAdded)
+      {
+        games.remove(aGame);
+      }
+    }
     return wasAdded;
   }
-
+  /* Code from template association_RemoveMany */
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    if (games.contains(aGame))
+    if (!games.contains(aGame))
     {
-      games.remove(aGame);
+      return wasRemoved;
+    }
+
+    int oldIndex = games.indexOf(aGame);
+    games.remove(oldIndex);
+    if (aGame.indexOfEmployee(this) == -1)
+    {
       wasRemoved = true;
+    }
+    else
+    {
+      wasRemoved = aGame.removeEmployee(this);
+      if (!wasRemoved)
+      {
+        games.add(oldIndex,aGame);
+      }
     }
     return wasRemoved;
   }
@@ -389,7 +503,13 @@ public class Employee extends Person
 
   public void delete()
   {
+    categories.clear();
+    ArrayList<Game> copyOfGames = new ArrayList<Game>(games);
     games.clear();
+    for(Game aGame : copyOfGames)
+    {
+      aGame.removeEmployee(this);
+    }
     ArrayList<Order> copyOfOrders = new ArrayList<Order>(orders);
     orders.clear();
     for(Order aOrder : copyOfOrders)

@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 77 "model.ump"
-// line 175 "model.ump"
+// line 79 "model.ump"
+// line 178 "model.ump"
 public class StoreInfo
 {
 

@@ -4,8 +4,8 @@
 
 import java.util.*;
 
-// line 103 "model.ump"
-// line 187 "model.ump"
+// line 105 "model.ump"
+// line 190 "model.ump"
 public class Category
 {
 
