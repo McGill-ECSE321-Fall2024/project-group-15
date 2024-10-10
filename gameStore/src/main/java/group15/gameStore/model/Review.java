@@ -1,11 +1,14 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
+package group15.gameStore.model;
 
+import jakarta.persistence.*;
 import java.util.*;
 
-// line 96 "model.ump"
-// line 204 "model.ump"
+// line 100 "model.ump"
+// line 186 "model.ump"
+@Entity
 public class Review
 {
 
@@ -13,26 +16,33 @@ public class Review
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, Review> reviewsByReviewID = new HashMap<int, Review>();
+  private static Map<Integer, Review> reviewsByReviewID = new HashMap<Integer, Review>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Review Attributes
+  @Id
+  @GeneratedValue
   private int reviewID;
   private Rating rating;
   private String description;
 
   //Review Associations
+  @OneToMany
+  @JoinTable(
+    name = "review_game", // Custom join table name
+    joinColumns = @JoinColumn(name = "reviewID"), // Join column in the Customer entity
+    inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
+  )
   private Game game;
-  private Customer customer;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Review(int aReviewID, Rating aRating, String aDescription, Game aGame, Customer aCustomer)
+  public Review(int aReviewID, Rating aRating, String aDescription, Game aGame)
   {
     rating = aRating;
     description = aDescription;
@@ -40,15 +50,9 @@ public class Review
     {
       throw new RuntimeException("Cannot create due to duplicate reviewID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
-    boolean didAddGame = setGame(aGame);
-    if (!didAddGame)
+    if (!setGame(aGame))
     {
-      throw new RuntimeException("Unable to create review due to game. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    boolean didAddCustomer = setCustomer(aCustomer);
-    if (!didAddCustomer)
-    {
-      throw new RuntimeException("Unable to create review due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+      throw new RuntimeException("Unable to create Review due to aGame. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -60,7 +64,7 @@ public class Review
   {
     boolean wasSet = false;
     int anOldReviewID = getReviewID();
-    if (anOldReviewID != null && anOldReviewID.equals(aReviewID)) {
+    if (anOldReviewID == aReviewID) {
       return true;
     }
     if (hasWithReviewID(aReviewID)) {
@@ -68,9 +72,7 @@ public class Review
     }
     reviewID = aReviewID;
     wasSet = true;
-    if (anOldReviewID != null) {
-      reviewsByReviewID.remove(anOldReviewID);
-    }
+    reviewsByReviewID.remove(anOldReviewID);
     reviewsByReviewID.put(aReviewID, this);
     return wasSet;
   }
@@ -120,65 +122,22 @@ public class Review
   {
     return game;
   }
-  /* Code from template association_GetOne */
-  public Customer getCustomer()
-  {
-    return customer;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setGame(Game aGame)
+  /* Code from template association_SetUnidirectionalOne */
+  public boolean setGame(Game aNewGame)
   {
     boolean wasSet = false;
-    if (aGame == null)
+    if (aNewGame != null)
     {
-      return wasSet;
+      game = aNewGame;
+      wasSet = true;
     }
-
-    Game existingGame = game;
-    game = aGame;
-    if (existingGame != null && !existingGame.equals(aGame))
-    {
-      existingGame.removeReview(this);
-    }
-    game.addReview(this);
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setCustomer(Customer aCustomer)
-  {
-    boolean wasSet = false;
-    if (aCustomer == null)
-    {
-      return wasSet;
-    }
-
-    Customer existingCustomer = customer;
-    customer = aCustomer;
-    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
-    {
-      existingCustomer.removeReview(this);
-    }
-    customer.addReview(this);
-    wasSet = true;
     return wasSet;
   }
 
   public void delete()
   {
     reviewsByReviewID.remove(getReviewID());
-    Game placeholderGame = game;
-    this.game = null;
-    if(placeholderGame != null)
-    {
-      placeholderGame.removeReview(this);
-    }
-    Customer placeholderCustomer = customer;
-    this.customer = null;
-    if(placeholderCustomer != null)
-    {
-      placeholderCustomer.removeReview(this);
-    }
+    game = null;
   }
 
 
@@ -188,7 +147,6 @@ public class Review
             "reviewID" + ":" + getReviewID()+ "," +
             "description" + ":" + getDescription()+ "]" + System.getProperties().getProperty("line.separator") +
             "  " + "rating" + "=" + (getRating() != null ? !getRating().equals(this)  ? getRating().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "game = "+(getGame()!=null?Integer.toHexString(System.identityHashCode(getGame())):"null") + System.getProperties().getProperty("line.separator") +
-            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
+            "  " + "game = "+(getGame()!=null?Integer.toHexString(System.identityHashCode(getGame())):"null");
   }
 }

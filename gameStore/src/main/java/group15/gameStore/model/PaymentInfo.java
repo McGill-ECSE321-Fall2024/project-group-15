@@ -1,12 +1,15 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
+package group15.gameStore.model;
 
+import jakarta.persistence.*;
 import java.util.*;
 import java.sql.Date;
 
-// line 52 "model.ump"
-// line 158 "model.ump"
+// line 54 "model.ump"
+// line 157 "model.ump"
+@Entity
 public class PaymentInfo
 {
 
@@ -14,27 +17,26 @@ public class PaymentInfo
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, PaymentInfo> paymentinfosByPaymentinfoID = new HashMap<int, PaymentInfo>();
+  private static Map<Integer, PaymentInfo> paymentinfosByPaymentinfoID = new HashMap<Integer, PaymentInfo>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //PaymentInfo Attributes
+  @Id
+  @GeneratedValue
   private int paymentinfoID;
   private String cardNumber;
   private Date expiryDate;
   private int cvv;
   private String billingAddress;
 
-  //PaymentInfo Associations
-  private Customer customer;
-
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public PaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer)
+  public PaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress)
   {
     cardNumber = aCardNumber;
     expiryDate = aExpiryDate;
@@ -43,11 +45,6 @@ public class PaymentInfo
     if (!setPaymentinfoID(aPaymentinfoID))
     {
       throw new RuntimeException("Cannot create due to duplicate paymentinfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
-    }
-    boolean didAddCustomer = setCustomer(aCustomer);
-    if (!didAddCustomer)
-    {
-      throw new RuntimeException("Unable to create paymentInfo due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -59,7 +56,7 @@ public class PaymentInfo
   {
     boolean wasSet = false;
     int anOldPaymentinfoID = getPaymentinfoID();
-    if (anOldPaymentinfoID != null && anOldPaymentinfoID.equals(aPaymentinfoID)) {
+    if (anOldPaymentinfoID == aPaymentinfoID) {
       return true;
     }
     if (hasWithPaymentinfoID(aPaymentinfoID)) {
@@ -67,9 +64,7 @@ public class PaymentInfo
     }
     paymentinfoID = aPaymentinfoID;
     wasSet = true;
-    if (anOldPaymentinfoID != null) {
-      paymentinfosByPaymentinfoID.remove(anOldPaymentinfoID);
-    }
+    paymentinfosByPaymentinfoID.remove(anOldPaymentinfoID);
     paymentinfosByPaymentinfoID.put(aPaymentinfoID, this);
     return wasSet;
   }
@@ -140,40 +135,10 @@ public class PaymentInfo
   {
     return billingAddress;
   }
-  /* Code from template association_GetOne */
-  public Customer getCustomer()
-  {
-    return customer;
-  }
-  /* Code from template association_SetOneToMany */
-  public boolean setCustomer(Customer aCustomer)
-  {
-    boolean wasSet = false;
-    if (aCustomer == null)
-    {
-      return wasSet;
-    }
-
-    Customer existingCustomer = customer;
-    customer = aCustomer;
-    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
-    {
-      existingCustomer.removePaymentInfo(this);
-    }
-    customer.addPaymentInfo(this);
-    wasSet = true;
-    return wasSet;
-  }
 
   public void delete()
   {
     paymentinfosByPaymentinfoID.remove(getPaymentinfoID());
-    Customer placeholderCustomer = customer;
-    this.customer = null;
-    if(placeholderCustomer != null)
-    {
-      placeholderCustomer.removePaymentInfo(this);
-    }
   }
 
 
@@ -184,7 +149,6 @@ public class PaymentInfo
             "cardNumber" + ":" + getCardNumber()+ "," +
             "cvv" + ":" + getCvv()+ "," +
             "billingAddress" + ":" + getBillingAddress()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "expiryDate" + "=" + (getExpiryDate() != null ? !getExpiryDate().equals(this)  ? getExpiryDate().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
+            "  " + "expiryDate" + "=" + (getExpiryDate() != null ? !getExpiryDate().equals(this)  ? getExpiryDate().toString().replaceAll("  ","    ") : "this" : "null");
   }
 }

@@ -1,40 +1,53 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
+package group15.gameStore.model;
 
+import jakarta.persistence.*;
+import java.sql.Date;
 import java.util.*;
 
-// line 66 "model.ump"
-// line 168 "model.ump"
+// line 70 "model.ump"
+// line 169 "model.ump"
+@Entity
 public class Order
 {
 
-  //------------------------
+  ///------------------------
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, Order> ordersByOrderID = new HashMap<int, Order>();
+  private static Map<Integer, Order> ordersByOrderID = new HashMap<Integer, Order>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Order Attributes
+  @Id
+  @GeneratedValue
   private int orderID;
   private String orderNumber;
+  
+  @Enumerated(EnumType.STRING)
   private Status orderStatus;
   private double price;
 
   //Order Associations
+  @OneToMany
+  @JoinTable(
+    name = "order_game", // Custom join table name
+    joinColumns = @JoinColumn(name = "orderID"), // Join column in the Customer entity
+    inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
+  )
   private List<Game> games;
-  private Customer customer;
-  private List<Employee> employees;
+
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Order(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice, Customer aCustomer)
+  public Order(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice)
   {
     orderNumber = aOrderNumber;
     orderStatus = aOrderStatus;
@@ -44,12 +57,6 @@ public class Order
       throw new RuntimeException("Cannot create due to duplicate orderID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
     games = new ArrayList<Game>();
-    boolean didAddCustomer = setCustomer(aCustomer);
-    if (!didAddCustomer)
-    {
-      throw new RuntimeException("Unable to create order due to customer. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    employees = new ArrayList<Employee>();
   }
 
   //------------------------
@@ -60,7 +67,7 @@ public class Order
   {
     boolean wasSet = false;
     int anOldOrderID = getOrderID();
-    if (anOldOrderID != null && anOldOrderID.equals(aOrderID)) {
+    if (anOldOrderID == aOrderID) {
       return true;
     }
     if (hasWithOrderID(aOrderID)) {
@@ -68,9 +75,7 @@ public class Order
     }
     orderID = aOrderID;
     wasSet = true;
-    if (anOldOrderID != null) {
-      ordersByOrderID.remove(anOldOrderID);
-    }
+    ordersByOrderID.remove(anOldOrderID);
     ordersByOrderID.put(aOrderID, this);
     return wasSet;
   }
@@ -158,88 +163,28 @@ public class Order
     int index = games.indexOf(aGame);
     return index;
   }
-  /* Code from template association_GetOne */
-  public Customer getCustomer()
-  {
-    return customer;
-  }
-  /* Code from template association_GetMany */
-  public Employee getEmployee(int index)
-  {
-    Employee aEmployee = employees.get(index);
-    return aEmployee;
-  }
-
-  public List<Employee> getEmployees()
-  {
-    List<Employee> newEmployees = Collections.unmodifiableList(employees);
-    return newEmployees;
-  }
-
-  public int numberOfEmployees()
-  {
-    int number = employees.size();
-    return number;
-  }
-
-  public boolean hasEmployees()
-  {
-    boolean has = employees.size() > 0;
-    return has;
-  }
-
-  public int indexOfEmployee(Employee aEmployee)
-  {
-    int index = employees.indexOf(aEmployee);
-    return index;
-  }
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames()
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addGame(Game aGame)
   {
     boolean wasAdded = false;
     if (games.contains(aGame)) { return false; }
     games.add(aGame);
-    if (aGame.indexOfOrder(this) != -1)
-    {
-      wasAdded = true;
-    }
-    else
-    {
-      wasAdded = aGame.addOrder(this);
-      if (!wasAdded)
-      {
-        games.remove(aGame);
-      }
-    }
+    wasAdded = true;
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
+
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    if (!games.contains(aGame))
+    if (games.contains(aGame))
     {
-      return wasRemoved;
-    }
-
-    int oldIndex = games.indexOf(aGame);
-    games.remove(oldIndex);
-    if (aGame.indexOfOrder(this) == -1)
-    {
+      games.remove(aGame);
       wasRemoved = true;
-    }
-    else
-    {
-      wasRemoved = aGame.removeOrder(this);
-      if (!wasRemoved)
-      {
-        games.add(oldIndex,aGame);
-      }
     }
     return wasRemoved;
   }
@@ -275,129 +220,11 @@ public class Order
     }
     return wasAdded;
   }
-  /* Code from template association_SetOneToMany */
-  public boolean setCustomer(Customer aCustomer)
-  {
-    boolean wasSet = false;
-    if (aCustomer == null)
-    {
-      return wasSet;
-    }
-
-    Customer existingCustomer = customer;
-    customer = aCustomer;
-    if (existingCustomer != null && !existingCustomer.equals(aCustomer))
-    {
-      existingCustomer.removeOrder(this);
-    }
-    customer.addOrder(this);
-    wasSet = true;
-    return wasSet;
-  }
-  /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfEmployees()
-  {
-    return 0;
-  }
-  /* Code from template association_AddManyToManyMethod */
-  public boolean addEmployee(Employee aEmployee)
-  {
-    boolean wasAdded = false;
-    if (employees.contains(aEmployee)) { return false; }
-    employees.add(aEmployee);
-    if (aEmployee.indexOfOrder(this) != -1)
-    {
-      wasAdded = true;
-    }
-    else
-    {
-      wasAdded = aEmployee.addOrder(this);
-      if (!wasAdded)
-      {
-        employees.remove(aEmployee);
-      }
-    }
-    return wasAdded;
-  }
-  /* Code from template association_RemoveMany */
-  public boolean removeEmployee(Employee aEmployee)
-  {
-    boolean wasRemoved = false;
-    if (!employees.contains(aEmployee))
-    {
-      return wasRemoved;
-    }
-
-    int oldIndex = employees.indexOf(aEmployee);
-    employees.remove(oldIndex);
-    if (aEmployee.indexOfOrder(this) == -1)
-    {
-      wasRemoved = true;
-    }
-    else
-    {
-      wasRemoved = aEmployee.removeOrder(this);
-      if (!wasRemoved)
-      {
-        employees.add(oldIndex,aEmployee);
-      }
-    }
-    return wasRemoved;
-  }
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addEmployeeAt(Employee aEmployee, int index)
-  {  
-    boolean wasAdded = false;
-    if(addEmployee(aEmployee))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfEmployees()) { index = numberOfEmployees() - 1; }
-      employees.remove(aEmployee);
-      employees.add(index, aEmployee);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveEmployeeAt(Employee aEmployee, int index)
-  {
-    boolean wasAdded = false;
-    if(employees.contains(aEmployee))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfEmployees()) { index = numberOfEmployees() - 1; }
-      employees.remove(aEmployee);
-      employees.add(index, aEmployee);
-      wasAdded = true;
-    } 
-    else 
-    {
-      wasAdded = addEmployeeAt(aEmployee, index);
-    }
-    return wasAdded;
-  }
 
   public void delete()
   {
     ordersByOrderID.remove(getOrderID());
-    ArrayList<Game> copyOfGames = new ArrayList<Game>(games);
     games.clear();
-    for(Game aGame : copyOfGames)
-    {
-      aGame.removeOrder(this);
-    }
-    Customer placeholderCustomer = customer;
-    this.customer = null;
-    if(placeholderCustomer != null)
-    {
-      placeholderCustomer.removeOrder(this);
-    }
-    ArrayList<Employee> copyOfEmployees = new ArrayList<Employee>(employees);
-    employees.clear();
-    for(Employee aEmployee : copyOfEmployees)
-    {
-      aEmployee.removeOrder(this);
-    }
   }
 
 
@@ -407,7 +234,6 @@ public class Order
             "orderID" + ":" + getOrderID()+ "," +
             "orderNumber" + ":" + getOrderNumber()+ "," +
             "price" + ":" + getPrice()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "orderStatus" + "=" + (getOrderStatus() != null ? !getOrderStatus().equals(this)  ? getOrderStatus().toString().replaceAll("  ","    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "customer = "+(getCustomer()!=null?Integer.toHexString(System.identityHashCode(getCustomer())):"null");
+            "  " + "orderStatus" + "=" + (getOrderStatus() != null ? !getOrderStatus().equals(this)  ? getOrderStatus().toString().replaceAll("  ","    ") : "this" : "null");
   }
 }

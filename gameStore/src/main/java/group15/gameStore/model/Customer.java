@@ -1,12 +1,14 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
+package group15.gameStore.model;
 
+import jakarta.persistence.*;
 import java.util.*;
-import java.sql.Date;
 
 // line 10 "model.ump"
 // line 132 "model.ump"
+@Entity
 public class Customer extends Person
 {
 
@@ -19,11 +21,38 @@ public class Customer extends Person
   private String phoneNumber;
   private boolean isPaymentInfoSaved;
 
-  //Customer Associations
-  private List<PaymentInfo> paymentInfos;
-  private List<Review> reviews;
-  private List<Wishlist> wishlists;
-  private List<Order> orders;
+ //Customer Associations
+ @OneToMany
+ @JoinTable(
+   name = "customer_paymentInfo", // Custom join table name
+   joinColumns = @JoinColumn(name = "customerID"), // Join column in the Customer entity
+   inverseJoinColumns = @JoinColumn(name = "paymentinfoID") // Join column in the Order entity
+ )
+ private List<PaymentInfo> paymentInfos;
+
+ @OneToMany
+ @JoinTable(
+   name = "customer_review", // Custom join table name
+   joinColumns = @JoinColumn(name = "customerID"), // Join column in the Customer entity
+   inverseJoinColumns = @JoinColumn(name = "reviewID") // Join column in the Order entity
+ )
+ private List<Review> reviews;
+
+ @ManyToMany
+ @JoinTable(
+   name = "customer_wishlist",
+   joinColumns = @JoinColumn(name = "customerID"),
+   inverseJoinColumns = @JoinColumn(name = "wishlistID")
+ )
+ private List<Wishlist> wishlists;
+
+ @OneToMany
+ @JoinTable(
+   name = "customer_orders", // Custom join table name
+   joinColumns = @JoinColumn(name = "customerID"), // Join column in the Customer entity
+   inverseJoinColumns = @JoinColumn(name = "orderID") // Join column in the Order entity
+ )
+ private List<Order> orders;
 
   //------------------------
   // CONSTRUCTOR
@@ -213,26 +242,12 @@ public class Customer extends Person
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public PaymentInfo addPaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress)
-  {
-    return new PaymentInfo(aPaymentinfoID, aCardNumber, aExpiryDate, aCvv, aBillingAddress, this);
-  }
-
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addPaymentInfo(PaymentInfo aPaymentInfo)
   {
     boolean wasAdded = false;
     if (paymentInfos.contains(aPaymentInfo)) { return false; }
-    Customer existingCustomer = aPaymentInfo.getCustomer();
-    boolean isNewCustomer = existingCustomer != null && !this.equals(existingCustomer);
-    if (isNewCustomer)
-    {
-      aPaymentInfo.setCustomer(this);
-    }
-    else
-    {
-      paymentInfos.add(aPaymentInfo);
-    }
+    paymentInfos.add(aPaymentInfo);
     wasAdded = true;
     return wasAdded;
   }
@@ -240,8 +255,7 @@ public class Customer extends Person
   public boolean removePaymentInfo(PaymentInfo aPaymentInfo)
   {
     boolean wasRemoved = false;
-    //Unable to remove aPaymentInfo, as it must always have a customer
-    if (!this.equals(aPaymentInfo.getCustomer()))
+    if (paymentInfos.contains(aPaymentInfo))
     {
       paymentInfos.remove(aPaymentInfo);
       wasRemoved = true;
@@ -285,26 +299,12 @@ public class Customer extends Person
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Review addReview(int aReviewID, Rating aRating, String aDescription, Game aGame)
-  {
-    return new Review(aReviewID, aRating, aDescription, aGame, this);
-  }
-
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addReview(Review aReview)
   {
     boolean wasAdded = false;
     if (reviews.contains(aReview)) { return false; }
-    Customer existingCustomer = aReview.getCustomer();
-    boolean isNewCustomer = existingCustomer != null && !this.equals(existingCustomer);
-    if (isNewCustomer)
-    {
-      aReview.setCustomer(this);
-    }
-    else
-    {
-      reviews.add(aReview);
-    }
+    reviews.add(aReview);
     wasAdded = true;
     return wasAdded;
   }
@@ -312,8 +312,7 @@ public class Customer extends Person
   public boolean removeReview(Review aReview)
   {
     boolean wasRemoved = false;
-    //Unable to remove aReview, as it must always have a customer
-    if (!this.equals(aReview.getCustomer()))
+    if (reviews.contains(aReview))
     {
       reviews.remove(aReview);
       wasRemoved = true;
@@ -357,26 +356,12 @@ public class Customer extends Person
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Wishlist addWishlist(int aWishListId, String aWishListName)
-  {
-    return new Wishlist(aWishListId, aWishListName, this);
-  }
-
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addWishlist(Wishlist aWishlist)
   {
     boolean wasAdded = false;
     if (wishlists.contains(aWishlist)) { return false; }
-    Customer existingCustomer = aWishlist.getCustomer();
-    boolean isNewCustomer = existingCustomer != null && !this.equals(existingCustomer);
-    if (isNewCustomer)
-    {
-      aWishlist.setCustomer(this);
-    }
-    else
-    {
-      wishlists.add(aWishlist);
-    }
+    wishlists.add(aWishlist);
     wasAdded = true;
     return wasAdded;
   }
@@ -384,8 +369,7 @@ public class Customer extends Person
   public boolean removeWishlist(Wishlist aWishlist)
   {
     boolean wasRemoved = false;
-    //Unable to remove aWishlist, as it must always have a customer
-    if (!this.equals(aWishlist.getCustomer()))
+    if (wishlists.contains(aWishlist))
     {
       wishlists.remove(aWishlist);
       wasRemoved = true;
@@ -429,26 +413,12 @@ public class Customer extends Person
   {
     return 0;
   }
-  /* Code from template association_AddManyToOne */
-  public Order addOrder(int aOrderID, String aOrderNumber, Status aOrderStatus, double aPrice)
-  {
-    return new Order(aOrderID, aOrderNumber, aOrderStatus, aPrice, this);
-  }
-
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addOrder(Order aOrder)
   {
     boolean wasAdded = false;
     if (orders.contains(aOrder)) { return false; }
-    Customer existingCustomer = aOrder.getCustomer();
-    boolean isNewCustomer = existingCustomer != null && !this.equals(existingCustomer);
-    if (isNewCustomer)
-    {
-      aOrder.setCustomer(this);
-    }
-    else
-    {
-      orders.add(aOrder);
-    }
+    orders.add(aOrder);
     wasAdded = true;
     return wasAdded;
   }
@@ -456,8 +426,7 @@ public class Customer extends Person
   public boolean removeOrder(Order aOrder)
   {
     boolean wasRemoved = false;
-    //Unable to remove aOrder, as it must always have a customer
-    if (!this.equals(aOrder.getCustomer()))
+    if (orders.contains(aOrder))
     {
       orders.remove(aOrder);
       wasRemoved = true;
@@ -499,26 +468,10 @@ public class Customer extends Person
 
   public void delete()
   {
-    for(int i=paymentInfos.size(); i > 0; i--)
-    {
-      PaymentInfo aPaymentInfo = paymentInfos.get(i - 1);
-      aPaymentInfo.delete();
-    }
-    for(int i=reviews.size(); i > 0; i--)
-    {
-      Review aReview = reviews.get(i - 1);
-      aReview.delete();
-    }
-    for(int i=wishlists.size(); i > 0; i--)
-    {
-      Wishlist aWishlist = wishlists.get(i - 1);
-      aWishlist.delete();
-    }
-    for(int i=orders.size(); i > 0; i--)
-    {
-      Order aOrder = orders.get(i - 1);
-      aOrder.delete();
-    }
+    paymentInfos.clear();
+    reviews.clear();
+    wishlists.clear();
+    orders.clear();
     super.delete();
   }
 

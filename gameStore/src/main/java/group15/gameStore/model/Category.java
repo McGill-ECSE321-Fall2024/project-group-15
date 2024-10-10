@@ -1,11 +1,13 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
 
+package group15.gameStore.model;
 
+import jakarta.persistence.*;
 import java.util.*;
-
-// line 105 "model.ump"
-// line 190 "model.ump"
+// line 109 "model.ump"
+// line 192 "model.ump"
+@Entity
 public class Category
 {
 
@@ -13,17 +15,25 @@ public class Category
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<int, Category> categorysByCategoryID = new HashMap<int, Category>();
+  private static Map<Integer, Category> categorysByCategoryID = new HashMap<Integer, Category>();
 
   //------------------------
   // MEMBER VARIABLES
   //------------------------
 
   //Category Attributes
+  @Id
+  @GeneratedValue
   private int categoryID;
   private String name;
 
   //Category Associations
+  @ManyToMany
+  @JoinTable(
+    name = "category_game",
+    joinColumns = @JoinColumn(name = "categoryID"),
+    inverseJoinColumns = @JoinColumn(name = "gameID")
+  )
   private List<Game> games;
 
   //------------------------
@@ -48,7 +58,7 @@ public class Category
   {
     boolean wasSet = false;
     int anOldCategoryID = getCategoryID();
-    if (anOldCategoryID != null && anOldCategoryID.equals(aCategoryID)) {
+    if (anOldCategoryID == aCategoryID) {
       return true;
     }
     if (hasWithCategoryID(aCategoryID)) {
@@ -56,9 +66,7 @@ public class Category
     }
     categoryID = aCategoryID;
     wasSet = true;
-    if (anOldCategoryID != null) {
-      categorysByCategoryID.remove(anOldCategoryID);
-    }
+    categorysByCategoryID.remove(anOldCategoryID);
     categorysByCategoryID.put(aCategoryID, this);
     return wasSet;
   }
@@ -125,48 +133,23 @@ public class Category
   {
     return 0;
   }
-  /* Code from template association_AddManyToManyMethod */
+  /* Code from template association_AddUnidirectionalMany */
   public boolean addGame(Game aGame)
   {
     boolean wasAdded = false;
     if (games.contains(aGame)) { return false; }
     games.add(aGame);
-    if (aGame.indexOfCategory(this) != -1)
-    {
-      wasAdded = true;
-    }
-    else
-    {
-      wasAdded = aGame.addCategory(this);
-      if (!wasAdded)
-      {
-        games.remove(aGame);
-      }
-    }
+    wasAdded = true;
     return wasAdded;
   }
-  /* Code from template association_RemoveMany */
+
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    if (!games.contains(aGame))
+    if (games.contains(aGame))
     {
-      return wasRemoved;
-    }
-
-    int oldIndex = games.indexOf(aGame);
-    games.remove(oldIndex);
-    if (aGame.indexOfCategory(this) == -1)
-    {
+      games.remove(aGame);
       wasRemoved = true;
-    }
-    else
-    {
-      wasRemoved = aGame.removeCategory(this);
-      if (!wasRemoved)
-      {
-        games.add(oldIndex,aGame);
-      }
     }
     return wasRemoved;
   }
@@ -206,19 +189,7 @@ public class Category
   public void delete()
   {
     categorysByCategoryID.remove(getCategoryID());
-    ArrayList<Game> copyOfGames = new ArrayList<Game>(games);
     games.clear();
-    for(Game aGame : copyOfGames)
-    {
-      if (aGame.numberOfCategories() <= Game.minimumNumberOfCategories())
-      {
-        aGame.delete();
-      }
-      else
-      {
-        aGame.removeCategory(this);
-      }
-    }
   }
 
 
