@@ -25,6 +25,7 @@ public class Person
   //------------------------
 
   //Person Attributes
+  @Id
   private int userID;
   private String username;
   private String password;
