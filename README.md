@@ -14,7 +14,7 @@ We are developping a website for an online game store. The platform will enable 
 | ------------------ | ------------------------ | ------------|
 | Jordan             | Mechanical Engineering   | U3          |
 | Ben                |                          |             |
-| Jason              |   |
+| Jason              | Software Engineer        | U2          |
 | Jacob              | Mechanical Engineering   | U4          |
 | Yvehenry           | Computer Engineering     | U3          |
 
