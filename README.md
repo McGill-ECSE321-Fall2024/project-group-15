@@ -21,14 +21,14 @@ We are developping a website for an online game store. The platform will enable 
 
 **Project Specification:**
 
-| Team Member's Name | Team Member's Role | Individulal Efforts Deliv. 1 (Hours) | Individulal Efforts Deliv. 2 (Hours) |
-| ------------------ | ------------------ | ------------------------------------ | ------------------------------------ |
-| Jordan             | Product Owners     | 19                      
-| Ben                | Developers         | 18
-| Jason              | Product Owners     | 20
-| Jacob              | Scrum Master       | 18
-| Yvehenry           | Developers         | 17
-
+| Team Member's Name | Team Member's Role | Sprint Hours Deliv. 1  | Sprint Hours Deliv. 2 |
+| ------------------ | ------------------ | ---------------------- | --------------------- |
+| Jordan             | Product Owners     |           19           |              
+| Ben                | Developers         |           18           |
+| Jason              | Product Owners     |           20           |
+| Jacob              | Scrum Master       |           18           |
+| Yvehenry           | Developers         |           17           |
+ 
 ## Deliverable 1:
 This first deliverable focuses on gathering and defining requirements, developing a domain model, designing a persistence layer, and ensuring that the project setup follows agile practices.<br/> 
 [Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
