@@ -1,7 +1,5 @@
 # Project Overview
 project-group-15
-introduces the team and describes the main scope of the project. In addition, the README file should contain an overview table with names, team roles, and individual efforts (in hours) with separate entries for each deliverable. Project Deliverable 1 shall be accompanied with a brief project report as part of the project wiki which records the meeting minutes and the key design decisions taken by the team. This project report should be navigable from the README file
-
 
 We are developping a website for an online game store. The platform will enable customers to browse and purchase video games online, while providing store employees and managers with tools to efficiently manage inventory, customer orders, and promotions. Key features include:
 
@@ -33,4 +31,5 @@ Project Specification:
 
 ### Deliverable 1:
 [Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)
+[Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)
 
