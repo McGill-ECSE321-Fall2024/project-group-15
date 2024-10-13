@@ -23,7 +23,7 @@ More info about team members:
 
 Project Specification:
 
-| Team Member's Name | Team Member's Role | Individulal Efforts Deliv. 2 (Hours) | Individulal Efforts Deliv. 2 (Hours) |
+| Team Member's Name | Team Member's Role | Individulal Efforts Deliv. 1 (Hours) | Individulal Efforts Deliv. 2 (Hours) |
 | ------------------ | ------------------ | ------------------------------------ | ------------------------------------ |
 | Jordan             |              |
 | Ben                |              |
