@@ -1,5 +1,5 @@
 # Project Overview
-project-group-15
+**Group 15**
 
 We are developping a website for an online game store. The platform will enable customers to browse and purchase video games online, while providing store employees and managers with tools to efficiently manage inventory, customer orders, and promotions. Key features include:
 
@@ -8,7 +8,7 @@ We are developping a website for an online game store. The platform will enable 
 - Managers: can oversee game approvals, employee management, and promotions; handles customer reviews, store policies, and game categories
 
 
-More info about team members: 
+**More info about team members:** 
 
 | Team Member's Name | Major                    | Year        |
 | ------------------ | ------------------------ | ------------|
@@ -19,7 +19,7 @@ More info about team members:
 | Yvehenry           | Computer Engineering     | U3          |
 
 
-Project Specification:
+**Project Specification:**
 
 | Team Member's Name | Team Member's Role | Individulal Efforts Deliv. 1 (Hours) | Individulal Efforts Deliv. 2 (Hours) |
 | ------------------ | ------------------ | ------------------------------------ | ------------------------------------ |
@@ -29,7 +29,14 @@ Project Specification:
 | Jacob              | Scrum Master       |
 | Yvehenry           | Developers         |
 
-### Deliverable 1:
-[Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)
-[Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)
+## Deliverable 1:
+This first deliverable focuses on gathering and defining requirements, developing a domain model, designing a persistence layer, and ensuring that the project setup follows agile practices.<br/> 
+[Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
+[Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
+
+**Other Important Documents:**<br/>
+[Use Case Diagram 1](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Accounts-Use-Case-Diagram)<br/>
+[Use Case Diagram 2](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Purchasing-Menu-Use-Case-Diagram)<br/>
+
+
 
