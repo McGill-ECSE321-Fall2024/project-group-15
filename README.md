@@ -32,5 +32,5 @@ Project Specification:
 | Yvehenry           | Developers         |
 
 ### Deliverable 1:
-Project Report
+[Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)
 
