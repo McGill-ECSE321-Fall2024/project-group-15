@@ -17,8 +17,8 @@ More info about team members:
 | Jordan             | Mechanical Engineering   | U3          |
 | Ben                |                          |             |
 | Jason              |   |
-| Jacob              | Mechanical Engineering   | U4
-| Yvehenry           |              |
+| Jacob              | Mechanical Engineering   | U4          |
+| Yvehenry           | Computer Engineering     | U3          |
 
 
 Project Specification:
