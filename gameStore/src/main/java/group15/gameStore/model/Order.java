@@ -24,7 +24,7 @@ public class Order
 
   //Order Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int orderID;
   private String orderNumber;
   
@@ -41,6 +41,10 @@ public class Order
   )
   private List<Game> games;
 
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Order() {
+  }
 
   //------------------------
   // CONSTRUCTOR

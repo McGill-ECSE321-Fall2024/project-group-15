@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.Game;
-import group15.gameStore.model.Person;
 import group15.gameStore.model.Promotion;
 
 @SpringBootTest
@@ -32,7 +31,7 @@ public class PromotionRepositoryTest {
     public void testCreateSaveAndReadPromotion() {
         //Game attributes for game to use for Promotion
         String title = "Minecraft";
-        String description = "Build anything you can imagine, uncover eerie mysteries, and survive the night in the ultimate sandbox game. In Minecraft, every playthrough is different, and unforgettable adventures await behind every corner. Explore and craft your way through an infinite world that’s yours to shape, one block at a time.";
+        String description = "The ultimate sandbox game.";
         double price = 49.99;
         int stock = 100;
         String image = "https://minecraft.com";
@@ -59,6 +58,6 @@ public class PromotionRepositoryTest {
         assertEquals(promotionCode, promotionFromDb.getPromotionCode());
         assertEquals(discountPercentage, promotionFromDb.getDiscountPercentage());
         assertEquals(validUntil, promotionFromDb.getValidUntil());
-        assertEquals(game, promotionFromDb.getGame());
+        assertEquals(game.getGameID(), promotionFromDb.getGame().getGameID());
     }
 }

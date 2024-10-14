@@ -54,6 +54,11 @@ public class Employee extends Person
   )
   private List<Wishlist> wishlists;
 
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  protected Employee() {
+  }
+
   //------------------------
   // CONSTRUCTOR
   //------------------------

@@ -40,7 +40,7 @@ public class PersonRepositoryTest {
         int personId = person.getUserID();
 
         // Read back from the database
-        Person personFromDb = repo.findByPersonId(personId);
+        Person personFromDb = repo.findByUserID(personId);
 
         // Assertions
         assertNotNull(personFromDb);

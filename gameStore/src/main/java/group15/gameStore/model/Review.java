@@ -24,19 +24,24 @@ public class Review
 
   //Review Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int reviewID;
   private Rating rating;
   private String description;
 
   //Review Associations
-  @OneToOne
+  @OneToOne(cascade = CascadeType.MERGE)
   // @JoinTable(
   //   name = "review_game", // Custom join table name
   //   joinColumns = @JoinColumn(name = "reviewID"), // Join column in the Customer entity
   //   inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
   // )
   private Game game;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Review() {
+  }
 
   //------------------------
   // CONSTRUCTOR

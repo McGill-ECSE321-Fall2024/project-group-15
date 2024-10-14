@@ -43,7 +43,7 @@ public class CustomerRepositoryTest {
         int customerId = customer.getUserID();
 
         // Read back from the database
-        Customer customerFromDb = repo.findByCustomerId(customerId);
+        Customer customerFromDb = repo.findByUserID(customerId);
 
         // Assertions
         assertNotNull(customerFromDb);

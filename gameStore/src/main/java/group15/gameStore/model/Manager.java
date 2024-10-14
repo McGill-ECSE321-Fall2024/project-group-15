@@ -25,6 +25,11 @@ public class Manager extends Employee
   )
   private List<Promotion> promotions;
 
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Manager() {
+  }
+
   //------------------------
   // CONSTRUCTOR
   //------------------------

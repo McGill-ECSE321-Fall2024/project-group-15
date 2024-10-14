@@ -25,7 +25,7 @@ public class Game
 
   //Game Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int gameID;
   private String title;
   private String description;
@@ -34,6 +34,11 @@ public class Game
   private String image;
   private Date archivedDate;
   private boolean isApproved;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Game() {
+  }
 
   //------------------------
   // CONSTRUCTOR

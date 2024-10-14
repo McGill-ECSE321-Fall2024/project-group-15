@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderRepository extends CrudRepository<Order, Integer> {
     // Find an order by its order ID
-    Order findOrderByOrderId(int id);
+    Order findOrderByOrderID(int orderID);
     
     // Find an order by its order number
     Order findOrderByOrderNumber(String orderNumber);

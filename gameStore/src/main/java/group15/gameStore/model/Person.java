@@ -26,11 +26,16 @@ public class Person
 
   //Person Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int userID;
   private String username;
   private String password;
   private String email;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  protected Person() {
+  }
 
   //------------------------
   // CONSTRUCTOR

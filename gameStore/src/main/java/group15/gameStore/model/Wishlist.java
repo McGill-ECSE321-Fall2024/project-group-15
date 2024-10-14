@@ -24,7 +24,7 @@ public class Wishlist
 
   //Wishlist Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int wishListId;
   private String wishListName;
 
@@ -36,6 +36,11 @@ public class Wishlist
     inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
   )
   private List<Game> games;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Wishlist() {
+  }
 
   //------------------------
   // CONSTRUCTOR

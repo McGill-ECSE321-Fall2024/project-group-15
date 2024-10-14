@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.Review;
+import jakarta.transaction.Transactional;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
 
@@ -23,8 +24,9 @@ public class ReviewRepositoryTest {
     
     @Autowired
     private GameRepository gameRepo;
-
-    private Game testGame;
+    
+    private Game testGame = new Game("Test Game", "A description of the game", 59.99, 0, null, false);
+    //private Game testGame2 = new Game("Test Game", "A description of the game", 59.99, 0, null, false);
 
     @BeforeEach
     public void setUp() {
@@ -33,7 +35,6 @@ public class ReviewRepositoryTest {
         gameRepo.deleteAll();
 
         // Create and save a Game to be used in the tests
-        testGame = new Game(0, "Test Game", "A description of the game", 59.99, 0, null, false);
         testGame = gameRepo.save(testGame);
     }
 
@@ -49,14 +50,14 @@ public class ReviewRepositoryTest {
         // Create a new Review
         Rating rating = Rating.FIVE_STAR;
         String description = "Amazing game!";
-        Review review = new Review(0, rating, description, testGame);
+        Review review = new Review(rating, description, testGame);
 
         // Save the Review
         review = repo.save(review);
         int reviewId = review.getReviewID();
 
         // Read the Review back from the database
-        Review reviewFromDb = repo.findById(reviewId).orElse(null);
+        Review reviewFromDb = repo.findByReviewID(reviewId);
 
         // Assertions
         assertNotNull(reviewFromDb);
@@ -67,10 +68,11 @@ public class ReviewRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void testFindReviewsByRating() {
         // Create and save reviews with different ratings
-        Review review1 = new Review(0, Rating.FIVE_STAR, "Great game!", testGame);
-        Review review2 = new Review(0, Rating.THREE_STAR, "It’s okay", testGame);
+        Review review1 = new Review(Rating.FIVE_STAR, "Great game!", testGame);
+        Review review2 = new Review(Rating.THREE_STAR, "It’s okay", testGame);
         repo.save(review1);
         repo.save(review2);
 
@@ -86,7 +88,7 @@ public class ReviewRepositoryTest {
     @Test
     public void testFindReviewsByDescription() {
         // Create and save reviews
-        Review review = new Review(0, Rating.FOUR_STAR, "Incredible gameplay!", testGame);
+        Review review = new Review(Rating.FOUR_STAR, "Incredible gameplay!", testGame);
         repo.save(review);
 
         // Find review by keyword in description (case-insensitive)
@@ -101,11 +103,11 @@ public class ReviewRepositoryTest {
     @Test
     public void testFindReviewsByGameID() {
         // Create and save a review for the game
-        Review review = new Review(0, Rating.FOUR_STAR, "Challenging and fun!", testGame);
+        Review review = new Review(Rating.FOUR_STAR, "Challenging and fun!", testGame);
         repo.save(review);
 
         // Find reviews for the specific game by game ID
-        List<Review> reviewsForGame = repo.findByGame_GameID(testGame.getGameID());
+        List<Review> reviewsForGame = repo.findByGame(testGame);
 
         // Assertions
         assertNotNull(reviewsForGame);
@@ -114,9 +116,10 @@ public class ReviewRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void testDeleteReviewByReviewID() {
         // Create and save a review
-        Review review = new Review(0, Rating.THREE_STAR, "Average game", testGame);
+        Review review = new Review(Rating.THREE_STAR, "Average game", testGame);
         review = repo.save(review);
         int reviewId = review.getReviewID();
 
@@ -124,7 +127,8 @@ public class ReviewRepositoryTest {
         repo.deleteByReviewID(reviewId);
 
         // Verify that the review was deleted
-        Review deletedReview = repo.findById(reviewId).orElse(null);
+        //Review deletedReview = repo.findById(reviewId).orElse(null);
+        Review deletedReview = repo.findByReviewID(reviewId);
         assertEquals(null, deletedReview);
     }
 }

@@ -25,15 +25,20 @@ public class Promotion
 
   //Promotion Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int promotionID;
   private String promotionCode;
   private double discountPercentage;
   private Date validUntil;
 
   //Promotion Associations
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL)
   private Game game;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Promotion() {
+  }
 
   //------------------------
   // CONSTRUCTOR

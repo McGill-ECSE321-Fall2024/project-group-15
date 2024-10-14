@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface PersonRepository extends CrudRepository<Person, Integer> {
     
-    // Find Category by categoryId
-    Person findByPersonId(Integer personId);
+    // Find a Person by user ID
+    Person findByUserID(Integer userID);
 
     // Find a Person by username
     Person findByUsername(String username);

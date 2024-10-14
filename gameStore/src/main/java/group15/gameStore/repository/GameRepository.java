@@ -8,7 +8,7 @@ import group15.gameStore.model.Game;
 
 public interface GameRepository extends CrudRepository<Game, String>{
 
-    Game findGameByGameID(int id);
+    Game findGameByGameID(int gameID);
 
     Game findGameByTitle(String title);
     // Game findGameByType(String type);

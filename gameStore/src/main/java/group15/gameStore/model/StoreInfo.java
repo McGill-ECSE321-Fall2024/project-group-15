@@ -24,9 +24,14 @@ public class StoreInfo
 
   //StoreInfo Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int storeInfoID;
   private String storePolicies;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private StoreInfo() {
+  }
 
   //------------------------
   // CONSTRUCTOR

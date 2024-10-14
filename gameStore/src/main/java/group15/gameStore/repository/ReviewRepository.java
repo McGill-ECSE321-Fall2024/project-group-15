@@ -2,12 +2,13 @@ package group15.gameStore.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import group15.gameStore.model.Review;
+import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
 import java.util.List;
 
 public interface ReviewRepository extends CrudRepository<Review, Integer> {
     //Find a review by Id
-    Review findById(int id);
+    Review findByReviewID(int reviewID);
 
     // Find reviews by rating
     List<Review> findByRating(Rating rating);
@@ -16,7 +17,7 @@ public interface ReviewRepository extends CrudRepository<Review, Integer> {
     List<Review> findByDescriptionContainingIgnoreCase(String keyword);
 
     // Find reviews for a specific game
-    List<Review> findByGameID(Integer gameID);
+    List<Review> findByGame(Game game);
 
     // Delete review by reviewID
     void deleteByReviewID(Integer reviewID);

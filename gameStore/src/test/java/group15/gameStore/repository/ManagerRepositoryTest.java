@@ -42,7 +42,7 @@ public class ManagerRepositoryTest {
         int managerId = manager.getUserID();
 
         // Read back from the database
-        Manager managerFromDb = repo.findManagerByUserId(managerId);
+        Manager managerFromDb = repo.findManagerByUserID(managerId);
 
         // Assertions
         assertNotNull(managerFromDb);

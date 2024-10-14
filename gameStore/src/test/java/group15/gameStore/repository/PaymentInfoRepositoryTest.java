@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.sql.Date;
 import java.sql.Time;
 
-import org.checkerframework.checker.units.qual.t;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,14 +38,14 @@ public class PaymentInfoRepositoryTest {
 
         // Save in the database
         paymentInfo = repo.save(paymentInfo);
-        int paymentInfoId = paymentInfo.getPaymentinfoID();
+        int paymentinfoId = paymentInfo.getPaymentInfoID();
 
         // Read back from the database
-        PaymentInfo paymentInfoFromDb = repo.findPaymentInfoById(paymentInfoId);
+        PaymentInfo paymentInfoFromDb = repo.findByPaymentInfoID(paymentinfoId);
 
         // Assertions
         assertNotNull(paymentInfoFromDb);
-        assertEquals(paymentInfoId, paymentInfoFromDb.getPaymentinfoID());
+        assertEquals(paymentinfoId, paymentInfoFromDb.getPaymentInfoID());
         assertEquals(cardNumber, paymentInfoFromDb.getCardNumber());
         assertEquals(expiryDate, paymentInfoFromDb.getExpiryDate());
         assertEquals(cvv, paymentInfoFromDb.getCvv());

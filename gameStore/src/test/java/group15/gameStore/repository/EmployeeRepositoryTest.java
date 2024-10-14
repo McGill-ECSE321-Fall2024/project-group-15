@@ -42,7 +42,7 @@ public class EmployeeRepositoryTest {
         int employeeId = employee.getUserID();
 
         // Read back from the database
-        Employee employeeFromDb = repo.findByEmployeeId(employeeId);
+        Employee employeeFromDb = repo.findByUserID(employeeId);
 
         // Assertions
         assertNotNull(employeeFromDb);

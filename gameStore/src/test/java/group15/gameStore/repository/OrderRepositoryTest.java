@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.sql.Date;
 import java.sql.Time;
 
-import org.checkerframework.checker.units.qual.t;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,14 +34,14 @@ public class OrderRepositoryTest {
         Status orderStatus = Status.DELIVERED;
         double price = 109.99;
 
-        Order order = new Order(orderNumber, orderStatus, price);
+        Order orderA = new Order(orderNumber, orderStatus, price);
 
         // Save in the database
-        order = repo.save(order);
-        int orderID = order.getOrderID();
+        orderA = repo.save(orderA);
+        int orderID = orderA.getOrderID();
 
         // Read back from the database
-        Order orderFromDb = repo.findOrderByOrderId(orderID);
+        Order orderFromDb = repo.findOrderByOrderID(orderID);
 
         // Assertions
         assertNotNull(orderFromDb);

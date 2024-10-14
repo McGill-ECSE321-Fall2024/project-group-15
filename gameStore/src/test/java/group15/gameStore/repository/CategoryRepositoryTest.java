@@ -37,7 +37,7 @@ public class CategoryRepositoryTest {
         int actionId = action.getCategoryID();
 
         // Read back from the database
-        Category categoryFromDb = repo.findByCategoryId(actionId);
+        Category categoryFromDb = repo.findByCategoryID(actionId);
 
         // Assertions
         assertNotNull(categoryFromDb);

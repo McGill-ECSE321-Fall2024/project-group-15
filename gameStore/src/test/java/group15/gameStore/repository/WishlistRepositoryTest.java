@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.Wishlist;
+import jakarta.transaction.Transactional;
 import group15.gameStore.model.Game;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class WishlistRepositoryTest {
     public void testCreateSaveAndReadWishlist() {
         // Create a new Wishlist
         String wishListName = "My Favorite Games";
-        Wishlist wishlist = new Wishlist(0, wishListName);
+        Wishlist wishlist = new Wishlist(wishListName);
 
         // Save the Wishlist
         wishlist = wishlistRepo.save(wishlist);
@@ -58,8 +59,8 @@ public class WishlistRepositoryTest {
     @Test
     public void testFindWishlistByNameContainingIgnoreCase() {
         // Create and save Wishlists
-        Wishlist wishlist1 = new Wishlist(0, "My Favorite Games");
-        Wishlist wishlist2 = new Wishlist(0, "Sports Games");
+        Wishlist wishlist1 = new Wishlist("My Favorite Games");
+        Wishlist wishlist2 = new Wishlist("Sports Games");
         wishlistRepo.save(wishlist1);
         wishlistRepo.save(wishlist2);
 
@@ -72,21 +73,22 @@ public class WishlistRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void testFindWishlistByGameId() {
         // Create and save Game entities
-        Game game1 = new Game(0, "Game A", null, 59.99, 0, null, false);
-        Game game2 = new Game(0, "Game B", null, 49.99, 0, null, false);
+        Game game1 = new Game("Game A", null, 59.99, 0, null, false);
+        Game game2 = new Game("Game B", null, 49.99, 0, null, false);
         gameRepo.save(game1);
         gameRepo.save(game2);
 
         // Create Wishlist and associate it with games
-        Wishlist wishlist = new Wishlist(0, "Wishlist 1");
+        Wishlist wishlist = new Wishlist("Wishlist 1");
         wishlist.addGame(game1);
         wishlist.addGame(game2);
         wishlist = wishlistRepo.save(wishlist);
 
         // Find Wishlists associated with game1
-        List<Wishlist> foundWishlists = wishlistRepo.findByGames_GameId(game1.getGameID());
+        List<Wishlist> foundWishlists = wishlistRepo.findByGames_GameID(game1.getGameID());
 
         // Assertions
         assertNotNull(foundWishlists);
@@ -95,9 +97,10 @@ public class WishlistRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void testDeleteWishlistByWishListId() {
         // Create and save a Wishlist
-        Wishlist wishlist = new Wishlist(0, "Wishlist to Delete");
+        Wishlist wishlist = new Wishlist("Wishlist to Delete");
         wishlist = wishlistRepo.save(wishlist);
         int wishListId = wishlist.getWishListId();
 
@@ -112,8 +115,8 @@ public class WishlistRepositoryTest {
     @Test
     public void testFindAllWishlists() {
         // Create and save multiple Wishlists
-        Wishlist wishlist1 = new Wishlist(0, "Wishlist 1");
-        Wishlist wishlist2 = new Wishlist(0, "Wishlist 2");
+        Wishlist wishlist1 = new Wishlist("Wishlist 1");
+        Wishlist wishlist2 = new Wishlist("Wishlist 2");
         wishlistRepo.save(wishlist1);
         wishlistRepo.save(wishlist2);
 

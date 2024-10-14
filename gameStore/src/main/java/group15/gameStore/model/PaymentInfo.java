@@ -17,7 +17,7 @@ public class PaymentInfo
   // STATIC VARIABLES
   //------------------------
 
-  private static Map<Integer, PaymentInfo> paymentinfosByPaymentinfoID = new HashMap<Integer, PaymentInfo>();
+  private static Map<Integer, PaymentInfo> paymentInfosByPaymentInfoID = new HashMap<Integer, PaymentInfo>();
 
   //------------------------
   // MEMBER VARIABLES
@@ -25,12 +25,17 @@ public class PaymentInfo
 
   //PaymentInfo Attributes
   @Id
-  @GeneratedValue
-  private int paymentinfoID;
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private int paymentInfoID;
   private String cardNumber;
   private Date expiryDate;
   private int cvv;
   private String billingAddress;
+
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private PaymentInfo() {
+  }
 
   //------------------------
   // CONSTRUCTOR
@@ -42,9 +47,9 @@ public class PaymentInfo
     expiryDate = aExpiryDate;
     cvv = aCvv;
     billingAddress = aBillingAddress;
-    if (!setPaymentinfoID(paymentinfoID))
+    if (!setPaymentInfoID(paymentInfoID))
     {
-      throw new RuntimeException("Cannot create due to duplicate paymentinfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
+      throw new RuntimeException("Cannot create due to duplicate paymentInfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
   }
 
@@ -52,20 +57,20 @@ public class PaymentInfo
   // INTERFACE
   //------------------------
 
-  public boolean setPaymentinfoID(int aPaymentinfoID)
+  public boolean setPaymentInfoID(int aPaymentInfoID)
   {
     boolean wasSet = false;
-    int anOldPaymentinfoID = getPaymentinfoID();
-    if (anOldPaymentinfoID == aPaymentinfoID) {
+    int anOldPaymentInfoID = getPaymentInfoID();
+    if (anOldPaymentInfoID == aPaymentInfoID) {
       return true;
     }
-    if (hasWithPaymentinfoID(aPaymentinfoID)) {
+    if (hasWithPaymentInfoID(aPaymentInfoID)) {
       return wasSet;
     }
-    paymentinfoID = aPaymentinfoID;
+    paymentInfoID = aPaymentInfoID;
     wasSet = true;
-    paymentinfosByPaymentinfoID.remove(anOldPaymentinfoID);
-    paymentinfosByPaymentinfoID.put(aPaymentinfoID, this);
+    paymentInfosByPaymentInfoID.remove(anOldPaymentInfoID);
+    paymentInfosByPaymentInfoID.put(aPaymentInfoID, this);
     return wasSet;
   }
 
@@ -101,19 +106,19 @@ public class PaymentInfo
     return wasSet;
   }
 
-  public int getPaymentinfoID()
+  public int getPaymentInfoID()
   {
-    return paymentinfoID;
+    return paymentInfoID;
   }
   /* Code from template attribute_GetUnique */
-  public static PaymentInfo getWithPaymentinfoID(int aPaymentinfoID)
+  public static PaymentInfo getWithPaymentInfoID(int aPaymentInfoID)
   {
-    return paymentinfosByPaymentinfoID.get(aPaymentinfoID);
+    return paymentInfosByPaymentInfoID.get(aPaymentInfoID);
   }
   /* Code from template attribute_HasUnique */
-  public static boolean hasWithPaymentinfoID(int aPaymentinfoID)
+  public static boolean hasWithPaymentInfoID(int aPaymentInfoID)
   {
-    return getWithPaymentinfoID(aPaymentinfoID) != null;
+    return getWithPaymentInfoID(aPaymentInfoID) != null;
   }
 
   public String getCardNumber()
@@ -138,14 +143,14 @@ public class PaymentInfo
 
   public void delete()
   {
-    paymentinfosByPaymentinfoID.remove(getPaymentinfoID());
+    paymentInfosByPaymentInfoID.remove(getPaymentInfoID());
   }
 
 
   public String toString()
   {
     return super.toString() + "["+
-            "paymentinfoID" + ":" + getPaymentinfoID()+ "," +
+            "paymentInfoID" + ":" + getPaymentInfoID()+ "," +
             "cardNumber" + ":" + getCardNumber()+ "," +
             "cvv" + ":" + getCvv()+ "," +
             "billingAddress" + ":" + getBillingAddress()+ "]" + System.getProperties().getProperty("line.separator") +

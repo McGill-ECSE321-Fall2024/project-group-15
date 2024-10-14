@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.StoreInfo;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class StoreInfoRepositoryTest {
     public void testCreateSaveAndReadStoreInfo() {
         // Create a new StoreInfo
         String storePolicies = "Return policy: 30 days, Exchange policy: 15 days";
-        StoreInfo storeInfo = new StoreInfo(0, storePolicies);
+        StoreInfo storeInfo = new StoreInfo(storePolicies);
 
         // Save the StoreInfo
         storeInfo = repo.save(storeInfo);
@@ -53,8 +54,8 @@ public class StoreInfoRepositoryTest {
     @Test
     public void testFindStoreInfoByKeywordInPolicies() {
         // Create and save store info with different policies
-        StoreInfo storeInfo1 = new StoreInfo(0, "Return policy: 30 days");
-        StoreInfo storeInfo2 = new StoreInfo(0, "No return policy");
+        StoreInfo storeInfo1 = new StoreInfo("Return policy: 30 days");
+        StoreInfo storeInfo2 = new StoreInfo("No return policy");
         repo.save(storeInfo1);
         repo.save(storeInfo2);
 
@@ -67,9 +68,10 @@ public class StoreInfoRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void testDeleteStoreInfoByStoreInfoID() {
         // Create and save a store info
-        StoreInfo storeInfo = new StoreInfo(0, "Return policy: 30 days");
+        StoreInfo storeInfo = new StoreInfo("Return policy: 30 days");
         storeInfo = repo.save(storeInfo);
         int storeInfoId = storeInfo.getStoreInfoID();
 
@@ -84,8 +86,8 @@ public class StoreInfoRepositoryTest {
     @Test
     public void testFindAllStoreInfo() {
         // Create and save multiple store info entries
-        StoreInfo storeInfo1 = new StoreInfo(0, "Policy 1");
-        StoreInfo storeInfo2 = new StoreInfo(0, "Policy 2");
+        StoreInfo storeInfo1 = new StoreInfo("Policy 1");
+        StoreInfo storeInfo2 = new StoreInfo("Policy 2");
         repo.save(storeInfo1);
         repo.save(storeInfo2);
 

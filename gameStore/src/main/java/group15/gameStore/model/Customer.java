@@ -54,6 +54,11 @@ public class Customer extends Person
  )
  private List<Order> orders;
 
+ // Hibernate default constructor
+ @SuppressWarnings("unused")
+ private Customer() {
+ }
+
   //------------------------
   // CONSTRUCTOR
   //------------------------

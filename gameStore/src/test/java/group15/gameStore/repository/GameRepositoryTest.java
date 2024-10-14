@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.sql.Date;
 import java.sql.Time;
 
-import org.checkerframework.checker.units.qual.t;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ public class GameRepositoryTest {
     public void testCreateSaveAndReadGame() {
         //Create Game
         String title = "Minecraft";
-        String description = "Build anything you can imagine, uncover eerie mysteries, and survive the night in the ultimate sandbox game. In Minecraft, every playthrough is different, and unforgettable adventures await behind every corner. Explore and craft your way through an infinite world that’s yours to shape, one block at a time.";
+        String description = "Build anything you can imagine, uncover eerie mysteries, and survive the night in the ultimate sandbox game.";
         double price = 49.99;
         int stock = 100;
         String image = "https://minecraft.com";
@@ -44,7 +43,7 @@ public class GameRepositoryTest {
         int gameID = game.getGameID();
 
         // Read back from the database
-        Game gameFromDb = repo.findGameByGameId(gameID);
+        Game gameFromDb = repo.findGameByGameID(gameID);
 
         // Assertions
         assertNotNull(gameFromDb);

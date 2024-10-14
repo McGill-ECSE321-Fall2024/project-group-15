@@ -23,7 +23,7 @@ public class Category
 
   //Category Attributes
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.AUTO)
   private int categoryID;
   private String name;
 
@@ -36,12 +36,14 @@ public class Category
   )
   private List<Game> games;
 
+  // Hibernate default constructor
+  @SuppressWarnings("unused")
+  private Category() {
+  }
+
   //------------------------
   // CONSTRUCTOR
   //------------------------
-
-  //Default con
-  protected Category() {}
 
   public Category(String aName)
   {
