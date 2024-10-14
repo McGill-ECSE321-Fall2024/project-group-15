@@ -7,13 +7,13 @@ import java.util.List;
 public interface CategoryRepository extends CrudRepository<Category, Integer> {
 
     // Find Category by categoryId
-    Category findByCategoryId(Integer categoryId);
+    Category findByCategoryID(Integer categoryID);
 
     // Find Category by name (case-insensitive)
-    List<Category> findByCategoryNameContainingIgnoreCase(String categoryName);
+    List<Category> findByNameContainingIgnoreCase(String name);
 
     // Delete Category by categoryId
-    void deleteByCategoryId(Integer categoryId);
+    void deleteByCategoryID(Integer categoryID);
 
     // Get all Categories
     List<Category> findAll();

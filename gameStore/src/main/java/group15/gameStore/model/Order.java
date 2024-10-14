@@ -4,7 +4,6 @@
 package group15.gameStore.model;
 
 import jakarta.persistence.*;
-import java.sql.Date;
 import java.util.*;
 
 // line 70 "model.ump"

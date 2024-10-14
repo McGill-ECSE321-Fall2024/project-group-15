@@ -12,7 +12,7 @@ public interface ManagerRepository extends CrudRepository<Manager, Integer> {
     List<Manager> findManagersByUsername(String username);
 
     // Find a manager by their user ID
-    Manager findManagerByUserId(int id);
+    Manager findManagerByUserID(int userID);
 
     // Delete a manager by email
     void deleteManagerByEmail(String email);

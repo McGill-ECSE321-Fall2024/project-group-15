@@ -6,17 +6,14 @@ import java.util.List;
 
 public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
 
-    // Find Employee by employeeId
-    Employee findByEmployeeId(Integer employeeId);
-
-    // Find Employees by firstName or lastName (case-insensitive)
-    List<Employee> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String firstName, String lastName);
+    // Find Employee by userID
+    Employee findByUserID(Integer userID);
 
     // Find Employee by email
     Employee findByEmail(String email);
 
-    // Delete Employee by employeeId
-    void deleteByEmployeeId(Integer employeeId);
+    // Delete Employee by userID
+    void deleteByUserID(Integer userID);
 
     // Get all Employees
     List<Employee> findAll();

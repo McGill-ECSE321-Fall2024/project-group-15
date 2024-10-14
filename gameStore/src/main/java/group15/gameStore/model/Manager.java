@@ -4,7 +4,6 @@
 package group15.gameStore.model;
 
 import jakarta.persistence.*;
-import java.sql.Date;
 import java.util.*;
 
 // line 63 "model.ump"
@@ -149,7 +148,7 @@ public class Manager extends Employee
   public boolean removeGame(Game aGame)
   {
     boolean wasRemoved = false;
-    List<Game> games = getGames_Game();
+    // List<Game> games = getGames_Game();
     if (getGames().contains(aGame))
     {
       wasRemoved = super.removeGame(aGame);

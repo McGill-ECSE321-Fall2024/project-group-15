@@ -25,6 +25,8 @@ public class Person
   //------------------------
 
   //Person Attributes
+  @Id
+  @GeneratedValue
   private int userID;
   private String username;
   private String password;

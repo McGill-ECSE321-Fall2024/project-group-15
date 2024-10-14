@@ -13,7 +13,7 @@ public interface WishlistRepository extends CrudRepository<Wishlist, Integer> {
     List<Wishlist> findByWishListNameContainingIgnoreCase(String wishListName);
 
     // Find all Wishlists associated with a specific game
-    List<Wishlist> findByGames_GameId(Integer gameId);
+    List<Wishlist> findByGames_GameID(Integer gameID);
 
     // Delete Wishlist by wishListId
     void deleteByWishListId(Integer wishListId);

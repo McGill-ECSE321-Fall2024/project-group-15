@@ -32,12 +32,7 @@ public class Promotion
   private Date validUntil;
 
   //Promotion Associations
-  @OneToMany
-  @JoinTable(
-    name = "promotion_game", // Custom join table name
-    joinColumns = @JoinColumn(name = "promotionID"), // Join column in the Customer entity
-    inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
-  )
+  @OneToOne
   private Game game;
 
   //------------------------

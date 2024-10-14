@@ -30,12 +30,12 @@ public class Review
   private String description;
 
   //Review Associations
-  @OneToMany
-  @JoinTable(
-    name = "review_game", // Custom join table name
-    joinColumns = @JoinColumn(name = "reviewID"), // Join column in the Customer entity
-    inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
-  )
+  @OneToOne
+  // @JoinTable(
+  //   name = "review_game", // Custom join table name
+  //   joinColumns = @JoinColumn(name = "reviewID"), // Join column in the Customer entity
+  //   inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
+  // )
   private Game game;
 
   //------------------------
