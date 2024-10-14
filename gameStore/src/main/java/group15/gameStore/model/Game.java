@@ -39,7 +39,7 @@ public class Game
   // CONSTRUCTOR
   //------------------------
 
-  public Game(int aGameID, String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved)
+  public Game(String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved)
   {
     title = aTitle;
     description = aDescription;
@@ -48,7 +48,7 @@ public class Game
     image = aImage;
     archivedDate = null;
     isApproved = aIsApproved;
-    if (!setGameID(aGameID))
+    if (!setGameID(gameID))
     {
       throw new RuntimeException("Cannot create due to duplicate gameID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }

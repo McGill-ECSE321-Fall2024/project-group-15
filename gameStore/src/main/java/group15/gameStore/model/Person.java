@@ -36,12 +36,12 @@ public class Person
   // CONSTRUCTOR
   //------------------------
 
-  public Person(int aUserID, String aUsername, String aPassword, String aEmail)
+  public Person(String aUsername, String aPassword, String aEmail)
   {
     username = aUsername;
     password = aPassword;
     email = aEmail;
-    if (!setUserID(aUserID))
+    if (!setUserID(userID))
     {
       throw new RuntimeException("Cannot create due to duplicate userID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }

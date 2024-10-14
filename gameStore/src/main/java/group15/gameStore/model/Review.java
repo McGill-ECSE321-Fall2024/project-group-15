@@ -42,11 +42,11 @@ public class Review
   // CONSTRUCTOR
   //------------------------
 
-  public Review(int aReviewID, Rating aRating, String aDescription, Game aGame)
+  public Review(Rating aRating, String aDescription, Game aGame)
   {
     rating = aRating;
     description = aDescription;
-    if (!setReviewID(aReviewID))
+    if (!setReviewID(reviewID))
     {
       throw new RuntimeException("Cannot create due to duplicate reviewID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }

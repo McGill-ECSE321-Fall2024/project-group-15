@@ -58,9 +58,9 @@ public class Customer extends Person
   // CONSTRUCTOR
   //------------------------
 
-  public Customer(int aUserID, String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, boolean aIsPaymentInfoSaved)
+  public Customer(String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber, boolean aIsPaymentInfoSaved)
   {
-    super(aUserID, aUsername, aPassword, aEmail);
+    super(aUsername, aPassword, aEmail);
     address = aAddress;
     phoneNumber = aPhoneNumber;
     isPaymentInfoSaved = aIsPaymentInfoSaved;

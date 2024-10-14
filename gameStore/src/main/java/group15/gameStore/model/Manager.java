@@ -29,9 +29,9 @@ public class Manager extends Employee
   // CONSTRUCTOR
   //------------------------
 
-  public Manager(int aUserID, String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
+  public Manager(String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
   {
-    super(aUserID, aUsername, aPassword, aEmail, aIsActive, aIsManager);
+    super(aUsername, aPassword, aEmail, aIsActive, aIsManager);
     promotions = new ArrayList<Promotion>();
   }
 

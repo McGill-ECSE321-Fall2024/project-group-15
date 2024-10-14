@@ -6,6 +6,9 @@ import group15.gameStore.model.Status;
 import java.util.List;
 
 public interface OrderRepository extends CrudRepository<Order, Integer> {
+    // Find an order by its order ID
+    Order findOrderByOrderId(int id);
+    
     // Find an order by its order number
     Order findOrderByOrderNumber(String orderNumber);
 
