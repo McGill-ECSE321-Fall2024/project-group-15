@@ -41,10 +41,10 @@ public class Wishlist
   // CONSTRUCTOR
   //------------------------
 
-  public Wishlist(int aWishListId, String aWishListName)
+  public Wishlist(String aWishListName)
   {
     wishListName = aWishListName;
-    if (!setWishListId(aWishListId))
+    if (!setWishListId(wishListId))
     {
       throw new RuntimeException("Cannot create due to duplicate wishListId. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }

@@ -32,10 +32,10 @@ public class StoreInfo
   // CONSTRUCTOR
   //------------------------
 
-  public StoreInfo(int aStoreInfoID, String aStorePolicies)
+  public StoreInfo(String aStorePolicies)
   {
     storePolicies = aStorePolicies;
-    if (!setStoreInfoID(aStoreInfoID))
+    if (!setStoreInfoID(storeInfoID))
     {
       throw new RuntimeException("Cannot create due to duplicate storeInfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
