@@ -40,10 +40,13 @@ public class Category
   // CONSTRUCTOR
   //------------------------
 
-  public Category(int aCategoryID, String aName)
+  //Default con
+  protected Category() {}
+
+  public Category(String aName)
   {
     name = aName;
-    if (!setCategoryID(aCategoryID))
+    if (!setCategoryID(categoryID))
     {
       throw new RuntimeException("Cannot create due to duplicate categoryID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }

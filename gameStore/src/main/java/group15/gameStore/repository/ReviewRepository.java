@@ -6,6 +6,8 @@ import group15.gameStore.model.Rating;
 import java.util.List;
 
 public interface ReviewRepository extends CrudRepository<Review, Integer> {
+    //Find reviews by Id
+    List<Review> findById(int id);
 
     // Find reviews by rating
     List<Review> findByRating(Rating rating);

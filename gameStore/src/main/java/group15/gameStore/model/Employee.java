@@ -59,9 +59,9 @@ public class Employee extends Person
   // CONSTRUCTOR
   //------------------------
 
-  public Employee(int aUserID, String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
+  public Employee(String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
   {
-    super(aUserID, aUsername, aPassword, aEmail);
+    super(aUsername, aPassword, aEmail);
     isActive = aIsActive;
     isManager = aIsManager;
     categories = new ArrayList<Category>();

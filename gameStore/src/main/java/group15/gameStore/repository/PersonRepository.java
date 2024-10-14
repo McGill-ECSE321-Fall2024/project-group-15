@@ -1,10 +1,16 @@
 package group15.gameStore.repository;
 
 import org.springframework.data.repository.CrudRepository;
+
+import group15.gameStore.model.Category;
 import group15.gameStore.model.Person;
 import java.util.List;
 
 public interface PersonRepository extends CrudRepository<Person, Integer> {
+    
+    // Find Category by categoryId
+    Person findByPersonId(Integer personId);
+
     // Find a Person by username
     Person findByUsername(String username);
 

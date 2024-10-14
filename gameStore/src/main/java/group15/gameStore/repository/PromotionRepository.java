@@ -7,7 +7,9 @@ import java.sql.Date;
 import java.util.List;
 
 public interface PromotionRepository extends CrudRepository<Promotion, Integer> {
-    
+    // Find promotions by ID
+    Promotion findById(int Id);
+
     // Find promotions by promotion code
     Promotion findByPromotionCode(String promotionCode);
 

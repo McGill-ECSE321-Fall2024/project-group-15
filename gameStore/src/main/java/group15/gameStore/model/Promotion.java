@@ -44,12 +44,12 @@ public class Promotion
   // CONSTRUCTOR
   //------------------------
 
-  public Promotion(int aPromotionID, String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Game aGame)
+  public Promotion(String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Game aGame)
   {
     promotionCode = aPromotionCode;
     discountPercentage = aDiscountPercentage;
     validUntil = aValidUntil;
-    if (!setPromotionID(aPromotionID))
+    if (!setPromotionID(promotionID))
     {
       throw new RuntimeException("Cannot create due to duplicate promotionID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }

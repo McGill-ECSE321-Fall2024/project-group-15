@@ -36,13 +36,13 @@ public class PaymentInfo
   // CONSTRUCTOR
   //------------------------
 
-  public PaymentInfo(int aPaymentinfoID, String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress)
+  public PaymentInfo(String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress)
   {
     cardNumber = aCardNumber;
     expiryDate = aExpiryDate;
     cvv = aCvv;
     billingAddress = aBillingAddress;
-    if (!setPaymentinfoID(aPaymentinfoID))
+    if (!setPaymentinfoID(paymentinfoID))
     {
       throw new RuntimeException("Cannot create due to duplicate paymentinfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
     }
