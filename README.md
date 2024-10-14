@@ -13,7 +13,7 @@ We are developping a website for an online game store. The platform will enable 
 | Team Member's Name | Major                    | Year        |
 | ------------------ | ------------------------ | ------------|
 | Jordan             | Mechanical Engineering   | U3          |
-| Ben                |                          |             |
+| Ben                | Software Engineering     | U3          |
 | Jason              | Software Engineer        | U2          |
 | Jacob              | Mechanical Engineering   | U4          |
 | Yvehenry           | Computer Engineering     | U3          |
