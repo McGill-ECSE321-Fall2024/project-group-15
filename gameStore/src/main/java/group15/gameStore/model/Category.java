@@ -5,6 +5,7 @@ package group15.gameStore.model;
 
 import jakarta.persistence.*;
 import java.util.*;
+
 // line 109 "model.ump"
 // line 192 "model.ump"
 @Entity

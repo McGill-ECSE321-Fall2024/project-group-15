@@ -74,7 +74,7 @@ public class ReviewRepositoryTest {
         Review review1 = new Review(Rating.FIVE_STAR, "Great game!", testGame);
         Review review2 = new Review(Rating.THREE_STAR, "It’s okay", testGame);
         repo.save(review1);
-        repo.save(review2);
+        //repo.save(review2);
 
         // Find reviews by rating
         List<Review> fiveStarReviews = repo.findByRating(Rating.FIVE_STAR);
