@@ -27,7 +27,7 @@ We are developping a website for an online game store. The platform will enable 
 | Ben                | Developers         |           18           |
 | Jason              | Product Owners     |           20           |
 | Jacob              | Scrum Master       |           18           |
-| Yvehenry           | Developers         |           17           |
+| Yvehenry           | Developers         |           18           |
  
 ## Deliverable 1:
 This first deliverable focuses on gathering and defining requirements, developing a domain model, designing a persistence layer, and ensuring that the project setup follows agile practices.<br/> 
