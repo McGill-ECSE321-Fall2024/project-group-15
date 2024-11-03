@@ -34,6 +34,8 @@ public class Game
   private String image;
   private Date archivedDate;
   private boolean isApproved;
+  @ManyToOne
+  private Manager manager;
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
@@ -44,7 +46,7 @@ public class Game
   // CONSTRUCTOR
   //------------------------
 
-  public Game(String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved)
+  public Game(String aTitle, String aDescription, double aPrice, int aStock, String aImage, boolean aIsApproved, Manager aManager)
   {
     title = aTitle;
     description = aDescription;
@@ -53,6 +55,7 @@ public class Game
     image = aImage;
     archivedDate = null;
     isApproved = aIsApproved;
+    manager = aManager;
     if (!setGameID(gameID))
     {
       throw new RuntimeException("Cannot create due to duplicate gameID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -62,7 +65,10 @@ public class Game
   //------------------------
   // INTERFACE
   //------------------------
-
+  public Manager getManager()
+  {
+    return manager;
+  }
   public boolean setGameID(int aGameID)
   {
     boolean wasSet = false;

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import group15.gameStore.model.Customer;
 import group15.gameStore.model.Order;
 import group15.gameStore.model.Status;
 
@@ -21,10 +22,24 @@ public class OrderRepositoryTest {
     @Autowired
     private OrderRepository repo;
 
+    @Autowired
+    private CustomerRepository customerRepo;
+
+    private Customer testCustomer = new Customer("ChadTheGamer", "00password", "chad@gmail.com","123SesameStreet", "012345678");
+
     @BeforeEach
+    public void setUp() {
+        // Clear the database before each test
+        repo.deleteAll();
+        customerRepo.deleteAll();
+
+        testCustomer = customerRepo.save(testCustomer);
+
+    }
     @AfterEach
     public void clearDatabase() {
         repo.deleteAll();
+        customerRepo.deleteAll();
     }
 
     @Test
@@ -34,7 +49,7 @@ public class OrderRepositoryTest {
         Status orderStatus = Status.DELIVERED;
         double price = 109.99;
 
-        Order orderA = new Order(orderNumber, orderStatus, price);
+        Order orderA = new Order(orderNumber, orderStatus, price, testCustomer);
 
         // Save in the database
         orderA = repo.save(orderA);

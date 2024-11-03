@@ -34,9 +34,8 @@ public class CustomerRepositoryTest {
         String email = "chad@fakeemail.com";
         String address = "123 Sesame Street";
         String phoneNumber = "123-456-7890";
-        boolean isPaymentInfoSaved = true;
 
-        Customer customer = new Customer(username, password, email, address, phoneNumber, isPaymentInfoSaved);
+        Customer customer = new Customer(username, password, email, address, phoneNumber);
 
         // Save in the database
         customer = repo.save(customer);
@@ -53,6 +52,5 @@ public class CustomerRepositoryTest {
         assertEquals(email, customerFromDb.getEmail());
         assertEquals(address, customerFromDb.getAddress());
         assertEquals(phoneNumber, customerFromDb.getPhoneNumber());
-        assertEquals(isPaymentInfoSaved, customerFromDb.getIsPaymentInfoSaved());        
     }
 }

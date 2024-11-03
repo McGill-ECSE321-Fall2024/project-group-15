@@ -31,6 +31,8 @@ public class PaymentInfo
   private Date expiryDate;
   private int cvv;
   private String billingAddress;
+  @ManyToOne
+  private Customer customer;
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
@@ -41,12 +43,13 @@ public class PaymentInfo
   // CONSTRUCTOR
   //------------------------
 
-  public PaymentInfo(String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress)
+  public PaymentInfo(String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer)
   {
     cardNumber = aCardNumber;
     expiryDate = aExpiryDate;
     cvv = aCvv;
     billingAddress = aBillingAddress;
+    customer = aCustomer;
     if (!setPaymentInfoID(paymentInfoID))
     {
       throw new RuntimeException("Cannot create due to duplicate paymentInfoID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -56,7 +59,9 @@ public class PaymentInfo
   //------------------------
   // INTERFACE
   //------------------------
-
+  public Customer getCustomer() {
+    return customer;
+  }
   public boolean setPaymentInfoID(int aPaymentInfoID)
   {
     boolean wasSet = false;

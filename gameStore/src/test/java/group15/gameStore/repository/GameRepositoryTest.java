@@ -14,16 +14,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.Game;
+import group15.gameStore.model.Manager;
 
 @SpringBootTest
 public class GameRepositoryTest {
     @Autowired
     private GameRepository repo;
 
+    @Autowired
+    private ManagerRepository managerRepo;
+
+    private Manager testManager = new Manager("ChadTheManager", "00password", "manager@mail.mcgill.ca", true, true);
+
     @BeforeEach
+    public void setUp() {
+        // Clear the database before each test
+        repo.deleteAll();
+        managerRepo.deleteAll();
+
+        testManager = managerRepo.save(testManager);
+
+    }
     @AfterEach
     public void clearDatabase() {
         repo.deleteAll();
+        managerRepo.deleteAll();
     }
 
     @Test
@@ -36,7 +51,7 @@ public class GameRepositoryTest {
         String image = "https://minecraft.com";
         boolean isApproved = true;
 
-        Game game = new Game(title, description, price, stock, image, isApproved);
+        Game game = new Game(title, description, price, stock, image, isApproved,testManager);
 
         // Save in the database
         game = repo.save(game);

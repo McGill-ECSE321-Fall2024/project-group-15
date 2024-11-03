@@ -30,13 +30,16 @@ public class Review
   private String description;
 
   //Review Associations
-  @OneToOne(cascade = CascadeType.MERGE)
+  @ManyToOne
   // @JoinTable(
   //   name = "review_game", // Custom join table name
   //   joinColumns = @JoinColumn(name = "reviewID"), // Join column in the Customer entity
   //   inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
   // )
   private Game game;
+
+  @ManyToOne
+  private Customer customer;
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
@@ -47,10 +50,11 @@ public class Review
   // CONSTRUCTOR
   //------------------------
 
-  public Review(Rating aRating, String aDescription, Game aGame)
+  public Review(Rating aRating, String aDescription, Game aGame, Customer aCustomer)
   {
     rating = aRating;
     description = aDescription;
+    customer = aCustomer;
     if (!setReviewID(reviewID))
     {
       throw new RuntimeException("Cannot create due to duplicate reviewID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -64,7 +68,9 @@ public class Review
   //------------------------
   // INTERFACE
   //------------------------
-
+  public Customer getCustomer() {
+    return customer;
+  }
   public boolean setReviewID(int aReviewID)
   {
     boolean wasSet = false;

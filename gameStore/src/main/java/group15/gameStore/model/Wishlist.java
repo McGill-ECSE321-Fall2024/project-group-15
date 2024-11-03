@@ -31,11 +31,14 @@ public class Wishlist
   //Wishlist Associations
   @OneToMany
   @JoinTable(
-    name = "wishlist_game", // Custom join table name
+    name = "wishlist_game",
     joinColumns = @JoinColumn(name = "wishlistID"), // Join column in the Customer entity
     inverseJoinColumns = @JoinColumn(name = "gameID") // Join column in the Order entity
   )
   private List<Game> games;
+
+  @ManyToOne
+  private Customer customer;
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
@@ -46,8 +49,9 @@ public class Wishlist
   // CONSTRUCTOR
   //------------------------
 
-  public Wishlist(String aWishListName)
+  public Wishlist(String aWishListName, Customer aCustomer)
   {
+    customer = aCustomer;
     wishListName = aWishListName;
     if (!setWishListId(wishListId))
     {
@@ -59,7 +63,10 @@ public class Wishlist
   //------------------------
   // INTERFACE
   //------------------------
-
+  public Customer getCustomer()
+  {
+    return customer;
+  }
   public boolean setWishListId(int aWishListId)
   {
     boolean wasSet = false;

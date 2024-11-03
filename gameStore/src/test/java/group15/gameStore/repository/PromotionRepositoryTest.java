@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.Game;
+import group15.gameStore.model.Manager;
 import group15.gameStore.model.Promotion;
 
 @SpringBootTest
@@ -21,10 +22,24 @@ public class PromotionRepositoryTest {
     @Autowired
     private PromotionRepository repo;
 
+    @Autowired
+    private ManagerRepository managerRepo;
+
+    private Manager testManager = new Manager("ChadTheManager", "00password", "manager@mail.mcgill.ca", true, true);
+
     @BeforeEach
+    public void setUp() {
+        // Clear the database before each test
+        repo.deleteAll();
+        managerRepo.deleteAll();
+
+        testManager = managerRepo.save(testManager);
+
+    }
     @AfterEach
     public void clearDatabase() {
         repo.deleteAll();
+        managerRepo.deleteAll();
     }
 
     @Test
@@ -41,7 +56,7 @@ public class PromotionRepositoryTest {
         String promotionCode = "HOLIDAYS";
         double discountPercentage = 0.40;
         Date validUntil = Date.valueOf("2025-12-31");
-        Game game = new Game(title, description, price, stock, image, isApproved);
+        Game game = new Game(title, description, price, stock, image, isApproved, testManager);
 
         Promotion promotion = new Promotion(promotionCode, discountPercentage, validUntil, game);
 

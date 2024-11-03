@@ -42,6 +42,9 @@ public class Order
   )
   private List<Game> games;
 
+  @ManyToOne
+  private Customer customer;
+
   // Hibernate default constructor
   @SuppressWarnings("unused")
   private Order() {
@@ -51,11 +54,12 @@ public class Order
   // CONSTRUCTOR
   //------------------------
 
-  public Order(String aOrderNumber, Status aOrderStatus, double aPrice)
+  public Order(String aOrderNumber, Status aOrderStatus, double aPrice, Customer aCustomer)
   {
     orderNumber = aOrderNumber;
     orderStatus = aOrderStatus;
     price = aPrice;
+    customer = aCustomer;
     if (!setOrderID(orderID))
     {
       throw new RuntimeException("Cannot create due to duplicate orderID. See https://manual.umple.org?RE003ViolationofUniqueness.html");
@@ -66,7 +70,10 @@ public class Order
   //------------------------
   // INTERFACE
   //------------------------
-
+  public Customer getCustomer()
+  {
+    return customer;
+  }
   public boolean setOrderID(int aOrderID)
   {
     boolean wasSet = false;
