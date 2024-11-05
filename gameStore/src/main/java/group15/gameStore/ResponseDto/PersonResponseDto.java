@@ -2,7 +2,7 @@ package main.java.group15.gameStore.dto;
 
 import group15.gameStore.model.Person;
 
-public class PersonDto{
+public class PersonResponseDto{
 
     //Person Attributes
     private int userID;
