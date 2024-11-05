@@ -7,24 +7,16 @@ public class PersonResponseDto{
     //Person Attributes
     private int userID;
     private String username;
-    private String password;
     private String email;
 
   @SuppressWarnings("unused")
- private PersonDto(){
+ private PersonResponseDto(){
  } 
 
- public PersonDto(Person personDto){
+ public PersonResponseDto(Person personDto){
     this.userID = personDto.getUserID();
     this.username = personDto.getUsername();
-    this.password = personDto.getPassword();
     this.email = personDto.getEmail();
- }
-
- public PersonDto(String aUsername, String aPassword, String aEmail){
-    this.username = aUsername;
-    this.password = aPassword;
-    this.email = aEmail;
  }
 
  //Generated Getters and Setters
@@ -42,14 +34,6 @@ public String getUsername() {
 
 public void setUsername(String username) {
     this.username = username;
-}
-
-public String getPassword() {
-    return password;
-}
-
-public void setPassword(String password) {
-    this.password = password;
 }
 
 public String getEmail() {
