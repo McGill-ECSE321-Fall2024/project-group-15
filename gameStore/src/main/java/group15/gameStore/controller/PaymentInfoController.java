@@ -6,14 +6,16 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import group15.gameStore.model.Customer;
 import group15.gameStore.model.PaymentInfo;
+import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.PaymentInfoService;
 import main.java.group15.gameStore.RequestDto.CustomerRequestDto;
 import main.java.group15.gameStore.RequestDto.PaymentInfoRequestDto;
@@ -27,6 +29,9 @@ public class PaymentInfoController {
     @Autowired
     private PaymentInfoService paymentInfoService;
 
+    @Autowired
+    private CustomerService customerService;
+
      /**
      * CreatePaymentInfo: creates a new payment information record
      * @param paymentInfo the PaymentInfoRequestDto containing the payment details
@@ -35,11 +40,11 @@ public class PaymentInfoController {
     @PostMapping("/paymentInfo")
     public ResponseEntity<PaymentInfoResponseDto> createPaymentInfo(@RequestBody PaymentInfoRequestDto paymentInfoDto) {
         try {
-            PaymentInfo paymentInfo = paymentInfoDto.toPaymentInfo();
+            PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(
+                paymentInfoDto.getCardNumber(),paymentInfoDto.getExpiryDate(),paymentInfoDto.getCvv(),
+                paymentInfoDto.getBillingAddress(),paymentInfoDto.getCustomer());
             
-            PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(paymentInfo);
             PaymentInfoResponseDto responseDto = new PaymentInfoResponseDto(createdPaymentInfo);
-            
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } 
         catch (IllegalArgumentException e) {
@@ -59,10 +64,10 @@ public class PaymentInfoController {
             @RequestBody PaymentInfoRequestDto paymentInfoDto) {
 
         try {
-            PaymentInfo paymentInfo = paymentInfoDto.toPaymentInfo();
+            PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
             
             PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(
-                    paymentInfoId,paymentInfo,paymentInfo.getCustomer());
+                    paymentInfoId,paymentInfo,paymentInfoDto.getCustomer());
 
             return new ResponseEntity<>(new PaymentInfoResponseDto(updatedPaymentInfo), HttpStatus.OK);
 
@@ -119,7 +124,8 @@ public class PaymentInfoController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
         }
 
-        List<PaymentInfoResponseDto> responseDtoList = paymentInfoList.stream().map(PaymentInfoResponseDto::new)
+        List<PaymentInfoResponseDto> responseDtoList = paymentInfoList.stream()
+                .map(PaymentInfoResponseDto::new)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
@@ -133,14 +139,17 @@ public class PaymentInfoController {
      @DeleteMapping("/paymentInfo/{cardNumber}")
     public ResponseEntity<Void> deletePaymentInfo(@PathVariable String cardNumber,
             @RequestBody CustomerRequestDto customerDto) {
-        
         try {
-            paymentInfoService.deletePaymentInfo(cardNumber, customerDto.toCustomer());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);  
-            
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        } catch (UnauthorizedAccessException e) {
+            // Retrieve the Customer from the database 
+            Customer customer = customerService.getCustomerByEmail(customerDto.getEmail());  
+
+            paymentInfoService.deletePaymentInfo(cardNumber, customer);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+        } 
+        catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+        } 
+        catch (UnauthorizedAccessException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
         }
     }

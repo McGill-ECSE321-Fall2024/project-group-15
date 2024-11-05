@@ -3,6 +3,7 @@ package main.java.group15.gameStore.RequestDto;
 import java.sql.Date;
 
 import group15.gameStore.model.Customer;
+import group15.gameStore.model.PaymentInfo;
 
 public class PaymentInfoRequestDto {
      //Payment Info attributes
@@ -56,4 +57,6 @@ public class PaymentInfoRequestDto {
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
+
+   
 }
