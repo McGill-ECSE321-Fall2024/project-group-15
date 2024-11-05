@@ -1,5 +1,7 @@
 package main.java.group15.gameStore.RequestDto;
 
+import group15.gameStore.model.Person;
+
 public class PersonRequestDto {
      //Person Attributes
      private String username;
@@ -7,14 +9,16 @@ public class PersonRequestDto {
      private String email;
  
    @SuppressWarnings("unused")
-  private PersonDto(){
+  private PersonRequestDto(){
   } 
 
-  public PersonDto(String aUsername, String aPassword, String aEmail){
+  public PersonRequestDto(String aUsername, String aPassword, String aEmail){
     this.username = aUsername;
     this.password = aPassword;
     this.email = aEmail;
  }
+
+
 
   //Generated Getters and Setters
 public String getUsername() {
@@ -40,5 +44,6 @@ public String getEmail() {
 public void setEmail(String email) {
     this.email = email;
 }
+
 
 }
