@@ -99,7 +99,7 @@ public class PaymentInfoService {
      */
     @Transactional
     public PaymentInfo getPaymentInfoById(int id){
-        PaymentInfo paymentInfo = paymentInfoRepo.findByPaymentInfoID(id);
+        PaymentInfo paymentInfo = paymentInfoRepo.findByPaymentInfoID(id).orElse(null);
         if (paymentInfo == null){
             throw new IllegalArgumentException("Payment Information not found");
         }
@@ -153,7 +153,7 @@ public class PaymentInfoService {
         }
 
         if(!paymentInfo.getCustomer().getPhoneNumber().equals(customer.getPhoneNumber())){
-            throw new IllegalArgumentException("Unauthorized access. Only the owner can delete this payment info.");
+            throw new UnauthorizedAccessException("Unauthorized access. Only the owner can delete this payment info.");
         }
 
         paymentInfoRepo.deleteByCardNumber(cardNumber);
