@@ -56,7 +56,5 @@ public class PaymentInfoRequestDto {
     }
     public void setCustomer(Customer customer) {
         this.customer = customer;
-    }
-
-   
+    }   
 }
