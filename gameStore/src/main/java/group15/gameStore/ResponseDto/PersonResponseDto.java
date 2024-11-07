@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.dto;
+package group15.gameStore.ResponseDto;
 
 import group15.gameStore.model.Person;
 

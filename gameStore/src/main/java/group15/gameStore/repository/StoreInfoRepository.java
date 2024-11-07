@@ -16,6 +16,7 @@ public interface StoreInfoRepository extends CrudRepository<StoreInfo, Integer> 
     void deleteByStoreInfoID(Integer storeInfoID);
 
     // Get all StoreInfo entries
+    @SuppressWarnings("null")
     List<StoreInfo> findAll();
 }
 

@@ -1,6 +1,4 @@
-package main.java.group15.gameStore.RequestDto;
-
-import group15.gameStore.model.Person;
+package group15.gameStore.RequestDto;
 
 public class PersonRequestDto {
      //Person Attributes

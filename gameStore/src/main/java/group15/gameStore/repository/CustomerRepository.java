@@ -16,5 +16,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Integer> {
     void deleteByUserID(Integer userID);
 
     // Get all Customers
+    @SuppressWarnings("null")
     List<Customer> findAll();
 }

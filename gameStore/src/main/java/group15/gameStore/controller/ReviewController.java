@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.controller;
+package group15.gameStore.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,19 +20,16 @@ import group15.gameStore.model.Rating;
 import group15.gameStore.model.Review;
 import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.GameService;
-import main.java.group15.gameStore.RequestDto.CustomerRequestDto;
-import main.java.group15.gameStore.RequestDto.ReviewRequestDto;
-import main.java.group15.gameStore.ResponseDto.ReviewResponseDto;
-import main.java.group15.gameStore.service.ReviewService;
+import group15.gameStore.RequestDto.CustomerRequestDto;
+import group15.gameStore.RequestDto.ReviewRequestDto;
+import group15.gameStore.ResponseDto.ReviewResponseDto;
+import group15.gameStore.service.ReviewService;
 
 @RestController
 public class ReviewController{
 
     @Autowired
     private ReviewService reviewService;
-
-    @Autowired
-    private GameService gameService;
 
     @Autowired
     private CustomerService customerService;
@@ -173,7 +171,7 @@ public class ReviewController{
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
 
-        } catch (UnauthorizedAccessException e) {
+        } catch (SecurityException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
         }
     }

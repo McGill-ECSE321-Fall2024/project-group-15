@@ -23,5 +23,6 @@ public interface ReviewRepository extends CrudRepository<Review, Integer> {
     void deleteByReviewID(Integer reviewID);
 
     // Get all reviews
+    @SuppressWarnings("null")
     List<Review> findAll();
 }

@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.controller;
+package group15.gameStore.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +18,9 @@ import group15.gameStore.model.Customer;
 import group15.gameStore.model.PaymentInfo;
 import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.PaymentInfoService;
-import main.java.group15.gameStore.RequestDto.CustomerRequestDto;
-import main.java.group15.gameStore.RequestDto.PaymentInfoRequestDto;
-import main.java.group15.gameStore.ResponseDto.PaymentInfoResponseDto;
+import group15.gameStore.RequestDto.CustomerRequestDto;
+import group15.gameStore.RequestDto.PaymentInfoRequestDto;
+import group15.gameStore.ResponseDto.PaymentInfoResponseDto;
 
 
 
@@ -148,7 +149,7 @@ public class PaymentInfoController {
         catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
         } 
-        catch (UnauthorizedAccessException e) {
+        catch (SecurityException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
         }
     }

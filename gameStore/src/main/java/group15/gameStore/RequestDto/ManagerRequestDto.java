@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.RequestDto;
+package group15.gameStore.RequestDto;
 
 public class ManagerRequestDto {
 

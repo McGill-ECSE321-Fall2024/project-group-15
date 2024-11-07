@@ -13,6 +13,7 @@ public interface GameRepository extends CrudRepository<Game, String>{
     Game findGameByTitle(String title);
     // Game findGameByType(String type);
     
+    @SuppressWarnings("null")
     List<Game> findAll();
 
     

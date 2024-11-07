@@ -1,6 +1,7 @@
 package group15.gameStore.service;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +38,11 @@ public class PromotionService {
         if (aDiscountPercentage <= 0 || aDiscountPercentage > 100) {
             throw new IllegalArgumentException("Discount percentage must be between 0 and 100.");
         }
-        if (aValidUntil == null || aValidUntil.before(new Date())) {
+        if (aValidUntil == null || aValidUntil.before(Date.from(Instant.now()))) {
             throw new IllegalArgumentException("Valid until date must be a future date.");
         }
-        if (aGame == null || gameRepo.findGameByGameID(aGame.getId()).isEmpty()) {
+        Game game = gameRepo.findGameByGameID(aGame.getGameID());
+        if (aGame == null || game == null) {            
             throw new IllegalArgumentException("Game must be valid and exist in the system.");
         }
         Promotion promotion = new Promotion(aPromotionCode, aDiscountPercentage, aValidUntil, aGame);
@@ -58,11 +60,11 @@ public class PromotionService {
      */
     @Transactional
     public Promotion updatePromotion(int promotionId, Promotion updatedPromotion, Game game) {
-        Promotion existingPromotion = promotionRepo.findById(promotionId).orElse(null);
+        Promotion existingPromotion = promotionRepo.findById(promotionId);
         if (existingPromotion == null) {
             throw new IllegalArgumentException("Promotion with the specified ID does not exist.");
         }
-        if (updatedPromotion == null || game == null || !existingPromotion.getGame().getId().equals(game.getId())) {
+        if (updatedPromotion == null || game == null || existingPromotion.getGame().getGameID() != game.getGameID()) {
             throw new IllegalArgumentException("Invalid update request or unauthorized game.");
         }
         String promotionCode = updatedPromotion.getPromotionCode();
@@ -74,7 +76,7 @@ public class PromotionService {
             throw new IllegalArgumentException("Discount percentage must be between 0 and 100.");
         }
         Date validUntil = updatedPromotion.getValidUntil();
-        if (validUntil == null || validUntil.before(new Date())) {
+        if (validUntil == null || validUntil.before(Date.from(Instant.now()))) {
             throw new IllegalArgumentException("Valid until date must be a future date.");
         }
         existingPromotion.setPromotionCode(promotionCode);
@@ -92,7 +94,7 @@ public class PromotionService {
      */
     @Transactional
     public Promotion getPromotionById(int id) {
-        Promotion promotion = promotionRepo.findById(id).orElse(null);
+        Promotion promotion = promotionRepo.findById(id);
         if (promotion == null) {
             throw new IllegalArgumentException("Promotion not found");
         }
@@ -127,10 +129,10 @@ public class PromotionService {
      */
     @Transactional
     public List<Promotion> getByValidUntil(Date validUntil) {
-        if (validUntil == null|| validUntil.before(new Date())) {
+        if (validUntil == null || validUntil.before(Date.from(Instant.now()))) {
             throw new IllegalArgumentException("Valid until date must be a future date.");
         }
-        List<Promotion> promotions = promotionRepo.findByValidUntil(validUntil);
+        List<Promotion> promotions = promotionRepo.findByValidUntilAfter(validUntil);
         if (promotions.isEmpty()) {
             throw new IllegalArgumentException("No promotions found valid until the specified date.");
         }
@@ -164,8 +166,8 @@ public class PromotionService {
         if (promotion == null) {
             throw new IllegalArgumentException("Promotion with the specified code does not exist.");
         }
-        if (!promotion.getGame().getId().equals(game.getId())) {
-            throw new UnauthorizedAccessException("Unauthorized access. Only the associated game can delete this promotion.");
+        if (promotion.getGame().getGameID() != game.getGameID()) {
+            throw new SecurityException("Unauthorized access. Only the associated game can delete this promotion.");
         }
 
         promotionRepo.deleteByPromotionCode(promotionCode);

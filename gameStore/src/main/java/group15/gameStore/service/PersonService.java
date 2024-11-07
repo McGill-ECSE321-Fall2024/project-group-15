@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.service;
+package group15.gameStore.service;
 
 import java.util.List;
 
