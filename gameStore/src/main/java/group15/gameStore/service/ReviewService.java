@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.service;
+package group15.gameStore.service;
 
 import java.util.List;
 
@@ -42,10 +42,12 @@ public class ReviewService{
         if (aDescription == null || aDescription.trim().isEmpty()) {
             throw new IllegalArgumentException("Description cannot be empty.");
         }
-        if (aGame == null || gameRepo.findGameByGameID(aGame.getId()).isEmpty()) {
+        Game game = gameRepo.findGameByGameID(aGame.getGameID());
+        if (aGame == null || game == null) {            
             throw new IllegalArgumentException("Game must be valid and exist in the system.");
         }
-        if (aCustomer == null || customerRepo.findByUserID(aCustomer.getId()).isEmpty()) {
+        Customer customer = customerRepo.findByUserID(aCustomer.getUserID());
+        if (aCustomer == null || customer == null) {            
             throw new IllegalArgumentException("Customer must be valid and registered.");
         }
 
@@ -64,11 +66,11 @@ public class ReviewService{
      */
     @Transactional
     public Review updateReview(int reviewId, Review updatedReview, Customer customer) {
-        Review existingReview = reviewRepo.findByReviewID(reviewId).orElse(null);
+        Review existingReview = reviewRepo.findByReviewID(reviewId);
         if (existingReview == null) {
             throw new IllegalArgumentException("Review with the specified ID does not exist.");
         }
-        if (updatedReview == null || customer == null || !existingReview.getCustomer().getId().equals(customer.getId())) {
+        if (updatedReview == null || customer == null || existingReview.getCustomer().getUserID() != customer.getUserID()) {
             throw new IllegalArgumentException("Invalid update request or unauthorized customer.");
         }
         Rating rating = updatedReview.getRating();
@@ -92,7 +94,7 @@ public class ReviewService{
      */
     @Transactional
     public Review getReviewById(int id) {
-        Review review = reviewRepo.findByReviewID(id).orElse(null);
+        Review review = reviewRepo.findByReviewID(id);
         if (review == null) {
             throw new IllegalArgumentException("Review not found.");
         }
@@ -157,12 +159,12 @@ public class ReviewService{
      */
     @Transactional
     public void deleteReview(int reviewId, Customer customer) {
-        Review review = reviewRepo.findByReviewID(reviewId).orElse(null);
+        Review review = reviewRepo.findByReviewID(reviewId);
         if (review == null) {
             throw new IllegalArgumentException("Review with the specified ID does not exist.");
         }
-        if (!review.getCustomer().getId().equals(customer.getId())) {
-            throw new UnauthorizedAccessException("Unauthorized access. Only the owner can delete this review.");
+        if (review.getCustomer().getUserID() != customer.getUserID()) {
+            throw new SecurityException("Unauthorized access. Only the owner can delete this review.");
         }
 
         reviewRepo.deleteByReviewID(reviewId);

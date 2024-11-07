@@ -21,5 +21,6 @@ public interface PaymentInfoRepository extends CrudRepository<PaymentInfo, Integ
     void deleteByCardNumber(String cardNumber);
 
     // Get all PaymentInfo records
+    @SuppressWarnings("null")
     List<PaymentInfo> findAll();
 }

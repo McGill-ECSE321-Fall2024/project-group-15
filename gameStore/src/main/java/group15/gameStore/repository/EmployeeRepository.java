@@ -16,5 +16,6 @@ public interface EmployeeRepository extends CrudRepository<Employee, Integer> {
     void deleteByUserID(Integer userID);
 
     // Get all Employees
+    @SuppressWarnings("null")
     List<Employee> findAll();
 }

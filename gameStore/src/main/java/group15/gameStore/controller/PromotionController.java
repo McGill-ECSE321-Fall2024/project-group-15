@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.controller;
+package group15.gameStore.controller;
 
 import java.sql.Date;
 import java.util.List;
@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +19,9 @@ import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 import group15.gameStore.service.GameService;
 import group15.gameStore.service.PromotionService;
-import main.java.group15.gameStore.RequestDto.GameRequestDto;
-import main.java.group15.gameStore.RequestDto.PromotionRequestDto;
-import main.java.group15.gameStore.ResponseDto.PromotionResponseDto;
+import group15.gameStore.RequestDto.GameRequestDto;
+import group15.gameStore.RequestDto.PromotionRequestDto;
+import group15.gameStore.ResponseDto.PromotionResponseDto;
 
 @RestController
 public class PromotionController{
@@ -168,7 +169,7 @@ public class PromotionController{
         catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         } 
-        catch (UnauthorizedAccessException e) {
+        catch (SecurityException e) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
         }
     }

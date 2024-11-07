@@ -42,10 +42,11 @@ public class PaymentInfoService {
         if (String.valueOf(aCvv).length() != 3) {
             throw new IllegalArgumentException("Invalid CVV. Must be a 3-digit number.");
         }
-        if (aBillingAddress == null || aBillingAddress.isEmpty()) {
+        if (aBillingAdress == null || aBillingAdress.isEmpty()) {
             throw new IllegalArgumentException("Billing address cannot be empty.");
         }
-        if (aCustomer == null || customerRepo.findByUserID(aCustomer.getId()).isEmpty()) {
+        Customer customer = customerRepo.findByUserID(aCustomer.getUserID());
+        if (aCustomer == null || customer == null) {
             throw new IllegalArgumentException("Customer must be valid and registered.");
         }
         PaymentInfo paymentInfo = new PaymentInfo(aCardNumber, aExpiryDate, aCvv, aBillingAdress, aCustomer);
@@ -63,11 +64,11 @@ public class PaymentInfoService {
      */
     @Transactional
     public PaymentInfo updatePaymentInfo(int paymentInfoId, PaymentInfo updatedPaymentInfo, Customer customer) {
-        PaymentInfo existingPaymentInfo = paymentInfoRepo.findByPaymentInfoID(paymentInfoId).orElse(null);
+        PaymentInfo existingPaymentInfo = paymentInfoRepo.findByPaymentInfoID(paymentInfoId);
         if (existingPaymentInfo == null) {
             throw new IllegalArgumentException("Payment info with the specified ID does not exist.");
         }
-        if (updatedPaymentInfo == null || customer == null || !existingPaymentInfo.getCustomer().getId().equals(customer.getId())) {
+        if (updatedPaymentInfo == null || customer == null || existingPaymentInfo.getCustomer().getUserID() != customer.getUserID()) {
             throw new IllegalArgumentException("Invalid update request or unauthorized customer.");
         }
         String cardNumber = updatedPaymentInfo.getCardNumber();
@@ -99,7 +100,7 @@ public class PaymentInfoService {
      */
     @Transactional
     public PaymentInfo getPaymentInfoById(int id){
-        PaymentInfo paymentInfo = paymentInfoRepo.findByPaymentInfoID(id).orElse(null);
+        PaymentInfo paymentInfo = paymentInfoRepo.findByPaymentInfoID(id);
         if (paymentInfo == null){
             throw new IllegalArgumentException("Payment Information not found");
         }
@@ -118,7 +119,7 @@ public class PaymentInfoService {
             throw new IllegalArgumentException("Invalid card number. Must be 16 digits.");
         }
         
-        PaymentInfo paymentInfo = paymentInfoRepo.findPaymentInfoByCardNumber(cardNumber);
+        PaymentInfo paymentInfo = paymentInfoRepo.findByCardNumber(cardNumber);
         if (paymentInfo == null) {
             throw new IllegalArgumentException("Payment info with the specified card number does not exist.");
         }
@@ -153,7 +154,7 @@ public class PaymentInfoService {
         }
 
         if(!paymentInfo.getCustomer().getPhoneNumber().equals(customer.getPhoneNumber())){
-            throw new UnauthorizedAccessException("Unauthorized access. Only the owner can delete this payment info.");
+            throw new SecurityException("Unauthorized access. Only the owner can delete this payment info.");
         }
 
         paymentInfoRepo.deleteByCardNumber(cardNumber);

@@ -1,5 +1,27 @@
-package main.java.group15.gameStore.RequestDto;
+package group15.gameStore.RequestDto;
+
+
 
 public class WishlistRequestDto {
+
+    private int wishlistId;
+
+    private int gameId;
+
+    public int getWishlistId() {
+        return wishlistId;
+    }
+
+    public void setWishlistId(int wishlistId) {
+        this.wishlistId = wishlistId;
+    }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
 
 }

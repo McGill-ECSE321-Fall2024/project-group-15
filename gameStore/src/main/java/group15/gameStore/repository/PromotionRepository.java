@@ -20,5 +20,6 @@ public interface PromotionRepository extends CrudRepository<Promotion, Integer> 
     void deleteByPromotionCode(String promotionCode);
 
     // Get all promotions
+    @SuppressWarnings("null")
     List<Promotion> findAll();
 }

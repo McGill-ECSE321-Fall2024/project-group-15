@@ -2,8 +2,8 @@ package group15.gameStore.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import group15.gameStore.model.Category;
 import group15.gameStore.model.Person;
+
 import java.util.List;
 
 public interface PersonRepository extends CrudRepository<Person, Integer> {
@@ -21,5 +21,6 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
     void deleteByUsername(String username);
 
     // Get all Person records
+    @SuppressWarnings("null")
     List<Person> findAll();
 }

@@ -1,4 +1,4 @@
-package main.java.group15.gameStore.controller;
+package group15.gameStore.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.model.Person;
-import main.java.group15.gameStore.RequestDto.PersonRequestDto;
-import main.java.group15.gameStore.dto.PersonResponseDto;
-import main.java.group15.gameStore.service.PersonService;
+import group15.gameStore.RequestDto.PersonRequestDto;
+import group15.gameStore.ResponseDto.PersonResponseDto;
+import group15.gameStore.service.PersonService;
 
 @RestController
 public class PersonController {
