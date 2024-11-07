@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import group15.gameStore.model.Customer;
+import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
 import group15.gameStore.model.Review;
 import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.GameService;
+import main.java.group15.gameStore.RequestDto.CustomerRequestDto;
 import main.java.group15.gameStore.RequestDto.ReviewRequestDto;
 import main.java.group15.gameStore.ResponseDto.ReviewResponseDto;
 import main.java.group15.gameStore.service.ReviewService;
@@ -113,6 +116,65 @@ public class ReviewController{
         }
     }
 
+    /**
+     * GetReviewByGame: retrieves reviews for a specific game
+     * @param gameId the ID of the game for which to retrieve reviews
+     * @return desired review information
+     */
+    @GetMapping("/review/game/{gameId}")
+    public ResponseEntity<List<ReviewResponseDto>> getReviewByGame(@PathVariable Game game) {
+        try {
+            List<Review> reviews = reviewService.getReviewByGame(game);
+            List<ReviewResponseDto> responseDtoList = reviews.stream()
+                    .map(ReviewResponseDto::new)
+                    .collect(Collectors.toList());
 
+            return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
+            
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+        }
+    }
 
+    /**
+     * GetAllReviews: retrieves all reviews in the system
+     * @return desired review information
+     */
+    @GetMapping("/reviews")
+    public ResponseEntity<List<ReviewResponseDto>> getAllReviews() {
+        List<Review> reviews = reviewService.getAllReviews();
+
+        if (reviews.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);  
+        }
+
+        List<ReviewResponseDto> responseDtoList = reviews.stream()
+                .map(ReviewResponseDto::new)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
+    }
+
+    /**
+     * DeleteReview: deletes a review by review ID if the specified customer is the owner
+     * @param reviewId the ID of the review to delete
+     * @param customerDto the CustomerRequestDto containing the customer details for authorization
+     * @return HTTP status
+     */
+    @DeleteMapping("/review/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable int reviewId,
+        @RequestBody CustomerRequestDto customerDto) {
+        try {
+            Customer customer = customerService.getCustomerById(customerDto.getCustomerId());
+
+            reviewService.deleteReview(reviewId, customer);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
+
+        } catch (UnauthorizedAccessException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
+        }
+    }
 }
