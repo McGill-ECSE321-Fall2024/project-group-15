@@ -49,7 +49,7 @@ public class PersonService {
      */
     @Transactional
     public Person updatePersonInfo(int personId, Person updatedPersonInfo) {
-        Person existingPerson = personRepository.findById(personId);
+        Person existingPerson = personRepo.findByUserID(personId);
         if (existingPerson == null) {
             throw new IllegalArgumentException("User with the specified ID does not exist.");
         }
@@ -74,7 +74,7 @@ public class PersonService {
         } else {
             throw new IllegalArgumentException("Invalid email format.");
         }
-        return personRepository.save(existingPerson);
+        return personRepo.save(existingPerson);
     }
 
     /**
@@ -114,7 +114,7 @@ public class PersonService {
      */
     @Transactional
     public List<Person> getAllPersons() {
-        List<Person> persons = personRepository.findAll();
+        List<Person> persons = personRepo.findAll();
         if (persons.isEmpty()) {
             throw new IllegalArgumentException("No User records found in the system.");
         }
@@ -128,7 +128,7 @@ public class PersonService {
      */
     @Transactional
     public void deletePersonByUsername(String username) {
-        Person person = personRepository.findByUsername(username);
+        Person person = personRepo.findByUsername(username);
         if (person == null) {
             throw new IllegalArgumentException("Person with the specified username does not exist.");
         }

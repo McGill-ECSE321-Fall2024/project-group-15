@@ -59,8 +59,7 @@ public class PaymentInfoController {
      * @return the updated payment information
      */
     @PutMapping("/paymentInfo/{paymentInfoId}")
-    public ResponseEntity<PaymentInfoResponseDto> updatePaymentInfo(
-            @PathVariable("paymentInfoId") int paymentInfoId,
+    public ResponseEntity<PaymentInfoResponseDto> updatePaymentInfo(@PathVariable("paymentInfoId") int paymentInfoId,
             @RequestBody PaymentInfoRequestDto paymentInfoDto) {
 
         try {
@@ -114,7 +113,7 @@ public class PaymentInfoController {
 
     /**
      * GetAllPaymentInfo: retrieves all payment information records in the system
-     * @return all payment infromation in the system
+     * @return all payment information in the system
      */
     @GetMapping("/paymentInfo")
     public ResponseEntity<List<PaymentInfoResponseDto>> getAllPaymentInfo() {
@@ -132,7 +131,7 @@ public class PaymentInfoController {
     }
 
     /**
-     * DeletePaymentInfoByCardNumber: deletes payment information by card number
+     * DeletePaymentInfo: deletes payment information by card number
      * @param cardNumber the card number of the payment information to delete
      * @return HTTP status
      */
