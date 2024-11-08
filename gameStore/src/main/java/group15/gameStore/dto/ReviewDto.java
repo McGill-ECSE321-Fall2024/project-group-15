@@ -1,11 +1,13 @@
-package group15.gameStore.RequestDto;
+package group15.gameStore.dto;
 
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
+import group15.gameStore.model.Review;
 
-public class ReviewRequestDto {
-     //Review Attributes
+public class ReviewDto {
+    //Review Attributes
+    private int reviewID;
     private Rating rating;
     private String description;
 
@@ -13,10 +15,18 @@ public class ReviewRequestDto {
     private Customer customer;
 
     @SuppressWarnings("unused" )
-    private ReviewRequestDto(){
+    private ReviewDto(){
     }
 
-    public ReviewRequestDto(Rating aRating, String aDescription, Game aGame, Customer aCustomer){
+    public ReviewDto(Review reviewDto){
+        this.reviewID = reviewDto.getReviewID();
+        this.rating = reviewDto.getRating();
+        this.description = reviewDto.getDescription();
+        this.game = reviewDto.getGame();
+        this.customer = reviewDto.getCustomer();
+    }
+
+    public ReviewDto(Rating aRating, String aDescription, Game aGame, Customer aCustomer){
         this.rating = aRating;
         this.description = aDescription;
         this.game = aGame;
@@ -24,6 +34,14 @@ public class ReviewRequestDto {
     }
 
     //Generated Getters and Setters
+    public int getReviewID() {
+        return reviewID;
+    }
+
+    public void setReviewID(int reviewID) {
+        this.reviewID = reviewID;
+    }
+
     public Rating getRating() {
         return rating;
     }

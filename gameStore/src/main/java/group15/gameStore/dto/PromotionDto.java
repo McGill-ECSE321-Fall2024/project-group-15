@@ -1,11 +1,11 @@
-package group15.gameStore.ResponseDto;
+package group15.gameStore.dto;
 
 import java.sql.Date;
 
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 
-public class PromotionResponseDto {
+public class PromotionDto {
     //Promotion attributes
     private int promotionID;
     private String promotionCode;
@@ -15,15 +15,22 @@ public class PromotionResponseDto {
     private Game game;
 
     @SuppressWarnings("unused")
-    private PromotionResponseDto(){
+    private PromotionDto(){
     }
 
-    public PromotionResponseDto(Promotion promotionDto){
+    public PromotionDto(Promotion promotionDto){
         this.promotionID = promotionDto.getPromotionID();
         this.promotionCode = promotionDto.getPromotionCode();
         this.discountPercentage = promotionDto.getDiscountPercentage();
         this.validUntil = promotionDto.getValidUntil();
         this.game = promotionDto.getGame();
+    }
+
+    public PromotionDto(String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Game aGame){
+        this.promotionCode = aPromotionCode;
+        this.discountPercentage = aDiscountPercentage;
+        this.validUntil = aValidUntil;
+        this.game = aGame;
     }
 
     //Generated Getters and Setters

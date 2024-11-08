@@ -18,9 +18,8 @@ import group15.gameStore.model.Customer;
 import group15.gameStore.model.PaymentInfo;
 import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.PaymentInfoService;
-import group15.gameStore.RequestDto.CustomerRequestDto;
-import group15.gameStore.RequestDto.PaymentInfoRequestDto;
-import group15.gameStore.ResponseDto.PaymentInfoResponseDto;
+import group15.gameStore.dto.CustomerDto;
+import group15.gameStore.dto.PaymentInfoDto;
 
 
 
@@ -35,17 +34,17 @@ public class PaymentInfoController {
 
      /**
      * CreatePaymentInfo: creates a new payment information record
-     * @param paymentInfo the PaymentInfoRequestDto containing the payment details
+     * @param paymentInfo the PaymentInfoDto containing the payment details
      * @return the created payment information
      */
     @PostMapping("/paymentInfo")
-    public ResponseEntity<PaymentInfoResponseDto> createPaymentInfo(@RequestBody PaymentInfoRequestDto paymentInfoDto) {
+    public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto) {
         try {
             PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(
                 paymentInfoDto.getCardNumber(),paymentInfoDto.getExpiryDate(),paymentInfoDto.getCvv(),
                 paymentInfoDto.getBillingAddress(),paymentInfoDto.getCustomer());
             
-            PaymentInfoResponseDto responseDto = new PaymentInfoResponseDto(createdPaymentInfo);
+            PaymentInfoDto responseDto = new PaymentInfoDto(createdPaymentInfo);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } 
         catch (IllegalArgumentException e) {
@@ -56,12 +55,12 @@ public class PaymentInfoController {
      /**
      * UpdatePaymentInfo: updates an existing payment information record
      * @param paymentInfoId the ID of the payment information to update
-     * @param paymentInfoDto the PaymentInfoRequestDto containing updated payment details
+     * @param paymentInfoDto the PaymentInfoDto containing updated payment details
      * @return the updated payment information
      */
     @PutMapping("/paymentInfo/{paymentInfoId}")
-    public ResponseEntity<PaymentInfoResponseDto> updatePaymentInfo(@PathVariable("paymentInfoId") int paymentInfoId,
-            @RequestBody PaymentInfoRequestDto paymentInfoDto) {
+    public ResponseEntity<PaymentInfoDto> updatePaymentInfo(@PathVariable("paymentInfoId") int paymentInfoId,
+            @RequestBody PaymentInfoDto paymentInfoDto) {
 
         try {
             PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
@@ -69,7 +68,7 @@ public class PaymentInfoController {
             PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(
                     paymentInfoId,paymentInfo,paymentInfoDto.getCustomer());
 
-            return new ResponseEntity<>(new PaymentInfoResponseDto(updatedPaymentInfo), HttpStatus.OK);
+            return new ResponseEntity<>(new PaymentInfoDto(updatedPaymentInfo), HttpStatus.OK);
 
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -82,10 +81,10 @@ public class PaymentInfoController {
      * @return desired payment information
      */
     @GetMapping("/paymentInfo/{paymentInfoId}")
-    public ResponseEntity<PaymentInfoResponseDto> getPaymentInfoById(@PathVariable int paymentInfoId) {
+    public ResponseEntity<PaymentInfoDto> getPaymentInfoById(@PathVariable int paymentInfoId) {
         try {
             PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
-            PaymentInfoResponseDto responseDto = new PaymentInfoResponseDto(paymentInfo);
+            PaymentInfoDto responseDto = new PaymentInfoDto(paymentInfo);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
             
@@ -100,10 +99,10 @@ public class PaymentInfoController {
      * @return desired payment information
      */
     @GetMapping("/paymentInfo/card/{cardNumber}")
-    public ResponseEntity<PaymentInfoResponseDto> getPaymentInfoByCardNumber(@PathVariable String cardNumber) {
+    public ResponseEntity<PaymentInfoDto> getPaymentInfoByCardNumber(@PathVariable String cardNumber) {
         try {
             PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoByCardNumber(cardNumber);
-            PaymentInfoResponseDto responseDto = new PaymentInfoResponseDto(paymentInfo);
+            PaymentInfoDto responseDto = new PaymentInfoDto(paymentInfo);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
             
@@ -117,15 +116,15 @@ public class PaymentInfoController {
      * @return all payment information in the system
      */
     @GetMapping("/paymentInfo")
-    public ResponseEntity<List<PaymentInfoResponseDto>> getAllPaymentInfo() {
+    public ResponseEntity<List<PaymentInfoDto>> getAllPaymentInfo() {
         List<PaymentInfo> paymentInfoList = paymentInfoService.GetAllPaymentInfo();
 
         if (paymentInfoList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
         }
 
-        List<PaymentInfoResponseDto> responseDtoList = paymentInfoList.stream()
-                .map(PaymentInfoResponseDto::new)
+        List<PaymentInfoDto> responseDtoList = paymentInfoList.stream()
+                .map(PaymentInfoDto::new)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
@@ -138,7 +137,7 @@ public class PaymentInfoController {
      */
      @DeleteMapping("/paymentInfo/{cardNumber}")
     public ResponseEntity<Void> deletePaymentInfo(@PathVariable String cardNumber,
-            @RequestBody CustomerRequestDto customerDto) {
+            @RequestBody CustomerDto customerDto) {
         try {
             // Retrieve the Customer from the database 
             Customer customer = customerService.getCustomerByEmail(customerDto.getEmail());  

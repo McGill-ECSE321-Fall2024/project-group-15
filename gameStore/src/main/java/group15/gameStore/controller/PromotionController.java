@@ -19,9 +19,8 @@ import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 import group15.gameStore.service.GameService;
 import group15.gameStore.service.PromotionService;
-import group15.gameStore.RequestDto.GameRequestDto;
-import group15.gameStore.RequestDto.PromotionRequestDto;
-import group15.gameStore.ResponseDto.PromotionResponseDto;
+import group15.gameStore.dto.GameDto;
+import group15.gameStore.dto.PromotionDto;
 
 @RestController
 public class PromotionController{
@@ -35,17 +34,17 @@ public class PromotionController{
 
     /**
      * CreatePromotion: creates a new promotion record
-     * @param promotionDto the PromotionRequestDto containing the promotion details
+     * @param promotionDto the PromotionDto containing the promotion details
      * @return the created promotion
      */
     @PostMapping("/promotion")
-    public ResponseEntity<PromotionResponseDto> createPromotion(@RequestBody PromotionRequestDto promotionDto) {
+    public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto) {
         try {
             Promotion createdPromotion = promotionService.createPromotion(
                 promotionDto.getPromotionCode(),promotionDto.getDiscountPercentage(),
                 promotionDto.getValidUntil(),promotionDto.getGame());
 
-            PromotionResponseDto responseDto = new PromotionResponseDto(createdPromotion);
+            PromotionDto responseDto = new PromotionDto(createdPromotion);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
         } 
         catch (IllegalArgumentException e) {
@@ -56,12 +55,12 @@ public class PromotionController{
      /**
      * UpdatePromotion: updates an existing promotion record
      * @param promotionId the ID of the promotion to update
-     * @param promotionDto the PromotionRequestDto containing updated promotion details
+     * @param promotionDto the PromotionDto containing updated promotion details
      * @return the updated promotion information
      */
     @PutMapping("/promotion/{promotionId}")
-    public ResponseEntity<PromotionResponseDto> updatePromotion(@PathVariable("promotionId") int promotionId,
-        @RequestBody PromotionRequestDto promotionDto) {
+    public ResponseEntity<PromotionDto> updatePromotion(@PathVariable("promotionId") int promotionId,
+        @RequestBody PromotionDto promotionDto) {
 
         try {
             Promotion existingPromotion = promotionService.getPromotionById(promotionId);
@@ -69,7 +68,7 @@ public class PromotionController{
             Promotion updatedPromotion = promotionService.updatePromotion(
                 promotionId,existingPromotion,promotionDto.getGame());
 
-            return new ResponseEntity<>(new PromotionResponseDto(updatedPromotion), HttpStatus.OK); 
+            return new ResponseEntity<>(new PromotionDto(updatedPromotion), HttpStatus.OK); 
 
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
@@ -82,10 +81,10 @@ public class PromotionController{
      * @return desired promotion information
      */
     @GetMapping("/promotion/{promotionId}")
-    public ResponseEntity<PromotionResponseDto> getPromotionById(@PathVariable int promotionId) {
+    public ResponseEntity<PromotionDto> getPromotionById(@PathVariable int promotionId) {
         try {
             Promotion promotion = promotionService.getPromotionById(promotionId);
-            PromotionResponseDto responseDto = new PromotionResponseDto(promotion);
+            PromotionDto responseDto = new PromotionDto(promotion);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);      
         } 
@@ -100,10 +99,10 @@ public class PromotionController{
      * @return desired promotion information
      */
     @GetMapping("/promotion/code/{promotionCode}")
-    public ResponseEntity<PromotionResponseDto> getByPromotionCode(@PathVariable String promotionCode) {
+    public ResponseEntity<PromotionDto> getByPromotionCode(@PathVariable String promotionCode) {
         try {
             Promotion promotion = promotionService.getByPromotionCode(promotionCode);
-            PromotionResponseDto responseDto = new PromotionResponseDto(promotion);
+            PromotionDto responseDto = new PromotionDto(promotion);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK); 
         } 
@@ -118,11 +117,11 @@ public class PromotionController{
      * @return desired promotion information
      */
     @GetMapping("/promotion/validUntil/{validUntil}")
-    public ResponseEntity<List<PromotionResponseDto>> getByValidUntil(@PathVariable Date validUntil) {
+    public ResponseEntity<List<PromotionDto>> getByValidUntil(@PathVariable Date validUntil) {
         try {
             List<Promotion> promotions = promotionService.getByValidUntil(validUntil);
-            List<PromotionResponseDto> responseDtoList = promotions.stream()
-                    .map(PromotionResponseDto::new)
+            List<PromotionDto> responseDtoList = promotions.stream()
+                    .map(PromotionDto::new)
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
@@ -137,15 +136,15 @@ public class PromotionController{
      * @return all promotion information in the system
      */
     @GetMapping("/promotions")
-    public ResponseEntity<List<PromotionResponseDto>> getAllPromotion() {
+    public ResponseEntity<List<PromotionDto>> getAllPromotion() {
         List<Promotion> promotions = promotionService.getAllPromotion();
 
         if (promotions.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);  
         }
 
-        List<PromotionResponseDto> responseDtoList = promotions.stream()
-                .map(PromotionResponseDto::new)
+        List<PromotionDto> responseDtoList = promotions.stream()
+                .map(PromotionDto::new)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
@@ -159,7 +158,7 @@ public class PromotionController{
      */
     @DeleteMapping("/promotion/{promotionCode}")
     public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode,
-        @RequestBody GameRequestDto gameDto) {
+        @RequestBody GameDto gameDto) {
         try {
             Game game = gameService.getGameById(gameDto.getGameId());
 

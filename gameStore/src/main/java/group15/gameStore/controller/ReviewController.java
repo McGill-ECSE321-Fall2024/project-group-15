@@ -14,15 +14,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import group15.gameStore.dto.CustomerDto;
+import group15.gameStore.dto.ReviewDto;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
 import group15.gameStore.model.Review;
 import group15.gameStore.service.CustomerService;
-import group15.gameStore.service.GameService;
-import group15.gameStore.RequestDto.CustomerRequestDto;
-import group15.gameStore.RequestDto.ReviewRequestDto;
-import group15.gameStore.ResponseDto.ReviewResponseDto;
 import group15.gameStore.service.ReviewService;
 
 @RestController
@@ -37,16 +35,16 @@ public class ReviewController{
 
     /**
      * CreateReview: creates a new review record
-     * @param reviewDto the ReviewRequestDto containing the review details
+     * @param reviewDto the ReviewDto containing the review details
      * @return the created review 
      */
     @PostMapping("/review")
-    public ResponseEntity<ReviewResponseDto> createReview(@RequestBody ReviewRequestDto reviewDto) {
+    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
         try {
             Review createdReview = reviewService.createReview(reviewDto.getRating(),
                 reviewDto.getDescription(),reviewDto.getGame(),reviewDto.getCustomer());
 
-            ReviewResponseDto responseDto = new ReviewResponseDto(createdReview);
+            ReviewDto responseDto = new ReviewDto(createdReview);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
         } 
         catch (IllegalArgumentException e) {
@@ -57,19 +55,19 @@ public class ReviewController{
     /**
      * UpdateReview: updates an existing review record
      * @param reviewId the ID of the review to update
-     * @param reviewDto the ReviewRequestDto containing updated review details
+     * @param reviewDto the ReviewDto containing updated review details
      * @return the updated review information
      */
     @PutMapping("/review/{reviewId}")
-    public ResponseEntity<ReviewResponseDto> updateReview(@PathVariable("reviewId") int reviewId,
-        @RequestBody ReviewRequestDto reviewDto) {
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable("reviewId") int reviewId,
+        @RequestBody ReviewDto reviewDto) {
         try {
             Review existingReview = reviewService.getReviewById(reviewId);
 
             Review updatedReview = reviewService.updateReview(reviewId,existingReview,
                 reviewDto.getCustomer());
 
-            return new ResponseEntity<>(new ReviewResponseDto(updatedReview), HttpStatus.OK);  
+            return new ResponseEntity<>(new ReviewDto(updatedReview), HttpStatus.OK);  
 
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
@@ -82,10 +80,10 @@ public class ReviewController{
      * @return desired review information
      */
     @GetMapping("/review/{reviewId}")
-    public ResponseEntity<ReviewResponseDto> getReviewById(@PathVariable int reviewId) {
+    public ResponseEntity<ReviewDto> getReviewById(@PathVariable int reviewId) {
         try {
             Review review = reviewService.getReviewById(reviewId);
-            ReviewResponseDto responseDto = new ReviewResponseDto(review);
+            ReviewDto responseDto = new ReviewDto(review);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK); 
             
@@ -100,11 +98,11 @@ public class ReviewController{
      * @return desired review information
      */
     @GetMapping("/review/rating/{rating}")
-    public ResponseEntity<List<ReviewResponseDto>> getReviewByRating(@PathVariable Rating rating) {
+    public ResponseEntity<List<ReviewDto>> getReviewByRating(@PathVariable Rating rating) {
         try {
             List<Review> reviews = reviewService.getReviewByRating(rating);
-            List<ReviewResponseDto> responseDtoList = reviews.stream()
-                    .map(ReviewResponseDto::new)
+            List<ReviewDto> responseDtoList = reviews.stream()
+                    .map(ReviewDto::new)
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
@@ -120,11 +118,11 @@ public class ReviewController{
      * @return desired review information
      */
     @GetMapping("/review/game/{gameId}")
-    public ResponseEntity<List<ReviewResponseDto>> getReviewByGame(@PathVariable Game game) {
+    public ResponseEntity<List<ReviewDto>> getReviewByGame(@PathVariable Game game) {
         try {
             List<Review> reviews = reviewService.getReviewByGame(game);
-            List<ReviewResponseDto> responseDtoList = reviews.stream()
-                    .map(ReviewResponseDto::new)
+            List<ReviewDto> responseDtoList = reviews.stream()
+                    .map(ReviewDto::new)
                     .collect(Collectors.toList());
 
             return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
@@ -139,15 +137,15 @@ public class ReviewController{
      * @return desired review information
      */
     @GetMapping("/reviews")
-    public ResponseEntity<List<ReviewResponseDto>> getAllReviews() {
+    public ResponseEntity<List<ReviewDto>> getAllReviews() {
         List<Review> reviews = reviewService.getAllReviews();
 
         if (reviews.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);  
         }
 
-        List<ReviewResponseDto> responseDtoList = reviews.stream()
-                .map(ReviewResponseDto::new)
+        List<ReviewDto> responseDtoList = reviews.stream()
+                .map(ReviewDto::new)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
@@ -161,7 +159,7 @@ public class ReviewController{
      */
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable int reviewId,
-        @RequestBody CustomerRequestDto customerDto) {
+        @RequestBody CustomerDto customerDto) {
         try {
             Customer customer = customerService.getCustomerById(customerDto.getCustomerId());
 

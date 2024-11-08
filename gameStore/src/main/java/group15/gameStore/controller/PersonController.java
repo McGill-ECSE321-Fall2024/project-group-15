@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.model.Person;
-import group15.gameStore.RequestDto.PersonRequestDto;
-import group15.gameStore.ResponseDto.PersonResponseDto;
+import group15.gameStore.dto.PersonDto;
 import group15.gameStore.service.PersonService;
 
 @RestController
@@ -27,16 +26,16 @@ public class PersonController {
 
     /**
      * CreatePerson: creates a new user record
-     * @param personDto the PersonRequestDto containing the person details
+     * @param personDto the PersonDto containing the person details
      * @return the created user 
      */
     @PostMapping("/person")
-    public ResponseEntity<PersonResponseDto> createPerson(@RequestBody PersonRequestDto personRequestDto){
+    public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto PersonDto){
         try{
-            Person createdPerson = personService.createPerson(personRequestDto.getUsername(), personRequestDto.getPassword(),
-            personRequestDto.getEmail());
+            Person createdPerson = personService.createPerson(PersonDto.getUsername(), PersonDto.getPassword(),
+            PersonDto.getEmail());
 
-            PersonResponseDto responseDto = new PersonResponseDto(createdPerson);
+            PersonDto responseDto = new PersonDto(createdPerson);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
         }
         catch (IllegalArgumentException e) {
@@ -50,12 +49,12 @@ public class PersonController {
      * @return the updated user information
      */
     @PutMapping("/person/{personId}")
-    public ResponseEntity<PersonResponseDto> updatePerson(@PathVariable("personId") int personId) {
+    public ResponseEntity<PersonDto> updatePerson(@PathVariable("personId") int personId) {
         try{
             Person person = personService.getPersonById(personId);
 
             Person updatedPerson = personService.updatePersonInfo(personId, person);
-            return new ResponseEntity<>(new PersonResponseDto(updatedPerson), HttpStatus.OK);
+            return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
         } 
         catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -68,10 +67,10 @@ public class PersonController {
      * @return return desired user information
      */
     @GetMapping("/person/{personId}")
-    public ResponseEntity<PersonResponseDto> getPersonById(@PathVariable int personId) {
+    public ResponseEntity<PersonDto> getPersonById(@PathVariable int personId) {
         try {
             Person person = personService.getPersonById(personId);
-            PersonResponseDto responseDto = new PersonResponseDto(person);
+            PersonDto responseDto = new PersonDto(person);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK); 
         } 
@@ -86,10 +85,10 @@ public class PersonController {
      * @return the desired user information
      */
     @GetMapping("/person/username/{username}")
-    public ResponseEntity<PersonResponseDto> getPersonByUsername(@PathVariable String username) {
+    public ResponseEntity<PersonDto> getPersonByUsername(@PathVariable String username) {
         try {
             Person person = personService.getPersonByUsername(username);
-            PersonResponseDto responseDto = new PersonResponseDto(person);
+            PersonDto responseDto = new PersonDto(person);
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);    
         } 
@@ -103,14 +102,14 @@ public class PersonController {
      * @return all users information in the system
      */
     @GetMapping("/person")
-    public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
+    public ResponseEntity<List<PersonDto>> getAllPersons() {
         List<Person> personList = personService.getAllPersons();
         if (personList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        List<PersonResponseDto> responseDtoList = personList.stream()
-                .map(PersonResponseDto::new)
+        List<PersonDto> responseDtoList = personList.stream()
+                .map(PersonDto::new)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
@@ -122,12 +121,12 @@ public class PersonController {
      * @return HTTP status
      */
     @DeleteMapping("/person/{username}")
-    public ResponseEntity<Void> deletePersonByUsername(@PathVariable String username,@RequestBody PersonRequestDto personRequestDto) {
+    public ResponseEntity<Void> deletePersonByUsername(@PathVariable String username,@RequestBody PersonDto PersonDto) {
         try {
             Person personToDelete = personService.getPersonByUsername(username);
             
             // Check authorization using the request DTO
-            if (!personToDelete.getUsername().equals(personRequestDto.getUsername())) {
+            if (!personToDelete.getUsername().equals(PersonDto.getUsername())) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
             }
             personService.deletePersonByUsername(username);

@@ -1,26 +1,33 @@
-package group15.gameStore.ResponseDto;
+package group15.gameStore.dto;
 
 import group15.gameStore.model.Person;
 
-public class PersonResponseDto{
+public class PersonDto{
 
     //Person Attributes
     private int userID;
     private String username;
+    private String password;
     private String email;
 
   @SuppressWarnings("unused")
- private PersonResponseDto(){
+ private PersonDto(){
  } 
 
- public PersonResponseDto(Person personDto){
+ public PersonDto(Person personDto){
     this.userID = personDto.getUserID();
     this.username = personDto.getUsername();
     this.email = personDto.getEmail();
  }
 
+ public PersonDto(String aUsername, String aPassword, String aEmail){
+    this.username = aUsername;
+    this.password = aPassword;
+    this.email = aEmail;
+ }
+
  //Generated Getters and Setters
-public int getUserID() {
+ public int getUserID() {
     return userID;
 }
 
@@ -44,6 +51,11 @@ public void setEmail(String email) {
     this.email = email;
 }
 
+public String getPassword() {
+    return password;
+}
 
- 
+public void setPassword(String password) {
+    this.password = password;
+}
 }
