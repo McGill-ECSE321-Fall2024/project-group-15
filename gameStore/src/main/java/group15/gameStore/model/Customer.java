@@ -4,7 +4,6 @@
 package group15.gameStore.model;
 
 import jakarta.persistence.*;
-import java.util.*;
 
 // line 10 "model.ump"
 // line 132 "model.ump"

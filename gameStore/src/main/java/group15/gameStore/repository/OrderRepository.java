@@ -22,5 +22,6 @@ public interface OrderRepository extends CrudRepository<Order, Integer> {
     void deleteOrderByOrderNumber(String orderNumber);
 
     // Get all orders
+    @SuppressWarnings("null")
     List<Order> findAll();
 }

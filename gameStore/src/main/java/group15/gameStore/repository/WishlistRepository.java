@@ -1,6 +1,7 @@
 package group15.gameStore.repository;
 
 import org.springframework.data.repository.CrudRepository;
+
 import group15.gameStore.model.Wishlist;
 import java.util.List;
 
@@ -19,5 +20,9 @@ public interface WishlistRepository extends CrudRepository<Wishlist, Integer> {
     void deleteByWishListId(Integer wishListId);
 
     // Get all Wishlists
+    @SuppressWarnings("null")
     List<Wishlist> findAll();
+
+    //find wishlist by customerid
+    Wishlist findByUserId(Integer userId);
 }

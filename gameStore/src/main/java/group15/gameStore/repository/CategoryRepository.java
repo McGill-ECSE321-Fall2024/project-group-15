@@ -16,5 +16,6 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
     void deleteByCategoryID(Integer categoryID);
 
     // Get all Categories
+    @SuppressWarnings("null")
     List<Category> findAll();
 }

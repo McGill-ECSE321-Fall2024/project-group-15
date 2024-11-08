@@ -18,5 +18,6 @@ public interface ManagerRepository extends CrudRepository<Manager, Integer> {
     void deleteManagerByEmail(String email);
 
     // Get all managers
+    @SuppressWarnings("null")
     List<Manager> findAll();
 }
