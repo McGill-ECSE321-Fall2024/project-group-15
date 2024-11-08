@@ -51,7 +51,7 @@ public class GameRepositoryTest {
         String image = "https://minecraft.com";
         boolean isApproved = true;
 
-        Game game = new Game(title, description, price, stock, image, isApproved,testManager);
+        Game game = new Game(title, description, price, stock, image, isApproved, testManager);
 
         // Save in the database
         game = repo.save(game);
