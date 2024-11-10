@@ -34,7 +34,7 @@ public class Person
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  protected Person() {
+  public Person() {
   }
 
   //------------------------

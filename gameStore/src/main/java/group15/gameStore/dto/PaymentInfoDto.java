@@ -16,7 +16,7 @@ public class PaymentInfoDto{
     private Customer customer;
 
     @SuppressWarnings("unused")
-    private PaymentInfoDto(){
+    public PaymentInfoDto(){
     }
     public PaymentInfoDto(PaymentInfo paymentInfoDto){
         this.paymentInfoID = paymentInfoDto.getPaymentInfoID();
