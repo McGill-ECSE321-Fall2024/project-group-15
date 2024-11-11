@@ -24,5 +24,5 @@ public interface WishlistRepository extends CrudRepository<Wishlist, Integer> {
     List<Wishlist> findAll();
 
     //find wishlist by customerid
-    Wishlist findByUserId(Integer userId);
+    List<Wishlist> findByUserID(Integer userID);
 }

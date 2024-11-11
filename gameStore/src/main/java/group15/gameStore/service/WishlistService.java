@@ -1,5 +1,7 @@
 package group15.gameStore.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,40 @@ public class WishlistService {
     GameRepository gameRepository;
 
     /**
+     * CreateWishlist: creates a wishlist for a customer
+     * @param userId: the ID of the user
+     * @param wishlistName: the name of the wishlist
+     * @param customer: the customer to create the wishlist for
+     * @return the created wishlist
+     * @throws IllegalArgumentException if customer ID is invalid
+     */
+     @Transactional  
+     public Wishlist createWishlist(int userId, String wishlistName, Customer customer) {
+         Wishlist wishlist = new Wishlist(wishlistName, customer);        
+         if (wishlist.getCustomer().getUserID() != customer.getUserID()) {
+            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
+         }
+         wishlistRepo.save(wishlist);
+         return wishlist;
+     } 
+
+    /**
+     * DeleteWishlist: deletes a wishlist
+     * @param wishlistId the ID of the wishlist
+     * @param customer the customer to delete the wishlist for
+     * @throws IllegalArgumentException if customer ID is invalid
+     */
+    @Transactional
+    public void deleteWishlist(int wishlistId, Customer customer) {
+        Wishlist wishlist = wishlistRepo.findById(wishlistId).orElse(null);
+        if (wishlist.getCustomer().getUserID() != customer.getUserID()) {
+            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
+        }
+        wishlistRepo.delete(wishlist);
+    }
+    
+
+    /**
      * AddGameToWishlist: adds a game to a wishlist
      * @param wishlistId: the ID of the wishlist
      * @param gameId: the ID of the game to add
@@ -31,12 +67,11 @@ public class WishlistService {
      * @throws IllegalArgumentException if wishlist ID or game ID is invalid
      */
     @Transactional
-    public Wishlist addGameToWishlist(int wishlistId, int gameId) {
+    public Wishlist addGameToWishlist(int wishlistId, int gameId, Customer customer) {
         Wishlist wishlist = wishlistRepo.findById(wishlistId).orElse(null);
-        if (wishlist == null) {
-            throw new IllegalArgumentException("Wishlist with the specified ID does not exist.");
+        if (wishlist.getCustomer().getUserID() != customer.getUserID()) {
+            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
         }
-
         Game game = gameRepository.findById(String.valueOf(gameId)).orElse(null);
         if (game == null) {
             throw new IllegalArgumentException("Game with the specified ID does not exist.");
@@ -55,10 +90,10 @@ public class WishlistService {
      * @throws IllegalArgumentException if wishlist ID or game ID is invalid
      */
     @Transactional
-    public Wishlist removeGameFromWishlist(int wishlistId, int gameId) {
+    public Wishlist removeGameFromWishlist(int wishlistId, int gameId, Customer customer) {
         Wishlist wishlist = wishlistRepo.findById(wishlistId).orElse(null);
-        if (wishlist == null) {
-            throw new IllegalArgumentException("Wishlist with the specified ID does not exist.");
+        if (wishlist.getCustomer().getUserID() != customer.getUserID()) {
+            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
         }
 
         Game game = gameRepository.findById(String.valueOf(gameId)).orElse(null);
@@ -71,25 +106,17 @@ public class WishlistService {
         return wishlist;
     }
 
-    /**
-     * GetWishlistByUserId: retrieves a wishlist by its userId
-     * @param userId: the ID of the user
-     * @return the wishlist with the specified userId
-     * @throws IllegalArgumentException if wishlist userId is invalid
-     * not sure if it works
-     */
+
+    
+
+
     @Transactional
-    public Wishlist getWishlistByUserId(int userId) {
+    public List<Wishlist> getWishlistByUserId(int userId) {
         Customer customer = customerRepository.findById(userId).orElse(null);
         if (customer == null) {
             throw new IllegalArgumentException("Customer with the specified ID does not exist.");
         }
-
-        Wishlist wishlist = wishlistRepo.findByUserId(userId);
-        if (wishlist == null) {
-            throw new IllegalArgumentException("Wishlist for the specified customer does not exist.");
-        }
-
+        List<Wishlist> wishlist = wishlistRepo.findByUserID(userId);
         return wishlist;
     }
 

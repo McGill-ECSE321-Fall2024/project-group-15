@@ -18,39 +18,7 @@ public class Customer extends Person
   //Customer Attributes
   private String address;
   private String phoneNumber;
- //Customer Associations
-//  @OneToMany
-//  @JoinTable(
-//    name = "customer_paymentInfo", // Custom join table name
-//    joinColumns = @JoinColumn(name = "customerID"), // Join column in the Customer entity
-//    inverseJoinColumns = @JoinColumn(name = "paymentinfoID") // Join column in the Order entity
-//  )
-//  private List<PaymentInfo> paymentInfos;
-
-//  @OneToMany
-//  @JoinTable(
-//    name = "customer_review", // Custom join table name
-//    joinColumns = @JoinColumn(name = "customerID"), // Join column in the Customer entity
-//    inverseJoinColumns = @JoinColumn(name = "reviewID") // Join column in the Order entity
-//  )
-//  private List<Review> reviews;
-
-//  @ManyToMany
-//  @JoinTable(
-//    name = "customer_wishlist",
-//    joinColumns = @JoinColumn(name = "customerID"),
-//    inverseJoinColumns = @JoinColumn(name = "wishlistID")
-//  )
-//  private List<Wishlist> wishlists;
-
-//  @OneToMany
-//  @JoinTable(
-//    name = "customer_orders", // Custom join table name
-//    joinColumns = @JoinColumn(name = "customerID"), // Join column in the Customer entity
-//    inverseJoinColumns = @JoinColumn(name = "orderID") // Join column in the Order entity
-//  )
-//  private List<Order> orders;
-
+ 
  // Hibernate default constructor
  @SuppressWarnings("unused")
  private Customer() {
