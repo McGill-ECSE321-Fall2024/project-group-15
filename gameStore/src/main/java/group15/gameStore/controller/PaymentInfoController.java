@@ -20,6 +20,7 @@ import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.PaymentInfoService;
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.dto.PaymentInfoDto;
+import group15.gameStore.exception.GameStoreException;
 
 
 
@@ -47,7 +48,7 @@ public class PaymentInfoController {
             PaymentInfoDto responseDto = new PaymentInfoDto(createdPaymentInfo);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -70,7 +71,7 @@ public class PaymentInfoController {
 
             return new ResponseEntity<>(new PaymentInfoDto(updatedPaymentInfo), HttpStatus.OK);
 
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -88,7 +89,7 @@ public class PaymentInfoController {
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
             
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -106,7 +107,7 @@ public class PaymentInfoController {
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
             
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -145,11 +146,9 @@ public class PaymentInfoController {
             paymentInfoService.deletePaymentInfo(cardNumber, customer);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
         } 
-        catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
-        } 
-        catch (SecurityException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
+        catch (GameStoreException e) {
+            HttpStatus status = e.getStatus() == HttpStatus.FORBIDDEN ? HttpStatus.FORBIDDEN : HttpStatus.NOT_FOUND;
+            return new ResponseEntity<>(status);
         }
     }
     

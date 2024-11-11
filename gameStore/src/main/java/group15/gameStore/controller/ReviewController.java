@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.dto.ReviewDto;
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
@@ -47,7 +48,7 @@ public class ReviewController{
             ReviewDto responseDto = new ReviewDto(createdReview);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
         }
     }
@@ -69,7 +70,7 @@ public class ReviewController{
 
             return new ResponseEntity<>(new ReviewDto(updatedReview), HttpStatus.OK);  
 
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
         }
     }
@@ -87,7 +88,7 @@ public class ReviewController{
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK); 
             
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         }
     }
@@ -107,7 +108,7 @@ public class ReviewController{
 
             return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
             
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         }
     }
@@ -127,7 +128,7 @@ public class ReviewController{
 
             return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
             
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
         }
     }
@@ -166,11 +167,9 @@ public class ReviewController{
             reviewService.deleteReview(reviewId, customer);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
 
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
-
-        } catch (SecurityException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
+        } catch (GameStoreException e) {
+            HttpStatus status = e.getStatus() == HttpStatus.FORBIDDEN ? HttpStatus.FORBIDDEN : HttpStatus.NOT_FOUND;
+            return new ResponseEntity<>(status);
         }
     }
 }

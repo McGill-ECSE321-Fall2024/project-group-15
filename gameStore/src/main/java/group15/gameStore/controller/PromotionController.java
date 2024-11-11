@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import group15.gameStore.dto.GameDto;
+import group15.gameStore.dto.PromotionDto;
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 import group15.gameStore.service.GameService;
 import group15.gameStore.service.PromotionService;
-import group15.gameStore.dto.GameDto;
-import group15.gameStore.dto.PromotionDto;
 
 @RestController
 public class PromotionController{
@@ -47,7 +48,7 @@ public class PromotionController{
             PromotionDto responseDto = new PromotionDto(createdPromotion);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
         }
     }
@@ -70,7 +71,7 @@ public class PromotionController{
 
             return new ResponseEntity<>(new PromotionDto(updatedPromotion), HttpStatus.OK); 
 
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
         }
     }
@@ -88,7 +89,7 @@ public class PromotionController{
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);      
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         }
     }
@@ -106,7 +107,7 @@ public class PromotionController{
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK); 
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         }
     }
@@ -126,7 +127,7 @@ public class PromotionController{
 
             return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
             
-        } catch (IllegalArgumentException e) {
+        } catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         }
     }
@@ -165,11 +166,9 @@ public class PromotionController{
             promotionService.deletePromotion(promotionCode, game);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
         } 
-        catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        } 
-        catch (SecurityException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
+        catch (GameStoreException e) {
+            HttpStatus status = e.getStatus() == HttpStatus.FORBIDDEN ? HttpStatus.FORBIDDEN : HttpStatus.NOT_FOUND;
+            return new ResponseEntity<>(status);
         }
     }
 }

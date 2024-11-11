@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.model.Person;
 import group15.gameStore.dto.PersonDto;
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.service.PersonService;
 
 @RestController
@@ -38,7 +39,7 @@ public class PersonController {
             PersonDto responseDto = new PersonDto(createdPerson);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
         }
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
         }
     }
@@ -56,7 +57,7 @@ public class PersonController {
             Person updatedPerson = personService.updatePersonInfo(personId, person);
             return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -74,7 +75,7 @@ public class PersonController {
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK); 
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -92,7 +93,7 @@ public class PersonController {
             
             return new ResponseEntity<>(responseDto, HttpStatus.OK);    
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -132,7 +133,7 @@ public class PersonController {
             personService.deletePersonByUsername(username);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
         } 
-        catch (IllegalArgumentException e) {
+        catch (GameStoreException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
         }
     }
