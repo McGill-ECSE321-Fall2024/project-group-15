@@ -8,12 +8,13 @@ import group15.gameStore.model.Order;
 import group15.gameStore.model.Person;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Customer;
+import group15.gameStore.model.Employee;
 import group15.gameStore.model.Status;
 
 import group15.gameStore.repository.OrderRepository;
 import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.CustomerRepository;
-
+import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.exception.GameStoreException;
 
 import jakarta.transaction.Transactional;
@@ -26,10 +27,12 @@ import java.util.List;
 public class OrderService {
     @Autowired
     private OrderRepository orderRepo;
-    private GameRepository gameRepo;
+    @Autowired
     private CustomerRepository customerRepo;
+    @Autowired
+    private EmployeeRepository employeeRepo;
 
-    public Order findOrderByID(int orderID) {
+    public Order getOrderByID(int orderID) {
         Order order = orderRepo.findOrderByOrderID(orderID);
         if (order == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no order with ID %d", orderID));
@@ -37,7 +40,7 @@ public class OrderService {
         return order;
     }
 
-    public List<Order> findAllOrders(int orderID) {
+    public List<Order> getAllOrders(int orderID) {
         List<Order> orders = orderRepo.findAll();
         if (orders.isEmpty()) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "There are no order in the system");
@@ -50,15 +53,29 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(String orderNumber, Status orderStatus, double price, Customer customer) {
-        //Handle date
-        Date today = Date.valueOf(LocalDate.now());
+        //TODO Handle date
+        //Date today = Date.valueOf(LocalDate.now());
+        if (orderNumber.isBlank() || orderStatus == null || customer == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+        }
+        if (price < 0) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price of an order cannot be negative");
+        }
+        if (customerRepo.findByUserID(customer.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The customer '%s' does not exist", customer.getUsername()));
+        }
         Order order = new Order(orderNumber, orderStatus, price, customer);
         return orderRepo.save(order);
     }
     
     @Transactional
-    public void deleteOrder(Order orderToDelete) {
-        //Verify if it's an employee
+    public void deleteOrder(Order orderToDelete, Employee employee) {
+        if (orderToDelete == null || employee == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid order deletion request: missing attributes");
+        }
+        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
+        }
         Order order = orderRepo.findOrderByOrderID(orderToDelete.getOrderID());
         if (order == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The order to delete does not exist");
@@ -67,33 +84,21 @@ public class OrderService {
     }
 
     @Transactional
-    public Order updateOrderNumber(Order orderToUpdate, String newOrderNumber) {
-        Order order = orderRepo.findOrderByOrderID(orderToUpdate.getOrderID());
-        if (order == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the title since the game does not exist");
+    public Order updateOrder(int orderID, Order updatedOrder, Employee employee) {
+        if (updatedOrder == null || employee == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
-        order.setOrderNumber(newOrderNumber);
+        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
+        }
+        Order order = orderRepo.findOrderByOrderID(orderID);
+        if (order == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "Cannot update the order since they do not exist");
+        }
+        order.setOrderNumber(updatedOrder.getOrderNumber());
+        order.setOrderStatus(updatedOrder.getOrderStatus());
+        order.setPrice(updatedOrder.getPrice());
         return orderRepo.save(order);
     }
 
-    @Transactional
-    public Order updateOrderStatus(Order orderToUpdate, Status newOrderStatus) {
-        Order order = orderRepo.findOrderByOrderID(orderToUpdate.getOrderID());
-        if (order == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the status since the game does not exist");
-        }
-        order.setOrderStatus(newOrderStatus);
-        return orderRepo.save(order);
-    }
-
-    @Transactional
-    public Order updateOrderPrice(Order orderToUpdate, double newPrice) {
-        Order order = orderRepo.findOrderByOrderID(orderToUpdate.getOrderID());
-        if (order == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the price since the game does not exist");
-        }
-        order.setPrice(newPrice);
-        return orderRepo.save(order);
-    }
-    
 }

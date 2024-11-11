@@ -36,7 +36,7 @@ public class ReviewController{
     /**
      * CreateReview: creates a new review record
      * @param reviewDto the ReviewDto containing the review details
-     * @return the created review 
+     * @return the created review and the HTTP status "CREATED"
      */
     @PostMapping("/review")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
@@ -56,7 +56,7 @@ public class ReviewController{
      * UpdateReview: updates an existing review record
      * @param reviewId the ID of the review to update
      * @param reviewDto the ReviewDto containing updated review details
-     * @return the updated review information
+     * @return the updated review information and the HTTP status "OK"
      */
     @PutMapping("/review/{reviewId}")
     public ResponseEntity<ReviewDto> updateReview(@PathVariable("reviewId") int reviewId,
@@ -77,7 +77,7 @@ public class ReviewController{
     /**
      * GetReviewById: retrieves a review by ID
      * @param reviewId the ID of the review to retrieve
-     * @return desired review information
+     * @return desired review information and the HTTP status "OK"
      */
     @GetMapping("/review/{reviewId}")
     public ResponseEntity<ReviewDto> getReviewById(@PathVariable int reviewId) {
@@ -95,7 +95,7 @@ public class ReviewController{
     /**
      * GetReviewByRating: retrieves reviews by a specific rating
      * @param rating the rating of the reviews to retrieve
-     * @return desired review information
+     * @return desired review information and the HTTP status "OK"
      */
     @GetMapping("/review/rating/{rating}")
     public ResponseEntity<List<ReviewDto>> getReviewByRating(@PathVariable Rating rating) {
@@ -115,7 +115,7 @@ public class ReviewController{
     /**
      * GetReviewByGame: retrieves reviews for a specific game
      * @param gameId the ID of the game for which to retrieve reviews
-     * @return desired review information
+     * @return desired review information and the HTTP status "OK"
      */
     @GetMapping("/review/game/{gameId}")
     public ResponseEntity<List<ReviewDto>> getReviewByGame(@PathVariable Game game) {
@@ -134,7 +134,7 @@ public class ReviewController{
 
     /**
      * GetAllReviews: retrieves all reviews in the system
-     * @return desired review information
+     * @return desired review information and the HTTP status "OK"
      */
     @GetMapping("/reviews")
     public ResponseEntity<List<ReviewDto>> getAllReviews() {
@@ -155,7 +155,7 @@ public class ReviewController{
      * DeleteReview: deletes a review by review ID if the specified customer is the owner
      * @param reviewId the ID of the review to delete
      * @param customerDto the CustomerRequestDto containing the customer details for authorization
-     * @return HTTP status
+     * @return HTTP status "NO CONTENT"
      */
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable int reviewId,
