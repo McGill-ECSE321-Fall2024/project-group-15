@@ -35,7 +35,7 @@ public class PaymentInfoController {
      /**
      * CreatePaymentInfo: creates a new payment information record
      * @param paymentInfo the PaymentInfoDto containing the payment details
-     * @return the created payment information
+     * @return the created payment information and HTTP Status "CREATED"
      */
     @PostMapping("/paymentInfo")
     public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto) {
@@ -56,7 +56,7 @@ public class PaymentInfoController {
      * UpdatePaymentInfo: updates an existing payment information record
      * @param paymentInfoId the ID of the payment information to update
      * @param paymentInfoDto the PaymentInfoDto containing updated payment details
-     * @return the updated payment information
+     * @return the updated payment information and the HTTP status "OK"
      */
     @PutMapping("/paymentInfo/{paymentInfoId}")
     public ResponseEntity<PaymentInfoDto> updatePaymentInfo(@PathVariable("paymentInfoId") int paymentInfoId,
@@ -78,7 +78,7 @@ public class PaymentInfoController {
     /**
      * GetPaymentInfoById: retrieves payment information by ID
      * @param paymentInfoId the ID of the payment information to retrieve
-     * @return desired payment information
+     * @return desired payment information and the HTTP status "OK"
      */
     @GetMapping("/paymentInfo/{paymentInfoId}")
     public ResponseEntity<PaymentInfoDto> getPaymentInfoById(@PathVariable int paymentInfoId) {
@@ -96,7 +96,7 @@ public class PaymentInfoController {
     /**
      * GetPaymentInfoByCardNumber: retrieves payment information by card number
      * @param cardNumber the card number of the payment information to retrieve
-     * @return desired payment information
+     * @return desired payment information and the HTTP status "OK"
      */
     @GetMapping("/paymentInfo/card/{cardNumber}")
     public ResponseEntity<PaymentInfoDto> getPaymentInfoByCardNumber(@PathVariable String cardNumber) {
@@ -113,7 +113,7 @@ public class PaymentInfoController {
 
     /**
      * GetAllPaymentInfo: retrieves all payment information records in the system
-     * @return all payment information in the system
+     * @return all payment information in the system and the HTTP status "OK"
      */
     @GetMapping("/paymentInfo")
     public ResponseEntity<List<PaymentInfoDto>> getAllPaymentInfo() {
@@ -133,7 +133,7 @@ public class PaymentInfoController {
     /**
      * DeletePaymentInfo: deletes payment information by card number
      * @param cardNumber the card number of the payment information to delete
-     * @return HTTP status
+     * @return HTTP status "NO CONTENT"
      */
      @DeleteMapping("/paymentInfo/{cardNumber}")
     public ResponseEntity<Void> deletePaymentInfo(@PathVariable String cardNumber,

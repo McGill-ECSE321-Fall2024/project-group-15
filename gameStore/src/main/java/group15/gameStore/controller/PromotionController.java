@@ -35,7 +35,7 @@ public class PromotionController{
     /**
      * CreatePromotion: creates a new promotion record
      * @param promotionDto the PromotionDto containing the promotion details
-     * @return the created promotion
+     * @return the created promotion and the HTTP status "CREATED"
      */
     @PostMapping("/promotion")
     public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto) {
@@ -56,7 +56,7 @@ public class PromotionController{
      * UpdatePromotion: updates an existing promotion record
      * @param promotionId the ID of the promotion to update
      * @param promotionDto the PromotionDto containing updated promotion details
-     * @return the updated promotion information
+     * @return the updated promotion information and the HTTP status "OK"
      */
     @PutMapping("/promotion/{promotionId}")
     public ResponseEntity<PromotionDto> updatePromotion(@PathVariable("promotionId") int promotionId,
@@ -78,7 +78,7 @@ public class PromotionController{
     /**
      * GetPromotionById: retrieves a promotion by ID
      * @param promotionId the ID of the promotion to retrieve
-     * @return desired promotion information
+     * @return desired promotion information and the HTTP status "OK"
      */
     @GetMapping("/promotion/{promotionId}")
     public ResponseEntity<PromotionDto> getPromotionById(@PathVariable int promotionId) {
@@ -96,7 +96,7 @@ public class PromotionController{
     /**
      * GetByPromotionCode: retrieves a promotion by its promotion code
      * @param promotionCode the promotion code of the promotion to retrieve
-     * @return desired promotion information
+     * @return desired promotion information and the HTTP status "OK"
      */
     @GetMapping("/promotion/code/{promotionCode}")
     public ResponseEntity<PromotionDto> getByPromotionCode(@PathVariable String promotionCode) {
@@ -114,7 +114,7 @@ public class PromotionController{
     /**
      * GetByValidUntil: retrieves promotions valid until a specific date
      * @param validUntil the date until which promotions are valid
-     * @return desired promotion information
+     * @return desired promotion information and the HTTP status "OK"
      */
     @GetMapping("/promotion/validUntil/{validUntil}")
     public ResponseEntity<List<PromotionDto>> getByValidUntil(@PathVariable Date validUntil) {
@@ -133,7 +133,7 @@ public class PromotionController{
 
     /**
      * GetAllPromotion: retrieves all promotions in the system
-     * @return all promotion information in the system
+     * @return all promotion information in the system and the HTTP status "OK"
      */
     @GetMapping("/promotions")
     public ResponseEntity<List<PromotionDto>> getAllPromotion() {
@@ -154,7 +154,7 @@ public class PromotionController{
      * DeletePromotion: deletes a promotion by promotion code and game
      * @param promotionCode the promotion code of the promotion to delete
      * @param gameDto the GameRequestDto containing the game details for the promotion
-     * @return HTTP status
+     * @return HTTP status "NO CONTENT"
      */
     @DeleteMapping("/promotion/{promotionCode}")
     public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode,

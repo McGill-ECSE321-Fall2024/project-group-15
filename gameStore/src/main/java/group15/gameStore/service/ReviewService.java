@@ -155,7 +155,8 @@ public class ReviewService{
      * DeleteReview: deletes a review by review ID if the specified customer is the owner
      * @param reviewId the ID of the review to delete
      * @param customer the customer requesting the deletion
-     * @throws IllegalArgumentException if the review is not found or if the customer is unauthorized
+     * @throws IllegalArgumentException if the review is not found 
+     * @throws SecurityException if the customer if not authorized
      */
     @Transactional
     public void deleteReview(int reviewId, Customer customer) {
