@@ -19,7 +19,7 @@ import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 import group15.gameStore.service.GameService;
 import group15.gameStore.service.PromotionService;
-import group15.gameStore.dto.GameDto;
+import group15.gameStore.dto.GameRequestDto;
 import group15.gameStore.dto.PromotionDto;
 
 @RestController
@@ -158,7 +158,7 @@ public class PromotionController{
      */
     @DeleteMapping("/promotion/{promotionCode}")
     public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode,
-        @RequestBody GameDto gameDto) {
+        @RequestBody GameRequestDto gameDto) {
         try {
             Game game = gameService.getGameById(gameDto.getGameId());
 

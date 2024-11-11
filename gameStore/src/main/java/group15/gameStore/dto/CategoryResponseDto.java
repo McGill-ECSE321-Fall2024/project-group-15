@@ -1,4 +1,4 @@
-package group15.gameStore.ResponseDto;
+package group15.gameStore.dto;
 
 public class CategoryResponseDto {
 

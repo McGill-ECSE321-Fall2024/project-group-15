@@ -1,4 +1,4 @@
-package group15.gameStore.RequestDto;
+package group15.gameStore.dto;
 
 
 

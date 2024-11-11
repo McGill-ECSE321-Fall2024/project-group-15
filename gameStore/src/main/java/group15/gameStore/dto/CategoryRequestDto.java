@@ -1,5 +1,5 @@
 package group15.gameStore.dto;
 
-public class GameDto {
+public class CategoryRequestDto {
 
 }
