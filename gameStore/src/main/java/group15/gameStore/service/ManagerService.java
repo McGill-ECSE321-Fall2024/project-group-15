@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import group15.gameStore.model.Employee;
 import group15.gameStore.model.Manager;
-
+import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.ManagerRepository;
 
 import group15.gameStore.exception.GameStoreException;
@@ -19,8 +19,10 @@ import java.util.List;
 public class ManagerService {
     @Autowired
     private ManagerRepository managerRepo;
+    @Autowired
+    private EmployeeRepository employeeRepo;
 
-    public Manager findManagerByID(int managerID) {
+    public Manager getManagerByID(int managerID) {
         Manager manager = managerRepo.findManagerByUserID(managerID);
         if (manager == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no manager with ID %d", managerID));
@@ -28,7 +30,7 @@ public class ManagerService {
         return manager;
     }
 
-    public Manager findManagerByEmail(String email) {
+    public Manager getManagerByEmail(String email) {
         Manager manager = managerRepo.findManagerByEmail(email);
         if (manager == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no manager with email %s", email));
@@ -36,7 +38,7 @@ public class ManagerService {
         return manager;
     }
 
-    public List<Manager> findManagersByUsername(String username) {
+    public List<Manager> getManagersByUsername(String username) {
         List<Manager> managers = managerRepo.findManagersByUsername(username);
         if (managers.size() == 0) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no manager with username %s", username));
@@ -44,7 +46,7 @@ public class ManagerService {
         return managers;
     }
 
-    public List<Manager> findAllManagers() {
+    public List<Manager> getAllManagers() {
         List<Manager> managers = managerRepo.findAll();
         if (managers.isEmpty()) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "There are no managers in the system");
@@ -54,6 +56,12 @@ public class ManagerService {
 
     @Transactional
     public Manager createManager(String username, String password, String email, boolean isActive, Employee employee) {
+        if (username.isBlank() || password.isBlank() || email.isBlank() || employee == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+        }
+        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
+        }
         if (!employee.isIsManager()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can create a manager account");
         }
@@ -63,6 +71,12 @@ public class ManagerService {
 
     @Transactional
     public void deleteManager(Manager managerToDelete, Employee employee) {
+        if (managerToDelete == null || employee == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+        }
+        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
+        }
         if (!employee.isIsManager()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can delete a manager account");
         }
@@ -73,58 +87,25 @@ public class ManagerService {
     }
 
     @Transactional
-    public Manager updateManagerUsername(Manager managerToUpdate, String newUsername) {
-        Manager manager = managerRepo.findManagerByUserID(managerToUpdate.getUserID());
-        if (manager == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the username since the manager does not exist");
+    public Manager updateManager(int managerID, Manager updatedManager, Employee employee) {
+        if (updatedManager == null || employee == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
-        manager.setUsername(newUsername);
-        return managerRepo.save(manager);
-    }
-    
-    @Transactional
-    public Manager updateManagerPassword(Manager managerToUpdate, String newPassword) {
-        Manager manager = managerRepo.findManagerByUserID(managerToUpdate.getUserID());
-        if (manager == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the password since the manager does not exist");
+        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
         }
-        manager.setPassword(newPassword);
-        return managerRepo.save(manager);
-    }
-
-    @Transactional
-    public Manager updateManagerEmail(Manager managerToUpdate, String newEmail) {
-        Manager manager = managerRepo.findManagerByUserID(managerToUpdate.getUserID());
-        if (manager == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the email since the manager does not exist");
-        }
-        manager.setEmail(newEmail);
-        return managerRepo.save(manager);
-    }
-
-    @Transactional
-    public Manager updateManagerIsActive(Manager managerToUpdate, boolean newIsActive, Employee employee) {
-        if (!employee.getIsManager()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can update the activity of an account");
-        }
-        Manager manager = managerRepo.findManagerByUserID(managerToUpdate.getUserID());
-        if (manager == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the activity since the manager does not exist");
-        }
-        manager.setIsActive(newIsActive);
-        return managerRepo.save(manager);
-    }
-
-    @Transactional
-    public Manager updateManagerIsManager(Manager managerToUpdate, boolean newIsManager, Employee employee) {
         if (!employee.getIsManager()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can update the type of account");
         }
-        Manager manager = managerRepo.findManagerByUserID(managerToUpdate.getUserID());
+        Manager manager = managerRepo.findManagerByUserID(managerID);
         if (manager == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Cannot update the type of account since the manager does not exist");
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "Cannot update the manager since they do not exist");
         }
-        manager.setIsManager(newIsManager);
+        manager.setUsername(updatedManager.getUsername());
+        manager.setPassword(manager.getPassword());
+        manager.setEmail(updatedManager.getEmail());
+        manager.setIsActive(updatedManager.getIsActive());
+        manager.setIsManager(updatedManager.getIsManager());
         return managerRepo.save(manager);
     }
 
