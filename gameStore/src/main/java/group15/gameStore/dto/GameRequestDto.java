@@ -2,6 +2,8 @@ package group15.gameStore.dto;
 
 import java.sql.Date;
 
+import group15.gameStore.model.Employee;
+import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
 
 import jakarta.validation.constraints.NotBlank;
@@ -24,8 +26,10 @@ public class GameRequestDto {
     private boolean isApproved;
     @NotNull(message = "Game manager is required")
     private Manager manager;
+    private Employee employee;
+    private Game game;
 
-    public GameRequestDto(String title, String description, double price, int stock, String image, Date archivedDate, boolean isApproved, Manager manager) {
+    public GameRequestDto(String title, String description, double price, int stock, String image, Date archivedDate, boolean isApproved, Manager manager, Employee employee) {
         this.title = title;
         this.description = description;
         this.price = price;
@@ -34,6 +38,8 @@ public class GameRequestDto {
         this.archivedDate = archivedDate;
         this.isApproved = isApproved;
         this.manager = manager;
+        this.employee = employee;
+        this.game = new Game(title, description, price, stock, image, isApproved, manager);
     }
 
     public String getTitle() {
@@ -98,5 +104,21 @@ public class GameRequestDto {
 
     public void setManager(Manager manager) {
         this.manager = manager;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

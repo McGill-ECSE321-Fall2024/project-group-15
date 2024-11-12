@@ -40,7 +40,15 @@ public class OrderService {
         return order;
     }
 
-    public List<Order> getAllOrders(int orderID) {
+    public Order getOrderByOrderNumber(String orderNumber) {
+        Order order = orderRepo.findOrderByOrderNumber(orderNumber);
+        if (order == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no order with number %s", orderNumber));
+        }
+        return order;
+    }
+
+    public List<Order> getAllOrders() {
         List<Order> orders = orderRepo.findAll();
         if (orders.isEmpty()) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "There are no order in the system");

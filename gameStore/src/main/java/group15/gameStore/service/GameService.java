@@ -87,9 +87,9 @@ public class GameService {
         if (gameToDelete == null || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
-        /*if (!employee.isIsManager() && !gameToDelete.isIsApproved()) {
+        if (!employee.isIsManager() && !gameToDelete.isIsApproved()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "The deletion of the game has not been approved by the manager");
-        }*/
+        }
         //Search game
         if (employeeRepo.findByUserID(employee.getUserID()) == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
