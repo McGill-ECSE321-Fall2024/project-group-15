@@ -92,7 +92,7 @@ public class GameDto {
         this.archivedDate = archivedDate;
     }
 
-    public boolean isApproved() {
+    public boolean getIsApproved() {
         return isApproved;
     }
 
