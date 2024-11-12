@@ -160,19 +160,4 @@ public class PaymentInfoService {
         paymentInfoRepo.deleteByCardNumber(cardNumber);
     }
 
-    public PaymentInfo save(PaymentInfo paymentInfo) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
-
-    public PaymentInfo findById(int cvv) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
-    }
-
-    public void delete(int cvv) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'delete'");
-    }
-
 }
