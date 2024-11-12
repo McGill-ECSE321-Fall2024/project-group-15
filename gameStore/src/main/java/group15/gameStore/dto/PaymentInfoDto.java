@@ -17,7 +17,7 @@ public class PaymentInfoDto{
     private CustomerDto customer;
 
     @SuppressWarnings("unused")
-    private PaymentInfoDto(){
+    public PaymentInfoDto(){
     }
     
     public PaymentInfoDto(PaymentInfo paymentInfoDto){

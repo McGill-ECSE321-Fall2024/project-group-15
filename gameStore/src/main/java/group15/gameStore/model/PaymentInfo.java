@@ -36,7 +36,7 @@ public class PaymentInfo
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private PaymentInfo() {
+public PaymentInfo() {
   }
 
   //------------------------

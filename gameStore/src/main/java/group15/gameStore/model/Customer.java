@@ -21,7 +21,7 @@ public class Customer extends Person
  
  // Hibernate default constructor
  @SuppressWarnings("unused")
- private Customer() {
+public Customer() {
  }
 
   //------------------------
