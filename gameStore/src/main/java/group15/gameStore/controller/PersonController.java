@@ -54,7 +54,7 @@ public class PersonController {
         try{
             Person person = personService.getPersonById(personId);
 
-            Person updatedPerson = personService.updatePersonInfo(personId, person);
+            Person updatedPerson = personService.updatePerson(personId, person);
             return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
         } 
         catch (GameStoreException e) {

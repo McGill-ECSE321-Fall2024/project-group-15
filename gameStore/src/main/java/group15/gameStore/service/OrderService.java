@@ -1,27 +1,20 @@
 package group15.gameStore.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import group15.gameStore.model.Order;
-import group15.gameStore.model.Person;
-import group15.gameStore.model.Game;
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Employee;
+import group15.gameStore.model.Order;
 import group15.gameStore.model.Status;
-
-import group15.gameStore.repository.OrderRepository;
-import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.CustomerRepository;
 import group15.gameStore.repository.EmployeeRepository;
-import group15.gameStore.exception.GameStoreException;
-
+import group15.gameStore.repository.OrderRepository;
 import jakarta.transaction.Transactional;
-
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class OrderService {

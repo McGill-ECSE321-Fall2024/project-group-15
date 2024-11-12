@@ -11,8 +11,8 @@ public class ReviewDto {
     private Rating rating;
     private String description;
 
-    private Game game;
-    private Customer customer;
+    private GameDto game;
+    private CustomerDto customer;
 
     @SuppressWarnings("unused" )
     private ReviewDto(){
@@ -22,15 +22,15 @@ public class ReviewDto {
         this.reviewID = reviewDto.getReviewID();
         this.rating = reviewDto.getRating();
         this.description = reviewDto.getDescription();
-        this.game = reviewDto.getGame();
-        this.customer = reviewDto.getCustomer();
+        this.game = new GameDto(reviewDto.getGame());
+        this.customer = new CustomerDto(reviewDto.getCustomer());
     }
 
     public ReviewDto(Rating aRating, String aDescription, Game aGame, Customer aCustomer){
         this.rating = aRating;
         this.description = aDescription;
-        this.game = aGame;
-        this.customer = aCustomer;
+        this.game = new GameDto(aGame);
+        this.customer = new CustomerDto(aCustomer);
     }
 
     //Generated Getters and Setters
@@ -58,19 +58,19 @@ public class ReviewDto {
         this.description = description;
     }
 
-    public Game getGame() {
+    public GameDto getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(GameDto game) {
         this.game = game;
     }
 
-    public Customer getCustomer() {
+    public CustomerDto getCustomer() {
         return customer;
     }
 
-    public void setCustomer(Customer customer) {
+    public void setCustomer(CustomerDto customer) {
         this.customer = customer;
     }
 }

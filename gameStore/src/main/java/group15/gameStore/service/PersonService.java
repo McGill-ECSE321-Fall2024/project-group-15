@@ -50,7 +50,7 @@ public class PersonService {
      * @throws GameStoreException if update request is invalid
      */
     @Transactional
-    public Person updatePersonInfo(int personId, Person updatedPersonInfo) {
+    public Person updatePerson(int personId, Person updatedPersonInfo) {
         Person existingPerson = personRepo.findByUserID(personId);
         if (existingPerson == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "User with the specified ID does not exist.");
