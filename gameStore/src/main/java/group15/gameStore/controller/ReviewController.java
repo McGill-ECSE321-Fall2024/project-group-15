@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.dto.CustomerDto;
+import group15.gameStore.dto.GameDto;
 import group15.gameStore.dto.ReviewDto;
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
@@ -22,6 +23,7 @@ import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
 import group15.gameStore.model.Review;
 import group15.gameStore.service.CustomerService;
+import group15.gameStore.service.GameService;
 import group15.gameStore.service.ReviewService;
 
 @RestController
@@ -30,6 +32,9 @@ public class ReviewController{
     @Autowired
     private ReviewService reviewService;
 
+    @Autowired
+    private GameService gameService;
+    
     @Autowired
     private CustomerService customerService;
 
@@ -40,10 +45,13 @@ public class ReviewController{
      * @return the created review and the HTTP status "CREATED"
      */
     @PostMapping("/review")
-    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto,@RequestBody GameDto gameDto,
+        @RequestBody CustomerDto customerDto) {
         try {
+            Game game = gameService.getGameByID(gameDto.getGameID());
+            Customer customer = customerService.findCustomerByID(customerDto.getUserID());
             Review createdReview = reviewService.createReview(reviewDto.getRating(),
-                reviewDto.getDescription(),reviewDto.getGame(),reviewDto.getCustomer());
+                reviewDto.getDescription(),game,customer);
 
             ReviewDto responseDto = new ReviewDto(createdReview);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
@@ -60,13 +68,14 @@ public class ReviewController{
      * @return the updated review information and the HTTP status "OK"
      */
     @PutMapping("/review/{reviewId}")
-    public ResponseEntity<ReviewDto> updateReview(@PathVariable("reviewId") int reviewId,
-        @RequestBody ReviewDto reviewDto) {
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable int reviewId,@RequestBody ReviewDto reviewDto,
+        @RequestBody CustomerDto customerDto) {
         try {
+            Customer customer = customerService.findCustomerByID(customerDto.getUserID());
             Review existingReview = reviewService.getReviewById(reviewId);
 
             Review updatedReview = reviewService.updateReview(reviewId,existingReview,
-                reviewDto.getCustomer());
+               customer);
 
             return new ResponseEntity<>(new ReviewDto(updatedReview), HttpStatus.OK);  
 
@@ -162,7 +171,7 @@ public class ReviewController{
     public ResponseEntity<Void> deleteReview(@PathVariable int reviewId,
         @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.getCustomerById(customerDto.getCustomerId());
+            Customer customer = customerService.findCustomerByID(customerDto.getUserID());
 
             reviewService.deleteReview(reviewId, customer);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 

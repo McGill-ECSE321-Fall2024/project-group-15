@@ -39,11 +39,12 @@ public class PromotionController{
      * @return the created promotion and the HTTP status "CREATED"
      */
     @PostMapping("/promotion")
-    public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto) {
+    public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto, @RequestBody GameDto gameDto) {
         try {
+            Game game = gameService.getGameByID(gameDto.getGameID());
             Promotion createdPromotion = promotionService.createPromotion(
                 promotionDto.getPromotionCode(),promotionDto.getDiscountPercentage(),
-                promotionDto.getValidUntil(),promotionDto.getGame());
+                promotionDto.getValidUntil(),game);
 
             PromotionDto responseDto = new PromotionDto(createdPromotion);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
@@ -60,14 +61,15 @@ public class PromotionController{
      * @return the updated promotion information and the HTTP status "OK"
      */
     @PutMapping("/promotion/{promotionId}")
-    public ResponseEntity<PromotionDto> updatePromotion(@PathVariable("promotionId") int promotionId,
-        @RequestBody PromotionDto promotionDto) {
+    public ResponseEntity<PromotionDto> updatePromotion(@PathVariable int promotionId,@RequestBody PromotionDto promotionDto,
+        @RequestBody GameDto gameDto) {
 
         try {
+            Game game = gameService.getGameByID(gameDto.getGameID());
             Promotion existingPromotion = promotionService.getPromotionById(promotionId);
 
             Promotion updatedPromotion = promotionService.updatePromotion(
-                promotionId,existingPromotion,promotionDto.getGame());
+                promotionId,existingPromotion,game);
 
             return new ResponseEntity<>(new PromotionDto(updatedPromotion), HttpStatus.OK); 
 
@@ -161,7 +163,7 @@ public class PromotionController{
     public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode,
         @RequestBody GameDto gameDto) {
         try {
-            Game game = gameService.getGameById(gameDto.getGameId());
+            Game game = gameService.getGameByID(gameDto.getGameID());
 
             promotionService.deletePromotion(promotionCode, game);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 

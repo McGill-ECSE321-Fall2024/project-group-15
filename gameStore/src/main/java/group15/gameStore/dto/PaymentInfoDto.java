@@ -6,6 +6,7 @@ import group15.gameStore.model.Customer;
 import group15.gameStore.model.PaymentInfo;
 
 public class PaymentInfoDto{
+    
     //Payment Info attributes
     private int paymentInfoID;
     private String cardNumber;
@@ -13,18 +14,19 @@ public class PaymentInfoDto{
     private int cvv;
     private String billingAddress; 
 
-    private Customer customer;
+    private CustomerDto customer;
 
     @SuppressWarnings("unused")
     private PaymentInfoDto(){
     }
+    
     public PaymentInfoDto(PaymentInfo paymentInfoDto){
         this.paymentInfoID = paymentInfoDto.getPaymentInfoID();
         this.cardNumber = paymentInfoDto.getCardNumber();
         this.expiryDate = paymentInfoDto.getExpiryDate();
         this.cvv = paymentInfoDto.getCvv();
         this.billingAddress = paymentInfoDto.getBillingAddress();
-        this.customer = paymentInfoDto.getCustomer();
+        this.customer = new CustomerDto(paymentInfoDto.getCustomer());
     }
 
     public PaymentInfoDto(String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer){
@@ -32,7 +34,7 @@ public class PaymentInfoDto{
         this.expiryDate = aExpiryDate;
         this.cvv = aCvv;
         this.billingAddress = aBillingAddress;
-        this.customer = aCustomer;
+        this.customer = new CustomerDto(aCustomer);
     }
     
     //Generated Getters and Setters
@@ -66,10 +68,10 @@ public class PaymentInfoDto{
     public void setBillingAddress(String billingAddress) {
         this.billingAddress = billingAddress;
     }
-    public Customer getCustomer() {
+    public CustomerDto getCustomer() {
         return customer;
     }
-    public void setCustomer(Customer customer) {
+    public void setCustomer(CustomerDto customer) {
         this.customer = customer;
     }
     

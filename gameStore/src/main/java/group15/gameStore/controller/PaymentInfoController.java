@@ -36,14 +36,16 @@ public class PaymentInfoController {
      /**
      * CreatePaymentInfo: creates a new payment information record
      * @param paymentInfo the PaymentInfoDto containing the payment details
+     * @param customerDto the customer for whom the payment info is created
      * @return the created payment information and HTTP Status "CREATED"
      */
     @PostMapping("/paymentInfo")
-    public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto) {
+    public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto,@RequestBody CustomerDto customerDto) {
         try {
+            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
             PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(
                 paymentInfoDto.getCardNumber(),paymentInfoDto.getExpiryDate(),paymentInfoDto.getCvv(),
-                paymentInfoDto.getBillingAddress(),paymentInfoDto.getCustomer());
+                paymentInfoDto.getBillingAddress(),customer);
             
             PaymentInfoDto responseDto = new PaymentInfoDto(createdPaymentInfo);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
@@ -60,14 +62,15 @@ public class PaymentInfoController {
      * @return the updated payment information and the HTTP status "OK"
      */
     @PutMapping("/paymentInfo/{paymentInfoId}")
-    public ResponseEntity<PaymentInfoDto> updatePaymentInfo(@PathVariable("paymentInfoId") int paymentInfoId,
-            @RequestBody PaymentInfoDto paymentInfoDto) {
+    public ResponseEntity<PaymentInfoDto> updatePaymentInfo(@PathVariable int paymentInfoId,
+            @RequestBody PaymentInfoDto paymentInfoDto, @RequestBody CustomerDto customerDto) {
 
         try {
+            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
             PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
             
             PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(
-                    paymentInfoId,paymentInfo,paymentInfoDto.getCustomer());
+                    paymentInfoId,paymentInfo,customer);
 
             return new ResponseEntity<>(new PaymentInfoDto(updatedPaymentInfo), HttpStatus.OK);
 
@@ -141,7 +144,7 @@ public class PaymentInfoController {
             @RequestBody CustomerDto customerDto) {
         try {
             // Retrieve the Customer from the database 
-            Customer customer = customerService.getCustomerByEmail(customerDto.getEmail());  
+            Customer customer = customerService.findCustomerByEmail(customerDto.getEmail());  
 
             paymentInfoService.deletePaymentInfo(cardNumber, customer);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 

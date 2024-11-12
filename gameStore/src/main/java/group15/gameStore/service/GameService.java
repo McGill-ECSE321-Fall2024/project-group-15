@@ -61,8 +61,6 @@ public class GameService {
 
     @Transactional
     public Game createGame(String title, String description, double price, int stock, String image, boolean isApproved, Manager manager, Employee employee) {
-        //TODO Handle date
-        //Date today = Date.valueOf(LocalDate.now());
         if (title.isBlank() || description.isBlank() || image.isBlank() || manager == null || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }

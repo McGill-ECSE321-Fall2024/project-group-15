@@ -2,18 +2,14 @@ package group15.gameStore.dto;
 
 import group15.gameStore.model.Customer;
 
-public class CustomerDto {
-    private int userId;
-    private String username;
-    private String password;
-    private String email;
+public class CustomerDto extends PersonDto {
+
     private String address;
     private String phoneNumber;
 
     // Constructor
-
     public CustomerDto(Customer customer) {
-        this.userId = customer.getUserID();
+        this.userID = customer.getUserID();
         this.username = customer.getUsername();
         this.password = customer.getPassword();
         this.email = customer.getEmail();
@@ -21,13 +17,21 @@ public class CustomerDto {
         this.phoneNumber = customer.getPhoneNumber();
     }
 
+    public CustomerDto(String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber){
+        super(aUsername, aPassword, aEmail);
+        address = aAddress;
+        phoneNumber = aPhoneNumber;
+    }
+
+
+
     // Getters and Setters
     public int getUserId() {
-        return userId;
+        return userID;
     }
 
     public void setUserId(int userId) {
-        this.userId = userId;
+        this.userID = userId;
     }
 
     
