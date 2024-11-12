@@ -45,7 +45,7 @@ public class CategoryController{
     public ResponseEntity<CategoryDto> updateCategory(@PathVariable int categoryId,
             @RequestBody CategoryDto categoryDto) {
 
-            Category existingCategory = categoryService.getCategoryById(categoryId);
+            Category existingCategory = categoryService.getCategoryById(categoryDto.getCategoryID());
             Category updatedCategory = categoryService.updateCategory(categoryId, existingCategory);
             return new ResponseEntity<>(new CategoryDto(updatedCategory), HttpStatus.OK);
 

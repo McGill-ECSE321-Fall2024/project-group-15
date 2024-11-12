@@ -51,7 +51,7 @@ public class EmployeeController{
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable int employeeId, 
             @RequestBody EmployeeDto employeeDto) {
         
-        Employee existingEmployee = employeeService.getEmployeeById(employeeId);
+        Employee existingEmployee = employeeService.getEmployeeById(employeeDto.getUserID());
         Employee updatedEmployee = employeeService.updateEmployee(employeeId, existingEmployee);
         
         return new ResponseEntity<>(new EmployeeDto(updatedEmployee), HttpStatus.OK);

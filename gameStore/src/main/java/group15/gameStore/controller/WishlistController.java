@@ -40,7 +40,7 @@ public class WishlistController {
     @PutMapping("/wishlist/create{userId}/{wishlistName}")
     public WishlistDto createWishlist(@PathVariable int userId, @PathVariable String wishlistName, @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             Wishlist wishlist = wishlistService.createWishlist(userId, wishlistName, customer);
             return new WishlistDto(wishlist);
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class WishlistController {
     @DeleteMapping("/wishlist/delete/{wishlistId}")
     public void deleteWishlist(@PathVariable int wishlistId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             wishlistService.deleteWishlist(wishlistId, customer);
         } catch (Exception e) {
             throw new IllegalArgumentException("Customer with the specified ID does not exist.");
@@ -73,7 +73,7 @@ public class WishlistController {
     @PutMapping("/wishlist/addgame/{wishlistId}/{gameId}")
     public WishlistDto addGameToWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             Wishlist wishlist = wishlistService.addGameToWishlist(wishlistId, gameId, customer);
             return new WishlistDto(wishlist);
         } catch (Exception e) {
@@ -91,7 +91,7 @@ public class WishlistController {
     @DeleteMapping("/wishlist/removegame/{wishlistId}/{gameId}")
     public WishlistDto removeGameFromWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             Wishlist wishlist = wishlistService.removeGameFromWishlist(wishlistId, gameId, customer);
             return new WishlistDto(wishlist);
         } catch (Exception e) {

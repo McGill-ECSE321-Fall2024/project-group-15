@@ -23,17 +23,17 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
     
-    //findCustomerById
+    //getCustomerByID
     @GetMapping("/customer/{cid}")
-    public CustomerDto findCustomerById(@PathVariable int cid) {
-        CustomerDto customerDto = new CustomerDto(customerService.findCustomerByID(cid));
+    public CustomerDto getCustomerByID(@PathVariable int cid) {
+        CustomerDto customerDto = new CustomerDto(customerService.getCustomerByID(cid));
         return customerDto;
     }
 
-    //findCustomerByEmail
+    //getCustomerByEmail
     @GetMapping("/customer/{email}")
-    public CustomerDto findCustomerByEmail(@PathVariable String email) {
-        CustomerDto customerDto = new CustomerDto(customerService.findCustomerByEmail(email));
+    public CustomerDto getCustomerByEmail(@PathVariable String email) {
+        CustomerDto customerDto = new CustomerDto(customerService.getCustomerByEmail(email));
         return customerDto;
     }
 
@@ -58,7 +58,7 @@ public class CustomerController {
     //deleteCustomer
     @PostMapping("/customer/delete")
     public ResponseEntity<Response> deleteCustomer(@RequestBody CustomerDto customerDto) {
-        Customer customer = customerService.findCustomerByID(customerDto.getUserId());
+        Customer customer = customerService.getCustomerByID(customerDto.getUserId());
         customerService.deleteCustomer(customer);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -67,7 +67,7 @@ public class CustomerController {
     @PostMapping("/customer/update/username/{userId}")
     public ResponseEntity<CustomerDto> updateCustomerUsername(@PathVariable int userId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer updatedCustomer = customerService.updateCustomerUsername(customerService.findCustomerByID(userId), customerDto.getUsername());
+            Customer updatedCustomer = customerService.updateCustomerUsername(customerService.getCustomerByID(userId), customerDto.getUsername());
             CustomerDto responseDto = new CustomerDto(updatedCustomer);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -79,7 +79,7 @@ public class CustomerController {
     @PostMapping("/customer/update/password/{userId}")
     public ResponseEntity<CustomerDto> updateCustomerPassword(@PathVariable int userId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer updatedCustomer = customerService.updateCustomerPassword(customerService.findCustomerByID(userId), customerDto.getPassword());
+            Customer updatedCustomer = customerService.updateCustomerPassword(customerService.getCustomerByID(userId), customerDto.getPassword());
             CustomerDto responseDto = new CustomerDto(updatedCustomer);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -91,7 +91,7 @@ public class CustomerController {
     @PostMapping("/customer/update/email/{userId}")
     public ResponseEntity<CustomerDto> updateCustomerEmail(@PathVariable int userId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer updatedCustomer = customerService.updateCustomerEmail(customerService.findCustomerByID(userId), customerDto.getEmail());
+            Customer updatedCustomer = customerService.updateCustomerEmail(customerService.getCustomerByID(userId), customerDto.getEmail());
             CustomerDto responseDto = new CustomerDto(updatedCustomer);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -103,7 +103,7 @@ public class CustomerController {
     @PostMapping("/customer/update/address/{userId}")
     public ResponseEntity<CustomerDto> updateCustomerAddress(@PathVariable int userId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer updatedCustomer = customerService.updateCustomerAddress(customerService.findCustomerByID(userId), customerDto.getAddress());
+            Customer updatedCustomer = customerService.updateCustomerAddress(customerService.getCustomerByID(userId), customerDto.getAddress());
             CustomerDto responseDto = new CustomerDto(updatedCustomer);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -115,7 +115,7 @@ public class CustomerController {
     @PostMapping("/customer/update/phoneNumber/{userId}")
     public ResponseEntity<CustomerDto> updateCustomerPhoneNumber(@PathVariable int userId, @RequestBody CustomerDto customerDto) {
         try {
-            Customer updatedCustomer = customerService.updateCustomerPhoneNumber(customerService.findCustomerByID(userId), customerDto.getPhoneNumber());
+            Customer updatedCustomer = customerService.updateCustomerPhoneNumber(customerService.getCustomerByID(userId), customerDto.getPhoneNumber());
             CustomerDto responseDto = new CustomerDto(updatedCustomer);
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {

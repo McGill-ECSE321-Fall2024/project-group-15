@@ -49,7 +49,7 @@ public class ReviewController{
         @RequestBody CustomerDto customerDto) {
         try {
             Game game = gameService.getGameByID(gameDto.getGameID());
-            Customer customer = customerService.findCustomerByID(customerDto.getUserID());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserID());
             Review createdReview = reviewService.createReview(reviewDto.getRating(),
                 reviewDto.getDescription(),game,customer);
 
@@ -71,8 +71,8 @@ public class ReviewController{
     public ResponseEntity<ReviewDto> updateReview(@PathVariable int reviewId,@RequestBody ReviewDto reviewDto,
         @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserID());
-            Review existingReview = reviewService.getReviewById(reviewId);
+            Customer customer = customerService.getCustomerByID(customerDto.getUserID());
+            Review existingReview = reviewService.getReviewById(reviewDto.getReviewID());
 
             Review updatedReview = reviewService.updateReview(reviewId,existingReview,
                customer);
@@ -171,7 +171,7 @@ public class ReviewController{
     public ResponseEntity<Void> deleteReview(@PathVariable int reviewId,
         @RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserID());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserID());
 
             reviewService.deleteReview(reviewId, customer);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 

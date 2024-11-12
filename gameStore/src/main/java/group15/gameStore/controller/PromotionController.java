@@ -66,7 +66,7 @@ public class PromotionController{
 
         try {
             Game game = gameService.getGameByID(gameDto.getGameID());
-            Promotion existingPromotion = promotionService.getPromotionById(promotionId);
+            Promotion existingPromotion = promotionService.getPromotionById(promotionDto.getPromotionID());
 
             Promotion updatedPromotion = promotionService.updatePromotion(
                 promotionId,existingPromotion,game);

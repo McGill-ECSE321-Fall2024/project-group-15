@@ -21,7 +21,7 @@ public class CustomerService {
      * @param customerID
      * @return the customer with the given ID
      */
-    public Customer findCustomerByID(int customerID) {
+    public Customer getCustomerByID(int customerID) {
         Customer customer = customerRepository.findById(customerID).orElse(null);
         if (customer == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no customer with ID %d", customerID));
@@ -34,7 +34,7 @@ public class CustomerService {
      * @param email
      * @return the customer with the given email
      */
-    public Customer findCustomerByEmail(String email) {
+    public Customer getCustomerByEmail(String email) {
         Customer customer = customerRepository.findByEmail(email);
         if (customer == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no customer with email %s", email));

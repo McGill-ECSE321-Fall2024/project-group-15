@@ -42,7 +42,7 @@ public class PaymentInfoController {
     @PostMapping("/paymentInfo")
     public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto,@RequestBody CustomerDto customerDto) {
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
+            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(
                 paymentInfoDto.getCardNumber(),paymentInfoDto.getExpiryDate(),paymentInfoDto.getCvv(),
                 paymentInfoDto.getBillingAddress(),customer);
@@ -66,8 +66,8 @@ public class PaymentInfoController {
             @RequestBody PaymentInfoDto paymentInfoDto, @RequestBody CustomerDto customerDto) {
 
         try {
-            Customer customer = customerService.findCustomerByID(customerDto.getUserId());
-            PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
+            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+            PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoDto.getPaymentInfoID());
             
             PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(
                     paymentInfoId,paymentInfo,customer);
@@ -144,7 +144,7 @@ public class PaymentInfoController {
             @RequestBody CustomerDto customerDto) {
         try {
             // Retrieve the Customer from the database 
-            Customer customer = customerService.findCustomerByEmail(customerDto.getEmail());  
+            Customer customer = customerService.getCustomerByID(customerDto.getUserID());  
 
             paymentInfoService.deletePaymentInfo(cardNumber, customer);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); 

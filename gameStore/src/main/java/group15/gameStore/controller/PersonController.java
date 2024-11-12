@@ -47,12 +47,13 @@ public class PersonController {
     /**
      * UpdatePerson: updates an existing user record
      * @param personId the ID of the person to update
+     * @param personDto the PersonDto containing the updated person details
      * @return the updated user information and the HTTP status "OK"
      */
     @PutMapping("/person/{personId}")
-    public ResponseEntity<PersonDto> updatePerson(@PathVariable("personId") int personId) {
+    public ResponseEntity<PersonDto> updatePerson(@PathVariable int personId,@RequestBody PersonDto personDto) {
         try{
-            Person person = personService.getPersonById(personId);
+            Person person = personService.getPersonById(personDto.getUserID());
 
             Person updatedPerson = personService.updatePerson(personId, person);
             return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
