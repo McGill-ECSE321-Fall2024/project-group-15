@@ -14,6 +14,7 @@ public class PersonDto{
     public PersonDto(){
     } 
 
+//Constructor
  public PersonDto(Person personDto){
     this.userID = personDto.getUserID();
     this.username = personDto.getUsername();

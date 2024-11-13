@@ -97,7 +97,7 @@ public class EmployeeService {
         return employee;
     }
 
-     /**
+    /**
      * GetEmployeeByEmail: retrieves an employee by their email
      * @param email the email of the employee
      * @return the Employee with the specified email

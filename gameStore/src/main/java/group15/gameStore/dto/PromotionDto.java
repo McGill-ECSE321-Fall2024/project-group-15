@@ -17,7 +17,8 @@ public class PromotionDto {
     @SuppressWarnings("unused")
     private PromotionDto(){
     }
-
+    
+    //Constructor
     public PromotionDto(Promotion promotionDto){
         this.promotionID = promotionDto.getPromotionID();
         this.promotionCode = promotionDto.getPromotionCode();

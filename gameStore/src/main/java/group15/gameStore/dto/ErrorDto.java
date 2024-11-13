@@ -5,7 +5,7 @@ import java.util.List;
 public class ErrorDto {
     private List<String> errors;
 
-    // Jackson needs a no-args constructor, but it doesn't need to be public
+    //Needs a no-args constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
     private ErrorDto() {
     }
