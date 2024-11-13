@@ -38,6 +38,11 @@ This first deliverable focuses on gathering and defining requirements, developin
 [Use Case Diagram 1](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Accounts-Use-Case-Diagram)<br/>
 [Use Case Diagram 2](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Purchasing-Menu-Use-Case-Diagram)<br/>
 
+**Effort Distribution**
+| Jordan | Ben | Jason | Jacob | Yvehenry |
+| ------ | --- | ----- | ----- | -------- |
+|   20%  | 20% |  20%  |  20%  |    20%   |  
+
 ## Deliverable 2:
 The second deliverable focuses on implementing backend services using RESTful HTTP methods, modeling system behavior, establishing testing practices, and ensuring that the project setup follows agile practices.<br/> 
 [Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
