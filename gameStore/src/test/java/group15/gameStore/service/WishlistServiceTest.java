@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
+import group15.gameStore.model.Game;
 import group15.gameStore.model.Wishlist;
 import group15.gameStore.repository.WishlistRepository;
 

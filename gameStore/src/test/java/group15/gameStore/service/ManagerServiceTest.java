@@ -1,5 +1,5 @@
-package group15.gameStore.integration;
+package group15.gameStore.service;
 
-public class ManagerServiceIntegrationTest {
+public class ManagerServiceTest {
 
 }
