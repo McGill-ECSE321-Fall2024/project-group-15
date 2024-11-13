@@ -45,7 +45,6 @@ The second deliverable focuses on implementing backend services using RESTful HT
 
 **Other Important Documents:**<br/>
 [Backend Services]()<b/r>
-
 [Software Quality Assurance]()<b/r>
 ...<b/r>
 
