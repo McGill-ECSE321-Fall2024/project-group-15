@@ -8,16 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.repository.CustomerRepository;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
     @Mock
     private CustomerRepository customerRepository;
@@ -51,9 +52,8 @@ public class CustomerServiceTest {
         List<Customer> allCustomers = customerService.findAllCustomers();
 
         assertEquals(2, allCustomers.size());
-        Iterable<Customer> iterable = allCustomers;
-        assertEquals(c1, iterable.iterator().next());
-        assertEquals(c2, iterable.iterator().next());
+        assertEquals(c1, allCustomers.get(0));
+        assertEquals(c2, allCustomers.get(1));
     }
 
     // Test get all customers when none exist
