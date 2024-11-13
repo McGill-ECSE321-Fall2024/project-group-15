@@ -49,9 +49,9 @@ The second deliverable focuses on implementing backend services using RESTful HT
 [Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
 
 **Other Important Documents:**<br/>
-[Backend Services](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Backend-Services)<b/r>
-
-[Software Quality Assurance]()<b/r>
+[Backend Services](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Backend-Services)<br/>
+[Software Quality Assurance]()<br/>
+...
 
 **Effort Distribution**
 | Jordan | Ben | Jason | Jacob | Yvehenry |
