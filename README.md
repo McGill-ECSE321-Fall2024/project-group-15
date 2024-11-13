@@ -21,8 +21,8 @@ We are developping a website for an online game store. The platform will enable 
 
 **Project Specification:**
 
-| Team Member's Name | Team Member's Role | Sprint Hours Deliv. 1  | Sprint Hours Deliv. 2 |
-| ------------------ | ------------------ | ---------------------- | --------------------- |
+| Team Member's Name | Team Member's Role | Sprint Hours Deliv. 1  | 
+| ------------------ | ------------------ | ---------------------- | 
 | Jordan             | Product Owners     |           19           |              
 | Ben                | Developers         |           18           |
 | Jason              | Product Owners     |           20           |
@@ -45,5 +45,11 @@ The second deliverable focuses on implementing backend services using RESTful HT
 
 **Other Important Documents:**<br/>
 ...
+
+**Effort Distribution**
+| Jordan | Ben | Jason | Jacob | Yvehenry |
+| ------ | --- | ----- | ----- | -------- |
+|  ...   | ... |  ...  |  ...  |    ...   |  
+
 
 
