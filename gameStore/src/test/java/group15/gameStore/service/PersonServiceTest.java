@@ -73,7 +73,7 @@ class PersonServiceTest {
         when(personRepo.save(existingPerson)).thenReturn(existingPerson);
 
         // Act
-        Person result = personService.updatePersonInfo(personId, updatedPerson);
+        Person result = personService.updatePerson(personId, updatedPerson);
 
         // Assert
         assertEquals("newUser", result.getUsername());
