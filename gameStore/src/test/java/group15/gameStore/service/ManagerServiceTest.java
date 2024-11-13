@@ -14,9 +14,14 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
@@ -25,6 +30,9 @@ import group15.gameStore.model.Manager;
 import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.ManagerRepository;
 
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class ManagerServiceTest {
     @Mock
     private ManagerRepository mockManagerRepo;

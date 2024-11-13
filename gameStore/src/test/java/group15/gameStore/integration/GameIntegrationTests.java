@@ -2,6 +2,8 @@ package group15.gameStore.integration;
 
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
@@ -35,13 +35,15 @@ import org.springframework.http.ResponseEntity;
 import group15.gameStore.dto.EmployeeDto;
 import group15.gameStore.dto.GameDto;
 import group15.gameStore.dto.ManagerDto;
-import group15.gameStore.dto.PersonDto;
 import group15.gameStore.exception.GameStoreException;
+import group15.gameStore.model.Employee;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
+import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.ManagerRepository;
 
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -52,6 +54,8 @@ public class GameIntegrationTests {
 	private GameRepository gameRepo;
     @Autowired
 	private ManagerRepository managerRepo;
+    @Autowired
+    private EmployeeRepository employeeRepo;
 
     private static final String VALID_TITLE = "game1";
     private static final String VALID_DESC = "description";
@@ -60,20 +64,25 @@ public class GameIntegrationTests {
     private static final String VALID_IMAGE = "imagelink";
     private static final boolean VALID_ISAPPROVED = true;
     private static final Manager VALID_MANAGER = new Manager("SmithManager", "Smith123", "smith@mail.com", true, true);
+    
     private int gameID;
     private String gameTitle;
     private double gamePrice;
     private Manager manager;
+    private Employee employee;
 
     private Game game = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER);
 
     @BeforeAll
     public void setDatabase() {
 		manager = managerRepo.save(VALID_MANAGER);
+        employee = employeeRepo.save(VALID_MANAGER);
 	}
     @AfterAll
 	public void clearDatabase() {
 		gameRepo.deleteAll();
+        managerRepo.deleteAll();
+        employeeRepo.deleteAll();
 	}
 
 	@Test
@@ -114,7 +123,7 @@ public class GameIntegrationTests {
     @Test
 	@Order(3)
     public void testGetValidGameByTitle() {
-        ResponseEntity<GameDto> response = client.getForEntity(String.format("/game/title/%d", gameTitle), GameDto.class);
+        ResponseEntity<GameDto> response = client.getForEntity(String.format("/game/title/%s", gameTitle), GameDto.class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -230,7 +239,7 @@ public class GameIntegrationTests {
         client.delete(String.format("/game/%d", gameID), requestEntity);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-		() -> client.getForEntity(String.format("/game/title/%d", gameTitle), GameDto.class));
+		() -> client.getForEntity(String.format("/game/title/%s", gameTitle), GameDto.class));
 
     }
 
