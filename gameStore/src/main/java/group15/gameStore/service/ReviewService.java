@@ -154,7 +154,7 @@ public class ReviewService{
     public List<Review> getAllReviews() {
         List<Review> reviews = reviewRepo.findAll();
         if (reviews.isEmpty()) {
-            throw new IllegalArgumentException("No reviews found in the system.");
+            throw new GameStoreException(HttpStatus.NOT_FOUND,"No reviews found in the system.");
         }
         return reviews;
     }

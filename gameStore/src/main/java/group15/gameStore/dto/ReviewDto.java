@@ -18,6 +18,7 @@ public class ReviewDto {
     private ReviewDto(){
     }
 
+    //Constructor
     public ReviewDto(Review reviewDto){
         this.reviewID = reviewDto.getReviewID();
         this.rating = reviewDto.getRating();

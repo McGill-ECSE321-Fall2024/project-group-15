@@ -8,18 +8,23 @@ import group15.gameStore.model.Wishlist;
 
 
 public class WishlistDto {
+    
+    //Wishlist attributes
     private int wishListId;
     private String wishListName;
+    
     private List<GameDto> games;
     private CustomerDto customer;
 
+    //Constructor
     public WishlistDto(Wishlist wishlist) {
         this.wishListId = wishlist.getWishListId();
         this.wishListName = wishlist.getWishListName();
         this.games = wishlist.getGames().stream().map(game -> new GameDto(game)).collect(Collectors.toList());
         this.customer = new CustomerDto(wishlist.getCustomer());
     }
-    //getters and setters
+    
+    //Getters and Setters
     public int getWishListId() {
         return wishListId;
     }

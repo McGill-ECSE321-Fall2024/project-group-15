@@ -20,7 +20,6 @@ import group15.gameStore.service.CustomerService;
 import group15.gameStore.service.PaymentInfoService;
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.dto.PaymentInfoDto;
-import group15.gameStore.exception.GameStoreException;
 
 
 
@@ -41,7 +40,6 @@ public class PaymentInfoController {
      */
     @PostMapping("/paymentInfo")
     public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto,@RequestBody CustomerDto customerDto) {
-        try {
             Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(
                 paymentInfoDto.getCardNumber(),paymentInfoDto.getExpiryDate(),paymentInfoDto.getCvv(),
@@ -49,10 +47,6 @@ public class PaymentInfoController {
             
             PaymentInfoDto responseDto = new PaymentInfoDto(createdPaymentInfo);
             return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
 
      /**
@@ -64,19 +58,10 @@ public class PaymentInfoController {
     @PutMapping("/paymentInfo/{paymentInfoId}")
     public ResponseEntity<PaymentInfoDto> updatePaymentInfo(@PathVariable int paymentInfoId,
             @RequestBody PaymentInfoDto paymentInfoDto, @RequestBody CustomerDto customerDto) {
-
-        try {
             Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoDto.getPaymentInfoID());
-            
-            PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(
-                    paymentInfoId,paymentInfo,customer);
-
+            PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(paymentInfoId,paymentInfo,customer);
             return new ResponseEntity<>(new PaymentInfoDto(updatedPaymentInfo), HttpStatus.OK);
-
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
 
     /**
@@ -86,15 +71,8 @@ public class PaymentInfoController {
      */
     @GetMapping("/paymentInfo/{paymentInfoId}")
     public ResponseEntity<PaymentInfoDto> getPaymentInfoById(@PathVariable int paymentInfoId) {
-        try {
-            PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
-            PaymentInfoDto responseDto = new PaymentInfoDto(paymentInfo);
-            
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
-            
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
+        return new ResponseEntity<>(new PaymentInfoDto(paymentInfo), HttpStatus.OK);
     }
 
     /**
@@ -104,15 +82,8 @@ public class PaymentInfoController {
      */
     @GetMapping("/paymentInfo/card/{cardNumber}")
     public ResponseEntity<PaymentInfoDto> getPaymentInfoByCardNumber(@PathVariable String cardNumber) {
-        try {
-            PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoByCardNumber(cardNumber);
-            PaymentInfoDto responseDto = new PaymentInfoDto(paymentInfo);
-            
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);
-            
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoByCardNumber(cardNumber);
+        return new ResponseEntity<>(new PaymentInfoDto(paymentInfo), HttpStatus.OK);
     }
 
     /**
@@ -140,19 +111,10 @@ public class PaymentInfoController {
      * @return HTTP status "NO CONTENT"
      */
      @DeleteMapping("/paymentInfo/{cardNumber}")
-    public ResponseEntity<Void> deletePaymentInfo(@PathVariable String cardNumber,
-            @RequestBody CustomerDto customerDto) {
-        try {
-            // Retrieve the Customer from the database 
-            Customer customer = customerService.getCustomerByID(customerDto.getUserID());  
-
-            paymentInfoService.deletePaymentInfo(cardNumber, customer);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-        } 
-        catch (GameStoreException e) {
-            HttpStatus status = e.getStatus() == HttpStatus.FORBIDDEN ? HttpStatus.FORBIDDEN : HttpStatus.NOT_FOUND;
-            return new ResponseEntity<>(status);
-        }
+     public ResponseEntity<Void> deletePaymentInfo(@PathVariable String cardNumber,@RequestBody CustomerDto customerDto) {
+        Customer customer = customerService.getCustomerByID(customerDto.getUserId());  
+        paymentInfoService.deletePaymentInfo(cardNumber, customer);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
     }
     
 
