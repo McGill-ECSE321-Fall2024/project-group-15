@@ -43,7 +43,7 @@ The second deliverable focuses on implementing backend services using RESTful HT
 [Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
 [Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
 
-**Other Important Documents:** <br/>
+**Other Important Documents:**<br/>
 [Backend Services]()<b/r>
 [Software Quality Assurance]()<b/r>
 ...
