@@ -32,7 +32,7 @@ public class EmployeeController{
     @PostMapping("/employee")
     public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto employeeDto) {
         Employee createdEmployee = employeeService.createEmployee(employeeDto.getUsername(), 
-                employeeDto.getPassword(),employeeDto.getEmail(),employeeDto.isActive,employeeDto.isManager);
+                employeeDto.getPassword(),employeeDto.getEmail(), employeeDto.isActive,employeeDto.isManager);
         return new ResponseEntity<>(new EmployeeDto(createdEmployee), HttpStatus.CREATED);
     }
 

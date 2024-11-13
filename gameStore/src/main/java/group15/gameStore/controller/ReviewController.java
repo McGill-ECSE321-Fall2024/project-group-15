@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.dto.GameDto;
 import group15.gameStore.dto.ReviewDto;
-import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
@@ -47,18 +46,12 @@ public class ReviewController{
     @PostMapping("/review")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto,@RequestBody GameDto gameDto,
         @RequestBody CustomerDto customerDto) {
-        try {
-            Game game = gameService.getGameByID(gameDto.getGameID());
-            Customer customer = customerService.getCustomerByID(customerDto.getUserID());
-            Review createdReview = reviewService.createReview(reviewDto.getRating(),
-                reviewDto.getDescription(),game,customer);
-
-            ReviewDto responseDto = new ReviewDto(createdReview);
-            return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
-        }
+        Game game = gameService.getGameByID(gameDto.getGameID());
+        Customer customer = customerService.getCustomerByID(customerDto.getUserID());
+        Review createdReview = reviewService.createReview(reviewDto.getRating(),
+            reviewDto.getDescription(),game,customer);
+        ReviewDto responseDto = new ReviewDto(createdReview);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
     }
 
     /**
@@ -70,18 +63,10 @@ public class ReviewController{
     @PutMapping("/review/{reviewId}")
     public ResponseEntity<ReviewDto> updateReview(@PathVariable int reviewId,@RequestBody ReviewDto reviewDto,
         @RequestBody CustomerDto customerDto) {
-        try {
-            Customer customer = customerService.getCustomerByID(customerDto.getUserID());
-            Review existingReview = reviewService.getReviewById(reviewDto.getReviewID());
-
-            Review updatedReview = reviewService.updateReview(reviewId,existingReview,
-               customer);
-
-            return new ResponseEntity<>(new ReviewDto(updatedReview), HttpStatus.OK);  
-
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
-        }
+        Customer customer = customerService.getCustomerByID(customerDto.getUserID());
+        Review existingReview = reviewService.getReviewById(reviewDto.getReviewID());
+        Review updatedReview = reviewService.updateReview(reviewId,existingReview,customer);
+        return new ResponseEntity<>(new ReviewDto(updatedReview), HttpStatus.OK);  
     }
 
     /**
@@ -91,15 +76,9 @@ public class ReviewController{
      */
     @GetMapping("/review/{reviewId}")
     public ResponseEntity<ReviewDto> getReviewById(@PathVariable int reviewId) {
-        try {
-            Review review = reviewService.getReviewById(reviewId);
-            ReviewDto responseDto = new ReviewDto(review);
-            
-            return new ResponseEntity<>(responseDto, HttpStatus.OK); 
-            
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        }
+        Review review = reviewService.getReviewById(reviewId);
+        ReviewDto responseDto = new ReviewDto(review);    
+        return new ResponseEntity<>(responseDto, HttpStatus.OK); 
     }
 
     /**
@@ -109,17 +88,9 @@ public class ReviewController{
      */
     @GetMapping("/review/rating/{rating}")
     public ResponseEntity<List<ReviewDto>> getReviewByRating(@PathVariable Rating rating) {
-        try {
-            List<Review> reviews = reviewService.getReviewByRating(rating);
-            List<ReviewDto> responseDtoList = reviews.stream()
-                    .map(ReviewDto::new)
-                    .collect(Collectors.toList());
-
-            return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
-            
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        }
+        List<Review> reviews = reviewService.getReviewByRating(rating);
+        List<ReviewDto> responseDtoList = reviews.stream().map(ReviewDto::new).collect(Collectors.toList());
+        return new ResponseEntity<>(responseDtoList, HttpStatus.OK);     
     }
 
     /**
@@ -129,17 +100,9 @@ public class ReviewController{
      */
     @GetMapping("/review/game/{gameId}")
     public ResponseEntity<List<ReviewDto>> getReviewByGame(@PathVariable Game game) {
-        try {
-            List<Review> reviews = reviewService.getReviewByGame(game);
-            List<ReviewDto> responseDtoList = reviews.stream()
-                    .map(ReviewDto::new)
-                    .collect(Collectors.toList());
-
-            return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
-            
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); 
-        }
+        List<Review> reviews = reviewService.getReviewByGame(game);
+        List<ReviewDto> responseDtoList = reviews.stream().map(ReviewDto::new).collect(Collectors.toList());
+        return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
     }
 
     /**
@@ -170,15 +133,8 @@ public class ReviewController{
     @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable int reviewId,
         @RequestBody CustomerDto customerDto) {
-        try {
-            Customer customer = customerService.getCustomerByID(customerDto.getUserID());
-
-            reviewService.deleteReview(reviewId, customer);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-
-        } catch (GameStoreException e) {
-            HttpStatus status = e.getStatus() == HttpStatus.FORBIDDEN ? HttpStatus.FORBIDDEN : HttpStatus.NOT_FOUND;
-            return new ResponseEntity<>(status);
-        }
+        Customer customer = customerService.getCustomerByID(customerDto.getUserID());
+        reviewService.deleteReview(reviewId, customer);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
     }
 }
