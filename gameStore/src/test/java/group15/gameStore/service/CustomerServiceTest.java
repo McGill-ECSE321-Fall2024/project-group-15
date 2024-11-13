@@ -2,7 +2,6 @@ package group15.gameStore.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -72,6 +71,8 @@ public class CustomerServiceTest {
     @Test
     public void testGetCustomerByID_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -89,6 +90,8 @@ public class CustomerServiceTest {
     @Test
     public void testGetCustomerByID_InvalidId() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -109,6 +112,8 @@ public class CustomerServiceTest {
     @Test
     public void testGetCustomerByEmail_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -126,6 +131,8 @@ public class CustomerServiceTest {
     @Test
     public void testGetCustomerByEmail_InvalidEmail() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -146,6 +153,8 @@ public class CustomerServiceTest {
     @Test
     public void testUpdateCustomerUsername_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -163,6 +172,8 @@ public class CustomerServiceTest {
     @Test
     public void testUpdateCustomerPassword_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -180,6 +191,8 @@ public class CustomerServiceTest {
     @Test
     public void testUpdateCustomerEmail_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -197,6 +210,8 @@ public class CustomerServiceTest {
     @Test
     public void testUpdateCustomerAddress_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
@@ -215,6 +230,8 @@ public class CustomerServiceTest {
     @Test
     public void testUpdateCustomerPhoneNumber_Success() {
         // Arrange
+        String name = "Dana White";
+        String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
