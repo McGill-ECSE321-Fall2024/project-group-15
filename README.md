@@ -21,13 +21,13 @@ We are developping a website for an online game store. The platform will enable 
 
 **Project Specification:**
 
-| Team Member's Name | Team Member's Role | Sprint Hours Deliv. 1  | 
-| ------------------ | ------------------ | ---------------------- | 
-| Jordan             | Product Owners     |           19           |              
-| Ben                | Developers         |           18           |
-| Jason              | Product Owners     |           20           |
-| Jacob              | Scrum Master       |           18           |
-| Yvehenry           | Developers         |           18           |
+| Team Member's Name | Team Member's Role |  
+| ------------------ | ------------------ | 
+| Jordan             | Product Owners     |      
+| Ben                | Developers         | 
+| Jason              | Product Owners     |  
+| Jacob              | Scrum Master       | 
+| Yvehenry           | Developers         |    
  
 ## Deliverable 1:
 This first deliverable focuses on gathering and defining requirements, developing a domain model, designing a persistence layer, and ensuring that the project setup follows agile practices.<br/> 
@@ -43,7 +43,9 @@ The second deliverable focuses on implementing backend services using RESTful HT
 [Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
 [Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
 
-**Other Important Documents:**<br/>
+**Other Important Documents:** <br/>
+[Backend Services]()<b/r>
+[Software Quality Assurance]()<b/r>
 ...
 
 **Effort Distribution**
