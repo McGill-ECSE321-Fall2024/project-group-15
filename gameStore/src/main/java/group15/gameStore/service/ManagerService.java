@@ -57,7 +57,7 @@ public class ManagerService {
     @Transactional
     public Manager createManager(String username, String password, String email, boolean isActive, Employee employee) {
         if (username.isBlank() || password.isBlank() || email.isBlank() || employee == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
         }
         if (employeeRepo.findByUserID(employee.getUserID()) == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
@@ -72,7 +72,7 @@ public class ManagerService {
     @Transactional
     public void deleteManager(Manager managerToDelete, Employee employee) {
         if (managerToDelete == null || employee == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
         }
         if (employeeRepo.findByUserID(employee.getUserID()) == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
@@ -88,8 +88,8 @@ public class ManagerService {
 
     @Transactional
     public Manager updateManager(int managerID, Manager updatedManager, Employee employee) {
-        if (updatedManager == null || employee == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+        if (updatedManager == null || updatedManager.getUsername().isBlank() || updatedManager.getPassword().isBlank() || updatedManager.getEmail().isBlank() || employee == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
         }
         if (employeeRepo.findByUserID(employee.getUserID()) == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
