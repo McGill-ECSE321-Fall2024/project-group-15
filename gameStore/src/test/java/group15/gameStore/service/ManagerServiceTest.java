@@ -140,9 +140,9 @@ public class ManagerServiceTest {
         Manager managerToDelete = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
         managerToDelete.setUserID(0);
 
-        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(managerToDelete);
-
         managerService.deleteManager(managerToDelete, manager);
+
+        when(mockManagerRepo.findAll()).thenReturn(new ArrayList<>());
 
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> managerService.getAllManagers());
@@ -158,14 +158,13 @@ public class ManagerServiceTest {
         when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
         Manager managerToDelete = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
-        managerToDelete.setUserID(0);
-
-        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(null);
+        managerToDelete.setUserID(1);
+        when(mockManagerRepo.findManagerByUserID(1)).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> managerService.deleteManager(managerToDelete, manager));
-		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
-		assertEquals("The manager to delete does not exist", e.getMessage());
+		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+		assertEquals("There is no manager with ID 1", e.getMessage());
     }
 
     @Test
