@@ -82,8 +82,8 @@ public class OrderController{
      * @return a list of all order information and the HTTP status "OK"
      */
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderDto>> getAllOrders(@PathVariable int orderId) {
-        List<Order> orders = orderService.getAllOrders(orderId);
+    public ResponseEntity<List<OrderDto>> getAllOrders() {
+        List<Order> orders = orderService.getAllOrders();
         List<OrderDto> responseDtoList = orders.stream().map(OrderDto::new).collect(Collectors.toList());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import java.util.Optional;
 import group15.gameStore.model.Promotion;
 import group15.gameStore.model.Game;
 import group15.gameStore.repository.PromotionRepository;
@@ -42,7 +41,7 @@ public class PromotionServiceTest {
         Promotion mockPromotion = new Promotion("PROMO2024", 20.0, validUntil, game);
         
         // Mock game repository behavior
-        when(gameRepository.findById(1)).thenReturn(Optional.of(game));
+        when(gameRepository.findGameByGameID(1)).thenReturn(game);
 
         // Mock promotion repository behavior
         when(promotionRepository.save(any(Promotion.class))).thenReturn(mockPromotion);
@@ -68,7 +67,7 @@ public class PromotionServiceTest {
         mockPromotion.setPromotionID(promotionId);
 
         // Mock behavior for finding promotion by ID
-        when(promotionRepository.findById(promotionId)).thenReturn(Optional.of(mockPromotion));
+        when(promotionRepository.findById(promotionId)).thenReturn(mockPromotion);
 
         // Act
         Promotion retrievedPromotion = promotionService.getPromotionById(promotionId);
@@ -85,7 +84,7 @@ public class PromotionServiceTest {
         int promotionId = 1;
 
         // Mock behavior for finding promotion by ID
-        when(promotionRepository.findById(promotionId)).thenReturn(Optional.empty());
+        when(promotionRepository.findById(promotionId)).thenReturn(null);
 
         // Act
         Promotion retrievedPromotion = promotionService.getPromotionById(promotionId);
@@ -104,7 +103,7 @@ public class PromotionServiceTest {
         Promotion mockPromotion = new Promotion(promotionCode, 20.0, Date.valueOf("2024-12-31"), game);
 
         // Mock behavior to find promotion
-        when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(Optional.of(mockPromotion));
+        when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(mockPromotion);
 
         // Act
         promotionService.deletePromotion(promotionCode, game);
@@ -120,7 +119,7 @@ public class PromotionServiceTest {
         Game game = new Game();
 
         // Mock behavior for non-existing promotion
-        when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(Optional.empty());
+        when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(null);
 
         // Act
         promotionService.deletePromotion(promotionCode, game);

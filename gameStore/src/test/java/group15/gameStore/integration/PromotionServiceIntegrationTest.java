@@ -95,7 +95,7 @@ public class PromotionServiceIntegrationTest {
                 .andExpect(status().isNoContent());
 
         // Verify the promotion was actually deleted
-        assertTrue(promotionRepository.findById(promotion.getPromotionID()).isEmpty());
+        assertNull(promotionRepository.findById(promotion.getPromotionID()));
     }
 
     @Test

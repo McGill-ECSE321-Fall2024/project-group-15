@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,94 +33,79 @@ public class WishlistController {
 
 
     /**
-     * Create a wishlist
+     * CreateWishlist: creates a new wishlist for a customer
      * @param userId the ID of the user
      * @param wishlistName the name of the wishlist
-     * @param customerDto the customer to create the wishlist for
-     * @return the created wishlist
+     * @param customerDto the CustomerDto containing the customer details
+     * @return the created wishlist and HTTP Status "CREATED"
      */
-    @PutMapping("/wishlist/create{userId}/{wishlistName}")
-    public WishlistDto createWishlist(@PathVariable int userId, @PathVariable String wishlistName, @RequestBody CustomerDto customerDto) {
-        try {
-            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
-            Wishlist wishlist = wishlistService.createWishlist(userId, wishlistName, customer);
-            return new WishlistDto(wishlist);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
-        }
+    @PutMapping("/wishlist/create/{userId}/{wishlistName}")
+    public ResponseEntity<WishlistDto> createWishlist(@PathVariable int userId, @PathVariable String wishlistName,@RequestBody CustomerDto customerDto) {
+        Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+        Wishlist createdWishlist = wishlistService.createWishlist(userId, wishlistName, customer);
+        return new ResponseEntity<>(new WishlistDto(createdWishlist), HttpStatus.CREATED);
     }
 
     /**
-     * Delete a wishlist
-     * @param wishlistId the ID of the wishlist
-     * @param customerDto the customer to delete the wishlist for
+     * DeleteWishlist: deletes a wishlist for a specified customer
+     * @param wishlistId the ID of the wishlist to delete
+     * @param customerDto the CustomerDto containing the customer's details
+     * @return HTTP status "NO CONTENT" if the deletion is successful
      */
     @DeleteMapping("/wishlist/delete/{wishlistId}")
-    public void deleteWishlist(@PathVariable int wishlistId, @RequestBody CustomerDto customerDto) {
-        try {
-            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
-            wishlistService.deleteWishlist(wishlistId, customer);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
-        }
+    public ResponseEntity<Void> deleteWishlist(@PathVariable int wishlistId, @RequestBody CustomerDto customerDto) {
+        Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+        wishlistService.deleteWishlist(wishlistId, customer);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
-     * Add a game to a wishlist
+     * addGameToWishlist: add a game to a wishlist
      * @param wishlistId the ID of the wishlist
      * @param gameId the ID of the game
-     * @param customerDto the customer to add the game to the wishlist for
-     * @return the updated wishlist
+     * @param customerDto the customer details for whom the game is added to the wishlist
+     * @return the updated wishlist in WishlistDto format and HTTP Status "OK"
      */
     @PutMapping("/wishlist/addgame/{wishlistId}/{gameId}")
-    public WishlistDto addGameToWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
-        try {
-            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
-            Wishlist wishlist = wishlistService.addGameToWishlist(wishlistId, gameId, customer);
-            return new WishlistDto(wishlist);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
-        }
+    public ResponseEntity<WishlistDto> addGameToWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
+        Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+        Wishlist wishlist = wishlistService.addGameToWishlist(wishlistId, gameId, customer);
+        return new ResponseEntity<>(new WishlistDto(wishlist), HttpStatus.OK);
     }
 
     /**
-     * Remove a game from a wishlist
+     * removeGameFromWishlist: remove a game from a wishlist
      * @param wishlistId the ID of the wishlist
      * @param gameId the ID of the game
-     * @param customerDto the customer to remove the game from the wishlist for
-     * @return the updated wishlist
+     * @param customerDto the customer details to validate ownership of the wishlist
+     * @return the updated wishlist in WishlistDto format and HTTP Status "OK"
      */
     @DeleteMapping("/wishlist/removegame/{wishlistId}/{gameId}")
-    public WishlistDto removeGameFromWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
-        try {
-            Customer customer = customerService.getCustomerByID(customerDto.getUserId());
-            Wishlist wishlist = wishlistService.removeGameFromWishlist(wishlistId, gameId, customer);
-            return new WishlistDto(wishlist);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Customer with the specified ID does not exist.");
-        }
+    public ResponseEntity<WishlistDto> removeGameFromWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
+        Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+        Wishlist wishlist = wishlistService.removeGameFromWishlist(wishlistId, gameId, customer);
+        return new ResponseEntity<>(new WishlistDto(wishlist), HttpStatus.OK);
     }
 
     /**
      * Get a wishlist by its ID
      * @param wishlistId the ID of the wishlist
-     * @return the wishlist with the given ID
+     * @return the wishlist with the given ID in WishlistDto format
      */
-    @GetMapping("/wishlist/{wishlistId}")
-    public WishlistDto getWishlistByWishlistId(@PathVariable int wishlistId) {
+    @GetMapping("/wishlist/byId/{wishlistId}")
+    public ResponseEntity<WishlistDto> getWishlistByWishlistId(@PathVariable int wishlistId) {
         WishlistDto wishlistDto = new WishlistDto(wishlistService.getWishlistByWishlistId(wishlistId));
-        return wishlistDto;
+        return new ResponseEntity<>(wishlistDto, HttpStatus.OK);
     }
 
     /**
-     * Get a wishlist by the user's ID
+     * Get all wishlists by the user's ID
      * @param userId the ID of the user
-     * @return the wishlist with the given user ID
+     * @return a list of wishlists associated with the given user ID in WishlistDto format
      */
-    @GetMapping("/wishlist/{userId}")
-    public List<WishlistDto> getWishlistByUserId(@PathVariable int userId) {
-        List<WishlistDto> wishlistDtos = wishlistService.getWishlistByUserId(userId).stream().map(wishlist -> new WishlistDto(wishlist)).collect(Collectors.toList());
-        return wishlistDtos;
+    @GetMapping("/wishlist/byUser/{userId}")
+    public ResponseEntity<List<WishlistDto>> getWishlistByUserId(@PathVariable int userId) {
+        List<WishlistDto> wishlistDtos = wishlistService.getWishlistByUserId(userId).stream().map(WishlistDto::new).collect(Collectors.toList());
+        return new ResponseEntity<>(wishlistDtos, HttpStatus.OK);
     }
-
 }
