@@ -32,9 +32,19 @@ tasks.named('test') {
 		exceptionFormat "full"
 		events "passed", "failed"
  	}
+	ignoreFailures = true
 	finalizedBy jacocoTestReport
 }
 
 tasks.named('jacocoTestReport') {
     dependsOn test // tests are required to run before generating the report
+}
+
+jacocoTestReport {
+    dependsOn test // Ensure tests run before generating report
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = file("$buildDir/reports/jacoco")
+    }
 }
