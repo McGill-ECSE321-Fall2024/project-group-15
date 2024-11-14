@@ -1,6 +1,7 @@
 package group15.gameStore.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -142,5 +143,103 @@ class PersonServiceTest {
         );
         assertEquals("No user records found in the system.", exception.getMessage());
     }
+
+    @Test
+    void testUpdatePersonInfo_NonExistentPerson() {
+        // Arrange
+        int personId = 99;
+        Person updatedPerson = new Person("newUser", "newPassword123", "new@example.com");
+
+        when(personRepo.findByUserID(personId)).thenReturn(null);
+
+        // Act & Assert
+        Exception exception = assertThrows(GameStoreException.class, () -> 
+            personService.updatePerson(personId, updatedPerson)
+        );
+        assertEquals("User with the specified ID does not exist.", exception.getMessage());
+        verify(personRepo, never()).save(any(Person.class));
+    }
+
+    @Test
+    void testGetPersonById_NonExistentPerson() {
+        // Arrange
+        int personId = 100;
+
+        when(personRepo.findByUserID(personId)).thenReturn(null);
+
+        // Act & Assert
+        Exception exception = assertThrows(GameStoreException.class, () -> 
+            personService.getPersonById(personId)
+        );
+        assertEquals("User not found.", exception.getMessage());
+        verify(personRepo, times(1)).findByUserID(personId);
+    }
+
+    @Test
+    void testDeletePersonByUsername_NotFound() {
+        // Arrange
+        String username = "nonExistentUser";
+
+        when(personRepo.findByUsername(username)).thenReturn(null);
+
+        // Act & Assert
+        Exception exception = assertThrows(GameStoreException.class, () -> 
+            personService.deletePersonByUsername(username)
+        );
+        assertEquals("Person with the specified username does not exist.", exception.getMessage());
+        verify(personRepo, never()).deleteByUsername(username);
+    }
+
+    @Test
+    void testGetAllPersons_Success() {
+        // Arrange
+        Person person1 = new Person("user1", "password123", "user1@example.com");
+        Person person2 = new Person("user2", "password456", "user2@example.com");
+        when(personRepo.findAll()).thenReturn(List.of(person1, person2));
+
+        // Act
+        List<Person> allPersons = personService.getAllPersons();
+
+        // Assert
+        assertEquals(2, allPersons.size());
+        assertEquals("user1", allPersons.get(0).getUsername());
+        assertEquals("user2", allPersons.get(1).getUsername());
+        verify(personRepo, times(1)).findAll();
+    }
+
+    @Test
+    void testCreatePerson_InvalidEmailFormat() {
+        // Arrange
+        String username = "testuser";
+        String password = "password123";
+        String email = "invalid-email"; // Invalid email format
+
+        // Act & Assert
+        Exception exception = assertThrows(GameStoreException.class, () -> 
+            personService.createPerson(username, password, email)
+        );
+        assertEquals("Invalid email format.", exception.getMessage());
+        verify(personRepo, never()).save(any(Person.class));
+}
+
+@Test
+void testGetAllPersons_MultipleUsers() {
+    // Arrange
+    Person person1 = new Person("user1", "password123", "user1@example.com");
+    Person person2 = new Person("user2", "password456", "user2@example.com");
+    Person person3 = new Person("user3", "password789", "user3@example.com");
+    when(personRepo.findAll()).thenReturn(List.of(person1, person2, person3));
+
+    // Act
+    List<Person> allPersons = personService.getAllPersons();
+
+    // Assert
+    assertEquals(3, allPersons.size());
+    assertEquals("user1", allPersons.get(0).getUsername());
+    assertEquals("user2", allPersons.get(1).getUsername());
+    assertEquals("user3", allPersons.get(2).getUsername());
+    verify(personRepo, times(1)).findAll();
+}
+
 }
 
