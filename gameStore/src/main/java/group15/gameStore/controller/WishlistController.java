@@ -70,6 +70,7 @@ public class WishlistController {
     @PutMapping("/wishlist/addgame/{wishlistId}/{gameId}")
     public ResponseEntity<WishlistDto> addGameToWishlist(@PathVariable int wishlistId, @PathVariable int gameId, @RequestBody CustomerDto customerDto) {
         Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+        System.out.println("Customer: " + customer);
         Wishlist wishlist = wishlistService.addGameToWishlist(wishlistId, gameId, customer);
         return new ResponseEntity<>(new WishlistDto(wishlist), HttpStatus.OK);
     }

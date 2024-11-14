@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +38,9 @@ public class WishlistServiceTest {
 
         @Mock
         private GameRepository gameRepository;
+
+        @InjectMocks
+        private GameService gameService;
     
         @InjectMocks
         private WishlistService wishlistService;
@@ -82,22 +84,17 @@ public class WishlistServiceTest {
         @Test
         public void testGetWishlistById_Success() {
             //Arrange
-            // String name = "Dana White";
-            // String password = "password1234";
-            // String email = "dana@gmail.com";
-            // String address = "1234 Main St";
-            // String phoneNumber = "123-456-7890";
-            // Customer c1 = new Customer(name, password, email, address, phoneNumber);
-            Customer c1 = new Customer();
+            String name = "Dana White";
+            String password = "password1234";
+            String email = "dana@gmail.com";
+            String address = "1234 Main St";
+            String phoneNumber = "123-456-7890";
+            Customer c1 = new Customer(name, password, email, address, phoneNumber);
             Wishlist w1 = new Wishlist("Wishlist1", c1);
-            w1.setWishListId(1);
-            // customerRepository.save(c1);
-            // wishlistRepository.save(w1);
-            when(customerRepository.findById(c1.getUserID())).thenReturn(java.util.Optional.of(c1));
-            when(wishlistRepository.findById(1)).thenReturn(java.util.Optional.of(w1));
+            when(wishlistRepository.findByWishListId(w1.getWishListId())).thenReturn(w1);
 
             //Act
-            Wishlist result = wishlistService.getWishlistByWishlistId(1);
+            Wishlist result = wishlistService.getWishlistByWishlistId(w1.getWishListId());
 
             //Assert
             assertNotNull(result);
@@ -130,15 +127,13 @@ public class WishlistServiceTest {
             String phoneNumber = "123-456-7890";
             Customer c1 = new Customer(name, password, email, address, phoneNumber);
             Wishlist w1 = new Wishlist("Wishlist1", c1);
-            w1.setWishListId(1);
-            wishlistRepository.save(w1);
             Game g1 = new Game();
             g1.setGameID(1);
-            gameRepository.save(g1);
-            when(wishlistRepository.findById(w1.getWishListId())).thenReturn(java.util.Optional.of(w1));
+            when(gameRepository.findGameByGameID(g1.getGameID())).thenReturn(g1);
+            when(wishlistRepository.findByWishListId(w1.getWishListId())).thenReturn(w1);
 
             //Act
-            Wishlist result = wishlistService.addGameToWishlist(w1.getWishListId(), 1, c1);
+            Wishlist result = wishlistService.addGameToWishlist(w1.getWishListId(), g1.getGameID(), c1);
 
             //Assert
             assertNotNull(result);

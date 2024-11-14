@@ -37,7 +37,7 @@ public class WishlistService {
      */
     @Transactional  
     public Wishlist createWishlist(int userId, String wishlistName, Customer customer) {
-        if (customerRepository.findById(customer.getUserID()).isEmpty()) {
+        if (customerRepository.findByUserID(userId) == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer with the specified ID does not exist.");
         }
         
@@ -54,7 +54,7 @@ public class WishlistService {
      */
     @Transactional
     public void deleteWishlist(int wishlistId, Customer customer) {
-        Wishlist wishlist = wishlistRepo.findById(wishlistId).orElse(null);
+        Wishlist wishlist = wishlistRepo.findByWishListId(wishlistId);
         if (wishlist == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Wishlist with the specified ID does not exist.");
         }
@@ -76,14 +76,14 @@ public class WishlistService {
      */
     @Transactional
     public Wishlist addGameToWishlist(int wishlistId, int gameId, Customer customer) {
-        Wishlist wishlist = wishlistRepo.findById(wishlistId).orElse(null);
+        Wishlist wishlist = wishlistRepo.findByWishListId(wishlistId);
         if (wishlist == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Wishlist with the specified ID does not exist.");
         }
         if (wishlist.getCustomer().getUserID() != customer.getUserID()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Customer is not authorized to modify this wishlist.");
         }
-        Game game = gameRepository.findById(String.valueOf(gameId)).orElse(null);
+        Game game = gameRepository.findGameByGameID(gameId);
         if (game == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Game with the specified ID does not exist.");
         }
@@ -103,7 +103,7 @@ public class WishlistService {
      */
     @Transactional
     public Wishlist removeGameFromWishlist(int wishlistId, int gameId, Customer customer) {
-        Wishlist wishlist = wishlistRepo.findById(wishlistId).orElse(null);
+        Wishlist wishlist = wishlistRepo.findByWishListId(wishlistId);
         if (wishlist == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Wishlist with the specified ID does not exist.");
         }
@@ -111,7 +111,7 @@ public class WishlistService {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Customer is not authorized to modify this wishlist.");
         }
 
-        Game game = gameRepository.findById(String.valueOf(gameId)).orElse(null);
+        Game game = gameRepository.findGameByGameID(gameId);
         if (game == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Game with the specified ID does not exist.");
         }
