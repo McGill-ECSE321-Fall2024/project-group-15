@@ -37,7 +37,7 @@ public class PromotionService {
         if (aPromotionCode == null || aPromotionCode.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Promotion code cannot be null or empty.");
         }
-        if (aDiscountPercentage >= 0 || aDiscountPercentage < 100) {
+        if (aDiscountPercentage < 0 || aDiscountPercentage > 100) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Discount percentage must be between 0 and 100.");
         }
         if (aValidUntil == null || aValidUntil.before(Date.from(Instant.now()))) {
