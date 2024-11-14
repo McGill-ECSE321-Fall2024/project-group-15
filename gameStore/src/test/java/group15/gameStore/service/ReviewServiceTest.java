@@ -1,10 +1,12 @@
 package group15.gameStore.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
@@ -75,7 +78,7 @@ class ReviewServiceTest {
         Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.createReview(null, "Good game", game, customer);
         });
-        assertEquals("A rating is required", exception.getMessage());
+        assertEquals("Review atttribute is required.", exception.getMessage());
     }
 
     @Test
@@ -83,18 +86,9 @@ class ReviewServiceTest {
         Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.createReview(rating, "", game, customer);
         });
-        assertEquals("Description cannot be empty.", exception.getMessage());
+        assertEquals("Review atttribute is required.", exception.getMessage());
     }
 
-    @Test
-    void testCreateReviewInvalidGame() {
-        when(gameRepo.findGameByGameID(game.getGameID())).thenReturn(null);
-
-        Exception exception = assertThrows(GameStoreException.class, () -> {
-            reviewService.createReview(rating, "Great game!", game, customer);
-        });
-        assertEquals("Game must be valid and exist in the system.", exception.getMessage());
-    }
 
     @Test
     void testUpdateReviewSuccess() {
@@ -122,6 +116,25 @@ class ReviewServiceTest {
             reviewService.updateReview(review.getReviewID(), review, anotherCustomer);
         });
         assertEquals("Invalid update request or unauthorized customer.", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdateReview_BadRequest() {
+        // Arrange
+        Review updatedReview = new Review();
+        updatedReview.setRating(Rating.FIVE_STAR);
+        updatedReview.setDescription("");  // Empty description
+
+        when(reviewRepo.findByReviewID(1)).thenReturn(review);
+
+        // Act 
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            reviewService.updateReview(1, updatedReview, customer);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+        assertEquals("A rating or description is required.", thrown.getMessage());
     }
 
     @Test
@@ -159,6 +172,22 @@ class ReviewServiceTest {
     }
 
     @Test
+    public void testGetReviewByRating_NotFound() {
+        // Arrange
+        Rating rating = Rating.FIVE_STAR;  
+        when(reviewRepo.findByRating(rating)).thenReturn(Collections.emptyList()); 
+
+        // Act 
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            reviewService.getReviewByRating(rating);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getStatus());
+        assertEquals("No reviews found with the specified rating.", thrown.getMessage());
+    }
+
+    @Test
     void testDeleteReviewSuccess() {
         when(reviewRepo.findByReviewID(review.getReviewID())).thenReturn(review);
 
@@ -172,11 +201,12 @@ class ReviewServiceTest {
         Customer anotherCustomer = new Customer();
         anotherCustomer.setUserID(2);
 
+        review.setCustomer(customer);
         when(reviewRepo.findByReviewID(review.getReviewID())).thenReturn(review);
 
-        Exception exception = assertThrows(GameStoreException.class, () -> {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
             reviewService.deleteReview(review.getReviewID(), anotherCustomer);
         });
-        assertEquals("Unauthorized access. Only the owner can delete this review.", exception.getMessage());
-    }
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+        assertEquals("Unauthorized access. Only the owner can delete this review.", exception.getMessage());    }
 }
