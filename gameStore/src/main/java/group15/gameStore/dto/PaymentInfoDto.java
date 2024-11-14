@@ -20,6 +20,7 @@ public class PaymentInfoDto{
     public PaymentInfoDto(){
     }
     
+    //Constructor
     public PaymentInfoDto(PaymentInfo paymentInfoDto){
         this.paymentInfoID = paymentInfoDto.getPaymentInfoID();
         this.cardNumber = paymentInfoDto.getCardNumber();

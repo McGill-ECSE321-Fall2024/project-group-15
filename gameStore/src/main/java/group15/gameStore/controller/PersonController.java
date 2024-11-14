@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.model.Person;
 import group15.gameStore.dto.PersonDto;
-import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.service.PersonService;
 
 @RestController
@@ -32,16 +31,9 @@ public class PersonController {
      */
     @PostMapping("/person")
     public ResponseEntity<PersonDto> createPerson(@RequestBody PersonDto PersonDto){
-        try{
-            Person createdPerson = personService.createPerson(PersonDto.getUsername(), PersonDto.getPassword(),
-            PersonDto.getEmail());
-
-            PersonDto responseDto = new PersonDto(createdPerson);
-            return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
-        }
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
-        }
+        Person createdPerson = personService.createPerson(PersonDto.getUsername(), PersonDto.getPassword(),PersonDto.getEmail());
+        PersonDto responseDto = new PersonDto(createdPerson);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
     }
 
     /**
@@ -52,15 +44,9 @@ public class PersonController {
      */
     @PutMapping("/person/{personId}")
     public ResponseEntity<PersonDto> updatePerson(@PathVariable int personId,@RequestBody PersonDto personDto) {
-        try{
-            Person person = personService.getPersonById(personDto.getUserID());
-
-            Person updatedPerson = personService.updatePerson(personId, person);
-            return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        Person person = personService.getPersonById(personDto.getUserID());
+        Person updatedPerson = personService.updatePerson(personId, person);
+        return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
     }
 
     /**
@@ -70,15 +56,9 @@ public class PersonController {
      */
     @GetMapping("/person/{personId}")
     public ResponseEntity<PersonDto> getPersonById(@PathVariable int personId) {
-        try {
-            Person person = personService.getPersonById(personId);
-            PersonDto responseDto = new PersonDto(person);
-            
-            return new ResponseEntity<>(responseDto, HttpStatus.OK); 
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Person person = personService.getPersonById(personId);
+        PersonDto responseDto = new PersonDto(person);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK); 
     }
 
     /**
@@ -88,15 +68,9 @@ public class PersonController {
      */
     @GetMapping("/person/username/{username}")
     public ResponseEntity<PersonDto> getPersonByUsername(@PathVariable String username) {
-        try {
-            Person person = personService.getPersonByUsername(username);
-            PersonDto responseDto = new PersonDto(person);
-            
-            return new ResponseEntity<>(responseDto, HttpStatus.OK);    
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Person person = personService.getPersonByUsername(username);
+        PersonDto responseDto = new PersonDto(person);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);    
     }
 
      /**
@@ -120,23 +94,18 @@ public class PersonController {
     /**
      * DeletePersonByUsername: deletes a person by their username
      * @param username the username of the person to delete
-     * @return HTTP status "NO CONTENT"
+     * @param personDto the DTO containing the requesting user's information for authorization
+     * @return HTTP status "NO CONTENT" if deletion is successful, "FORBIDDEN" if authorization fails
      */
     @DeleteMapping("/person/{username}")
-    public ResponseEntity<Void> deletePersonByUsername(@PathVariable String username,@RequestBody PersonDto PersonDto) {
-        try {
-            Person personToDelete = personService.getPersonByUsername(username);
-            
-            // Check authorization using the request DTO
-            if (!personToDelete.getUsername().equals(PersonDto.getUsername())) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);  
-            }
-            personService.deletePersonByUsername(username);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
+    public ResponseEntity<Void> deletePersonByUsername(@PathVariable String username, @RequestBody PersonDto personDto) {
+        Person personToDelete = personService.getPersonByUsername(username);
+
+        // Check authorization using the request DTO
+        if (!personToDelete.getUsername().equals(personDto.getUsername())) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        personService.deletePersonByUsername(username);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    
 }

@@ -21,13 +21,13 @@ We are developping a website for an online game store. The platform will enable 
 
 **Project Specification:**
 
-| Team Member's Name | Team Member's Role | Sprint Hours Deliv. 1  | Sprint Hours Deliv. 2 |
-| ------------------ | ------------------ | ---------------------- | --------------------- |
-| Jordan             | Product Owners     |           19           |              
-| Ben                | Developers         |           18           |
-| Jason              | Product Owners     |           20           |
-| Jacob              | Scrum Master       |           18           |
-| Yvehenry           | Developers         |           18           |
+| Team Member's Name | Team Member's Role |  
+| ------------------ | ------------------ | 
+| Jordan             | Product Owners     |      
+| Ben                | Developers         | 
+| Jason              | Product Owners     |  
+| Jacob              | Scrum Master       | 
+| Yvehenry           | Developers         |    
  
 ## Deliverable 1:
 This first deliverable focuses on gathering and defining requirements, developing a domain model, designing a persistence layer, and ensuring that the project setup follows agile practices.<br/> 
@@ -37,6 +37,26 @@ This first deliverable focuses on gathering and defining requirements, developin
 **Other Important Documents:**<br/>
 [Use Case Diagram 1](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Accounts-Use-Case-Diagram)<br/>
 [Use Case Diagram 2](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Purchasing-Menu-Use-Case-Diagram)<br/>
+
+**Effort Distribution**
+| Jordan | Ben | Jason | Jacob | Yvehenry |
+| ------ | --- | ----- | ----- | -------- |
+|   20%  | 20% |  20%  |  20%  |    20%   |  
+
+## Deliverable 2:
+The second deliverable focuses on implementing backend services using RESTful HTTP methods, modeling system behavior, establishing testing practices, and ensuring that the project setup follows agile practices.<br/> 
+[Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
+[Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
+
+**Other Important Documents:**<br/>
+[Backend Services](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Backend-Services)<br/>
+[Software Quality Assurance]()<br/>
+...
+
+**Effort Distribution**
+| Jordan | Ben | Jason | Jacob | Yvehenry |
+| ------ | --- | ----- | ----- | -------- |
+|  ...   | ... |  ...  |  ...  |    ...   |  
 
 
 

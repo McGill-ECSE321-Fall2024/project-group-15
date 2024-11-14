@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.dto.GameDto;
 import group15.gameStore.dto.PromotionDto;
-import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 import group15.gameStore.service.GameService;
@@ -40,18 +39,12 @@ public class PromotionController{
      */
     @PostMapping("/promotion")
     public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto, @RequestBody GameDto gameDto) {
-        try {
-            Game game = gameService.getGameByID(gameDto.getGameID());
-            Promotion createdPromotion = promotionService.createPromotion(
-                promotionDto.getPromotionCode(),promotionDto.getDiscountPercentage(),
-                promotionDto.getValidUntil(),game);
-
-            PromotionDto responseDto = new PromotionDto(createdPromotion);
-            return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
-        }
+        Game game = gameService.getGameByID(gameDto.getGameID());
+        Promotion createdPromotion = promotionService.createPromotion(
+            promotionDto.getPromotionCode(),promotionDto.getDiscountPercentage(),
+            promotionDto.getValidUntil(),game);
+        PromotionDto responseDto = new PromotionDto(createdPromotion);
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);  
     }
 
      /**
@@ -63,19 +56,10 @@ public class PromotionController{
     @PutMapping("/promotion/{promotionId}")
     public ResponseEntity<PromotionDto> updatePromotion(@PathVariable int promotionId,@RequestBody PromotionDto promotionDto,
         @RequestBody GameDto gameDto) {
-
-        try {
-            Game game = gameService.getGameByID(gameDto.getGameID());
-            Promotion existingPromotion = promotionService.getPromotionById(promotionDto.getPromotionID());
-
-            Promotion updatedPromotion = promotionService.updatePromotion(
-                promotionId,existingPromotion,game);
-
-            return new ResponseEntity<>(new PromotionDto(updatedPromotion), HttpStatus.OK); 
-
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  
-        }
+        Game game = gameService.getGameByID(gameDto.getGameID());
+        Promotion existingPromotion = promotionService.getPromotionById(promotionDto.getPromotionID());
+        Promotion updatedPromotion = promotionService.updatePromotion(promotionId,existingPromotion,game);
+        return new ResponseEntity<>(new PromotionDto(updatedPromotion), HttpStatus.OK); 
     }
 
     /**
@@ -85,15 +69,9 @@ public class PromotionController{
      */
     @GetMapping("/promotion/{promotionId}")
     public ResponseEntity<PromotionDto> getPromotionById(@PathVariable int promotionId) {
-        try {
             Promotion promotion = promotionService.getPromotionById(promotionId);
             PromotionDto responseDto = new PromotionDto(promotion);
-            
             return new ResponseEntity<>(responseDto, HttpStatus.OK);      
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        }
     }
 
     /**
@@ -103,15 +81,9 @@ public class PromotionController{
      */
     @GetMapping("/promotion/code/{promotionCode}")
     public ResponseEntity<PromotionDto> getByPromotionCode(@PathVariable String promotionCode) {
-        try {
-            Promotion promotion = promotionService.getByPromotionCode(promotionCode);
-            PromotionDto responseDto = new PromotionDto(promotion);
-            
-            return new ResponseEntity<>(responseDto, HttpStatus.OK); 
-        } 
-        catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        }
+        Promotion promotion = promotionService.getByPromotionCode(promotionCode);
+        PromotionDto responseDto = new PromotionDto(promotion);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK); 
     }
 
     /**
@@ -121,17 +93,10 @@ public class PromotionController{
      */
     @GetMapping("/promotion/validUntil/{validUntil}")
     public ResponseEntity<List<PromotionDto>> getByValidUntil(@PathVariable Date validUntil) {
-        try {
-            List<Promotion> promotions = promotionService.getByValidUntil(validUntil);
-            List<PromotionDto> responseDtoList = promotions.stream()
-                    .map(PromotionDto::new)
-                    .collect(Collectors.toList());
-
-            return new ResponseEntity<>(responseDtoList, HttpStatus.OK);  
-            
-        } catch (GameStoreException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
-        }
+        List<Promotion> promotions = promotionService.getByValidUntil(validUntil);
+        List<PromotionDto> responseDtoList = promotions.stream().map(PromotionDto::new)
+            .collect(Collectors.toList());
+        return new ResponseEntity<>(responseDtoList, HttpStatus.OK);     
     }
 
     /**
@@ -162,15 +127,9 @@ public class PromotionController{
     @DeleteMapping("/promotion/{promotionCode}")
     public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode,
         @RequestBody GameDto gameDto) {
-        try {
-            Game game = gameService.getGameByID(gameDto.getGameID());
 
-            promotionService.deletePromotion(promotionCode, game);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); 
-        } 
-        catch (GameStoreException e) {
-            HttpStatus status = e.getStatus() == HttpStatus.FORBIDDEN ? HttpStatus.FORBIDDEN : HttpStatus.NOT_FOUND;
-            return new ResponseEntity<>(status);
-        }
+        Game game = gameService.getGameByID(gameDto.getGameID());
+        promotionService.deletePromotion(promotionCode, game);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
