@@ -8,10 +8,13 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
@@ -20,6 +23,7 @@ import group15.gameStore.repository.CustomerRepository;
 import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.ReviewRepository;
 
+@ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
 
     @Mock
@@ -68,15 +72,15 @@ class ReviewServiceTest {
 
     @Test
     void testCreateReviewInvalidRating() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.createReview(null, "Good game", game, customer);
         });
-        assertEquals("A Rating is required.", exception.getMessage());
+        assertEquals("A rating is required", exception.getMessage());
     }
 
     @Test
     void testCreateReviewInvalidDescription() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.createReview(rating, "", game, customer);
         });
         assertEquals("Description cannot be empty.", exception.getMessage());
@@ -86,7 +90,7 @@ class ReviewServiceTest {
     void testCreateReviewInvalidGame() {
         when(gameRepo.findGameByGameID(game.getGameID())).thenReturn(null);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.createReview(rating, "Great game!", game, customer);
         });
         assertEquals("Game must be valid and exist in the system.", exception.getMessage());
@@ -114,7 +118,7 @@ class ReviewServiceTest {
 
         when(reviewRepo.findByReviewID(review.getReviewID())).thenReturn(review);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.updateReview(review.getReviewID(), review, anotherCustomer);
         });
         assertEquals("Invalid update request or unauthorized customer.", exception.getMessage());
@@ -134,7 +138,7 @@ class ReviewServiceTest {
     void testGetReviewByIdNotFound() {
         when(reviewRepo.findByReviewID(999)).thenReturn(null);
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.getReviewById(999);
         });
         assertEquals("Review not found.", exception.getMessage());
@@ -170,7 +174,7 @@ class ReviewServiceTest {
 
         when(reviewRepo.findByReviewID(review.getReviewID())).thenReturn(review);
 
-        Exception exception = assertThrows(SecurityException.class, () -> {
+        Exception exception = assertThrows(GameStoreException.class, () -> {
             reviewService.deleteReview(review.getReviewID(), anotherCustomer);
         });
         assertEquals("Unauthorized access. Only the owner can delete this review.", exception.getMessage());
