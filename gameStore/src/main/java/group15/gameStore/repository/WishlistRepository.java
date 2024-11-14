@@ -2,7 +2,6 @@ package group15.gameStore.repository;
 
 import org.springframework.data.repository.CrudRepository;
 
-import group15.gameStore.model.Customer;
 import group15.gameStore.model.Wishlist;
 import java.util.List;
 

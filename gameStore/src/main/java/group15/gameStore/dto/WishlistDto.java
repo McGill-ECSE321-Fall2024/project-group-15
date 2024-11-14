@@ -1,10 +1,8 @@
 package group15.gameStore.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import group15.gameStore.model.Customer;
 import group15.gameStore.model.Wishlist;
 
 

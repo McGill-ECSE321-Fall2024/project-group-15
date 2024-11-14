@@ -260,7 +260,7 @@ public class CustomerServiceIntegrationTest {
     public void testDeleteCustomer() {
         client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
 
-        ResponseEntity<Void> response = client.exchange("/customers/delete", HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = client.exchange("/customers/delete/Joe", HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
