@@ -99,14 +99,4 @@ public class WishlistController {
         return new ResponseEntity<>(wishlistDto, HttpStatus.OK);
     }
 
-    /**
-     * Get all wishlists by the user's ID
-     * @param userId the ID of the user
-     * @return a list of wishlists associated with the given user ID in WishlistDto format
-     */
-    @GetMapping("/wishlist/byUser/{userId}")
-    public ResponseEntity<List<WishlistDto>> getWishlistByUserId(@PathVariable int userId) {
-        List<WishlistDto> wishlistDtos = wishlistService.getWishlistByUserId(userId).stream().map(WishlistDto::new).collect(Collectors.toList());
-        return new ResponseEntity<>(wishlistDtos, HttpStatus.OK);
-    }
 }

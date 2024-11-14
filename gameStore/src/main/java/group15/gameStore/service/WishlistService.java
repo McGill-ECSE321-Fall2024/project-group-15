@@ -122,18 +122,13 @@ public class WishlistService {
     }
 
     /**
-     * GetWishlistByUserId: retrieves a list of wishlists for a specific user
-     * @param userId the ID of the user whose wishlists are to be retrieved
-     * @return a list of wishlists associated with the specified user ID
-     * @throws GameStoreException if the user ID is invalid or the customer does not exist
+     * GetWishlistByUserId: retrieves a wishlist by its userId
+     * @return the wishlist with the specified userId
+     * @throws GameStoreException if userId is invalid
      */
     @Transactional
-    public List<Wishlist> getWishlistByUserId(int userId) {
-        Customer customer = customerRepository.findById(userId).orElse(null);
-        if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer with the specified ID does not exist.");
-        }
-        return wishlistRepo.findByUserID(userId);
+    public List<Wishlist> getAllWishlists() {
+        return wishlistRepo.findAll();
     }
 
     /**

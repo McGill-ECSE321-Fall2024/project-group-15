@@ -45,7 +45,7 @@ public class PaymentInfoServiceIntegrationTest {
     }
 
     @Test
-    @Order(0)
+    @Order(1)
     public void testGetAllEmptyPaymentInfo() {
         ResponseEntity<String> response = client.getForEntity("/paymentinfo", String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -53,7 +53,7 @@ public class PaymentInfoServiceIntegrationTest {
     }
 
     @Test
-    @Order(1)
+    @Order(2)
     public void testCreateValidPaymentInfo() {
         ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.postForEntity("/paymentinfo/create", paymentInfoRequestDto, PaymentInfoDto.class);
         ResponseEntity<PaymentInfoDto> paymentInfoResponse2 = client.postForEntity("/paymentinfo/create", paymentInfoRequestDto2, PaymentInfoDto.class);
@@ -65,7 +65,7 @@ public class PaymentInfoServiceIntegrationTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void testGetValidPaymentInfoByCardNumber() {
         ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.getForEntity("/paymentinfo/1234567812345678", PaymentInfoDto.class);
         assertEquals(HttpStatus.OK, paymentInfoResponse.getStatusCode());
@@ -74,7 +74,7 @@ public class PaymentInfoServiceIntegrationTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void testUpdateValidPaymentInfo() {
         PaymentInfoDto updatedPaymentInfo = new PaymentInfoDto();
         HttpEntity<PaymentInfoDto> requestEntity = new HttpEntity<>(updatedPaymentInfo);
@@ -86,7 +86,7 @@ public class PaymentInfoServiceIntegrationTest {
 
     @SuppressWarnings("null")
     @Test
-    @Order(4)
+    @Order(5)
     public void testGetAllPaymentInfo() {
         @SuppressWarnings("rawtypes")
         ResponseEntity<List> response = client.getForEntity("/paymentinfo", List.class);
@@ -101,14 +101,14 @@ public class PaymentInfoServiceIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void testDeletePaymentInfo() {
         ResponseEntity<Void> response = client.exchange("/paymentinfo/delete/1234567812345678", HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void testDeletePaymentInfo_NotFound() {
         ResponseEntity<String> response = client.exchange("/paymentinfo/delete/0000000000000000", HttpMethod.DELETE, null, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
