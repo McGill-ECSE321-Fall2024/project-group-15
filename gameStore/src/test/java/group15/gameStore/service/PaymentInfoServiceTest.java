@@ -6,16 +6,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.sql.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.PaymentInfo;
 import group15.gameStore.repository.CustomerRepository;
 import group15.gameStore.repository.PaymentInfoRepository;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class PaymentInfoServiceTest {
 
     @Mock
