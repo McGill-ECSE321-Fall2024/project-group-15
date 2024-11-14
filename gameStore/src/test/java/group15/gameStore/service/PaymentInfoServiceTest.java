@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.PaymentInfo;
 import group15.gameStore.repository.CustomerRepository;
@@ -64,7 +65,7 @@ public class PaymentInfoServiceTest {
 
     @Test
     public void testCreatePaymentInfo_InvalidCardNumber() {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
             paymentInfoService.createPaymentInfo(
                 "12345", 
                 Date.valueOf("2025-12-31"), 
@@ -89,7 +90,7 @@ public class PaymentInfoServiceTest {
     public void testGetPaymentInfoById_NotFound() {
         when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(null);
         
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
             paymentInfoService.getPaymentInfoById(1);
         });
         
@@ -109,7 +110,7 @@ public class PaymentInfoServiceTest {
     public void testDeletePaymentInfo_NotFound() {
         when(paymentInfoRepo.findByCardNumber("1234567812345678")).thenReturn(null);
         
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
             paymentInfoService.deletePaymentInfo("1234567812345678", mockCustomer);
         });
         
@@ -123,7 +124,7 @@ public class PaymentInfoServiceTest {
 
         when(paymentInfoRepo.findByCardNumber("1234567812345678")).thenReturn(mockPaymentInfo);
         
-        SecurityException thrown = assertThrows(SecurityException.class, () -> {
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
             paymentInfoService.deletePaymentInfo("1234567812345678", unauthorizedCustomer);
         });
         
