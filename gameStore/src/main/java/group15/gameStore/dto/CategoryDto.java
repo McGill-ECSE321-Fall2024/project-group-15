@@ -15,7 +15,7 @@ public class CategoryDto {
     private List<GameDto> games;
 
     @SuppressWarnings("unused")
-    private CategoryDto(){
+    public CategoryDto(){
     }
 
     //Constructor

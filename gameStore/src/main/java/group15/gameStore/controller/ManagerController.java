@@ -53,8 +53,7 @@ public class ManagerController{
      * @return the updated manager and the HTTP status "OK"
      */
     @PutMapping("/manager/{managerId}")
-    public ResponseEntity<ManagerDto> updateManager(@PathVariable int managerId, @RequestBody ManagerDto managerDto,
-                                                    @RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<ManagerDto> updateManager(@PathVariable int managerId, @RequestBody ManagerDto managerDto,@RequestBody EmployeeDto employeeDto) {
         Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
         Manager existingManager = managerService.getManagerByID(managerDto.getUserID());
         Manager updatedManager = managerService.updateManager(managerId, existingManager, employee);

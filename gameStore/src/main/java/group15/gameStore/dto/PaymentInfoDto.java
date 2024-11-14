@@ -17,9 +17,10 @@ public class PaymentInfoDto{
     private CustomerDto customer;
 
     @SuppressWarnings("unused")
-    private PaymentInfoDto(){
+    public PaymentInfoDto(){
     }
     
+    //Constructor
     public PaymentInfoDto(PaymentInfo paymentInfoDto){
         this.paymentInfoID = paymentInfoDto.getPaymentInfoID();
         this.cardNumber = paymentInfoDto.getCardNumber();

@@ -36,7 +36,7 @@ public class PaymentInfo
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private PaymentInfo() {
+public PaymentInfo() {
   }
 
   //------------------------
@@ -59,6 +59,13 @@ public class PaymentInfo
   //------------------------
   // INTERFACE
   //------------------------
+  public boolean setCustomer(Customer aCustomer){
+    boolean wasSet = false;
+    customer = aCustomer;
+    wasSet = true;
+    return wasSet;
+  }
+  
   public Customer getCustomer() {
     return customer;
   }

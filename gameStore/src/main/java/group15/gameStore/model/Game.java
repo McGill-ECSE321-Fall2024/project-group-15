@@ -39,7 +39,7 @@ public class Game
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private Game() {
+public Game() {
   }
 
   //------------------------

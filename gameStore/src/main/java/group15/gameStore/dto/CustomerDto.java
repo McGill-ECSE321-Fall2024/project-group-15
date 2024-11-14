@@ -4,9 +4,14 @@ import group15.gameStore.model.Customer;
 
 public class CustomerDto extends PersonDto {
 
+    //Customer attributes
     private String address;
     private String phoneNumber;
 
+    @SuppressWarnings("unused")
+    public CustomerDto(){
+    } 
+    
     // Constructor
     public CustomerDto(Customer customer) {
         this.userID = customer.getUserID();
