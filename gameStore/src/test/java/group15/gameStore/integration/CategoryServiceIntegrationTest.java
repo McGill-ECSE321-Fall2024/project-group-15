@@ -1,7 +1,6 @@
 package group15.gameStore.integration;
 
 import group15.gameStore.dto.*;
-import group15.gameStore.model.Category;
 import group15.gameStore.repository.CategoryRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,18 +89,20 @@ public class CategoryServiceIntegrationTest {
         assertTrue(equals(response.getBody(), updatedCategoryDto));
     }
 
-    @SuppressWarnings("unchecked")
+
     @Test
     @Order(4)
     public void testGetAllCategories() {
         client.postForEntity("/categories/create", categoryRequestDto, CategoryDto.class);
         client.postForEntity("/categories/create", categoryRequestDto2, CategoryDto.class);
 
+        @SuppressWarnings("rawtypes")
         ResponseEntity<List> response = client.getForEntity("/categories", List.class);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().size() > 0);
         
+        @SuppressWarnings("unchecked")
         List<Map<String, Object>> categories = response.getBody();
         assertEquals(categoryRequestDto.getName(), categories.get(0).get("name"));
         assertEquals(categoryRequestDto2.getName(), categories.get(1).get("name"));
