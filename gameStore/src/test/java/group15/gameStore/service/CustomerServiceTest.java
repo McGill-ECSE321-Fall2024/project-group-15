@@ -15,12 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.repository.CustomerRepository;
@@ -28,8 +24,7 @@ import group15.gameStore.repository.CustomerRepository;
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
 
-    @Autowired
-    private TestRestTemplate client;
+   
 
     @Mock
     private CustomerRepository customerRepo;
@@ -266,12 +261,11 @@ public class CustomerServiceTest {
         String address = "1234 Main St";
         String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
         when(customerRepo.findByEmail(email)).thenReturn(c1);
 
         GameStoreException e = assertThrows(GameStoreException.class, () -> customerService.createCustomer(name, password, email, address, phoneNumber));
-        assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
-        assertEquals("This email is already in use.", e.getMessage());
+        assertEquals(HttpStatus.CONFLICT, e.getStatus());
+        assertEquals("Email is already taken.", e.getMessage());
     }
     
     @Test
