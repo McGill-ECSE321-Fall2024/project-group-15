@@ -216,9 +216,6 @@ public class GameService {
         if (existingGame == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Game with the specified ID does not exist.");
         }
-        if (updatedGame == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid update request: no information provided.");
-        }
         String title = updatedGame.getTitle();
         if (title == null || title.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Title is required.");

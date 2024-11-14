@@ -28,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import group15.gameStore.dto.EmployeeDto;
-import group15.gameStore.dto.GameDto;
 import group15.gameStore.dto.ManagerDto;
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Employee;

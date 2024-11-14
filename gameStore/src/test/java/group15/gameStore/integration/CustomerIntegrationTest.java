@@ -2,9 +2,7 @@ package group15.gameStore.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.repository.CustomerRepository;
-import group15.gameStore.repository.PersonRepository;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
