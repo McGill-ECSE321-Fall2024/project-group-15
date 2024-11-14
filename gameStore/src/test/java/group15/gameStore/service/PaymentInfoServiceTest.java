@@ -297,4 +297,116 @@ public class PaymentInfoServiceTest {
         assertEquals("Invalid update request or unauthorized customer.", thrown.getMessage());
     }
 
+    @Test
+    public void testCreatePaymentInfo_EmptyCardNumber() {
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.createPaymentInfo(
+                "",  // Empty card number
+                Date.valueOf("2025-12-31"), 
+                123, 
+                "123 Test St", 
+                mockCustomer);
+        });
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_NullPaymentInfo() {
+        // Simulate findByPaymentInfoID returning null to mimic PaymentInfo not found
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(null);
+
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, mockPaymentInfo, mockCustomer);
+        });
+        assertEquals("Payment info with the specified ID does not exist.", thrown.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInfo_ExpiredCardDate() {
+        // Act & Assert: Expect exception when expiry date is in the past
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.createPaymentInfo(
+                "1234567812345678", 
+                Date.valueOf("2020-01-01"),  // Past expiry date
+                123, 
+                "123 Test St", 
+                mockCustomer);
+        });
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInfo_NullBillingAddress() {
+        // Act & Assert: Expect exception when billing address is null
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.createPaymentInfo(
+                "1234567812345678", 
+                Date.valueOf("2025-12-31"), 
+                123, 
+                null,  // Null billing address
+                mockCustomer);
+        });
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_NullCustomerOnUpdate() {
+        // Arrange
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("8765432187654321");
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2026-12-31"));
+        updatedPaymentInfo.setCvv(321);
+        updatedPaymentInfo.setBillingAddress("456 New Address St");
+
+        // Act & Assert: Attempt to update with null customer should throw an exception
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, null);  // Null customer
+        });
+        assertEquals("Payment info with the specified ID does not exist.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_MismatchedCustomer() {
+        // Arrange
+        Customer otherCustomer = new Customer();
+        otherCustomer.setUserID(99);  // Different customer ID
+
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("8765432187654321");
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2026-12-31"));
+        updatedPaymentInfo.setCvv(321);
+        updatedPaymentInfo.setBillingAddress("456 New Address St");
+        updatedPaymentInfo.setCustomer(otherCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+
+        // Act & Assert: Updating with a different customer should throw an exception
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, otherCustomer);
+        });
+        assertEquals("Invalid update request or unauthorized customer.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_EmptyCardNumber() {
+        // Arrange
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("");  // Empty card number
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2026-12-31"));
+        updatedPaymentInfo.setCvv(321);
+        updatedPaymentInfo.setBillingAddress("456 New Address St");
+        updatedPaymentInfo.setCustomer(mockCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+
+        // Act & Assert: Updating with an empty card number should throw an exception
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, mockCustomer);
+        });
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+
 }
