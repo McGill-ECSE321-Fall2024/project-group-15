@@ -16,6 +16,8 @@ import group15.gameStore.model.Game;
 import group15.gameStore.repository.PromotionRepository;
 import group15.gameStore.repository.GameRepository;
 import java.sql.Date;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class PromotionServiceTest {
@@ -136,4 +138,74 @@ public class PromotionServiceTest {
         // Assert
         assertEquals("Promotion with the specified code does not exist.", thrown.getMessage());
     }
+
+    @Test
+    void testCreatePromotion_WithInvalidDiscount_ThrowsException() {
+        // Arrange
+        Game game = new Game();
+        game.setGameID(1);
+        Date validUntil = Date.valueOf("2024-12-31");
+
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            promotionService.createPromotion("PROMO2024", -10.0, validUntil, game);
+        });
+        assertEquals("Discount percentage must be between 0 and 100.", thrown.getMessage());
+    }
+
+@Test
+void testCreatePromotion_WithDiscountOver100_ThrowsException() {
+    // Arrange
+    Game game = new Game();
+    game.setGameID(1);
+    Date validUntil = Date.valueOf("2024-12-31");
+
+    // Act & Assert
+    GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+        promotionService.createPromotion("PROMO2024", 120.0, validUntil, game);
+    });
+    assertEquals("Discount percentage must be between 0 and 100.", thrown.getMessage());
+}
+
+@Test
+void testCreatePromotion_WithExpiredDate_ThrowsException() {
+    // Arrange
+    Game game = new Game();
+    game.setGameID(1);
+    Date expiredDate = Date.valueOf("2023-01-01");
+
+    // Act & Assert
+    GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+        promotionService.createPromotion("PROMO2024", 20.0, expiredDate, game);
+    });
+    assertEquals("Valid until date must be a future date.", thrown.getMessage());
+}
+
+
+@Test
+void testCreateMultiplePromotionsForSameGame_Success() {
+    // Arrange
+    Game game = new Game();
+    game.setGameID(1);
+    Date validUntil = Date.valueOf("2024-12-31");
+
+    Promotion promo1 = new Promotion("PROMO2024", 15.0, validUntil, game);
+    Promotion promo2 = new Promotion("PROMO2025", 10.0, validUntil, game);
+
+    when(gameRepository.findGameByGameID(1)).thenReturn(game);
+    when(promotionRepository.save(any(Promotion.class)))
+        .thenReturn(promo1)
+        .thenReturn(promo2);
+
+    // Act
+    Promotion createdPromo1 = promotionService.createPromotion("PROMO2024", 15.0, validUntil, game);
+    Promotion createdPromo2 = promotionService.createPromotion("PROMO2025", 10.0, validUntil, game);
+
+    // Assert
+    assertEquals("PROMO2024", createdPromo1.getPromotionCode());
+    assertEquals("PROMO2025", createdPromo2.getPromotionCode());
+    verify(promotionRepository, times(2)).save(any(Promotion.class));
+}
+
+
 }
