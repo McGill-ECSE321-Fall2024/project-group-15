@@ -199,7 +199,7 @@ class ReviewServiceTest {
     @Test
     void testDeleteReviewUnauthorized() {
         Customer anotherCustomer = new Customer();
-        anotherCustomer.setUserID(2);
+        anotherCustomer.setUserID(5);
 
         review.setCustomer(customer);
         when(reviewRepo.findByReviewID(review.getReviewID())).thenReturn(review);
@@ -208,5 +208,20 @@ class ReviewServiceTest {
             reviewService.deleteReview(review.getReviewID(), anotherCustomer);
         });
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
-        assertEquals("Unauthorized access. Only the owner can delete this review.", exception.getMessage());    }
+        assertEquals("Unauthorized access. Only the owner can delete this review.", exception.getMessage());
+    }
+
+    @Test
+    void testDeleteReviewNotFound() {
+        when(reviewRepo.findByReviewID(review.getReviewID())).thenReturn(null);
+
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            reviewService.deleteReview(review.getReviewID(), customer);
+        });
+        
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Review with the specified ID does not exist.", exception.getMessage());
+
+        verify(reviewRepo, never()).deleteByReviewID(review.getReviewID());
+    }
 }
