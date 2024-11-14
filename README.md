@@ -54,7 +54,7 @@ The second deliverable focuses on implementing backend services using RESTful HT
 [Software Quality Assurance Report](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Software-Quality-Assurance-Report)<br/>
 [Tests Case Locations](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Backend-Unit-and-Integration-Testing)<br/>
 
-**To Build System and Run Test**<br/>
+**To Build System and Run Test:**<br/>
 -> cd gamestore ./gradlew clean build or ./gradlew build
 
 
