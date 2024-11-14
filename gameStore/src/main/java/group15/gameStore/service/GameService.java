@@ -211,12 +211,10 @@ public class GameService {
     public Game updateGame(int gameID, Game updatedGame, Employee employee) {
         if (updatedGame == null || updatedGame.getTitle().isBlank() || updatedGame.getDescription().isBlank() || updatedGame.getImage().isBlank() || updatedGame.getManager() == null ||  employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
+        }
         Game existingGame = gameRepo.findGameByGameID(gameID);
         if (existingGame == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Game with the specified ID does not exist.");
-        }
-        if (updatedGame == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid update request: no information provided.");
         }
         String title = updatedGame.getTitle();
         if (title == null || title.trim().isEmpty()) {

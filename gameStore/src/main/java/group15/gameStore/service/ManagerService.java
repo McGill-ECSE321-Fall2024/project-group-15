@@ -91,6 +91,7 @@ public class ManagerService {
     public Manager createManager(String username, String password, String email, boolean isActive, Employee employee) {
         if (username.isBlank() || password.isBlank() || email.isBlank() || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
+        }
         if (username == null || username.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Username is required.");
         }
@@ -146,6 +147,7 @@ public class ManagerService {
     public Manager updateManager(int managerID, Manager updatedManager, Employee employee) {
         if (updatedManager == null || updatedManager.getUsername().isBlank() || updatedManager.getPassword().isBlank() || updatedManager.getEmail().isBlank() || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
+        }
         if (updatedManager == null || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid update request: missing manager or employee information.");
         }
