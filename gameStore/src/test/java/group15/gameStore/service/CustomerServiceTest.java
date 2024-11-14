@@ -15,14 +15,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.repository.CustomerRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class CustomerServiceTest {
+
+    @Autowired
+    private TestRestTemplate client;
 
     @Mock
     private CustomerRepository customerRepo;
@@ -96,21 +103,11 @@ public class CustomerServiceTest {
 
     @Test
     public void testGetCustomerByID_InvalidId() {
-        // Arrange
-        String name = "Dana White";
-        String password = "password1234";
-        String email = "dana@gmail.com";
-        String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
-        Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findById(c1.getUserID())).thenReturn(java.util.Optional.of(c1));
+        when(customerRepo.findById(2)).thenReturn(java.util.Optional.empty());
 
-        // Act
         GameStoreException exception = assertThrows(GameStoreException.class, () -> {
             customerService.getCustomerByID(2);
         });
-
-        // Assert
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("There is no customer with ID 2", exception.getMessage());
     }
@@ -122,7 +119,7 @@ public class CustomerServiceTest {
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
         when(customerRepo.findByEmail(email)).thenReturn(c1);
 
@@ -134,28 +131,15 @@ public class CustomerServiceTest {
     }
 
     
-    
     @Test
     public void testGetCustomerByEmail_InvalidEmail() {
-        // Arrange
-        String name = "Dana White";
-        String password = "password1234";
-        String email = "dana@gmail.com";
-        String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
-        Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findByEmail(email)).thenReturn(c1);
-
-        // Act
         GameStoreException exception = assertThrows(GameStoreException.class, () -> {
             customerService.getCustomerByEmail("notvalidemail@fmail.com");
         });
 
-        // Assert
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("There is no customer with email notvalidemail@fmail.com", exception.getMessage());
     }
-
-    // Test update Customer Username
 
     @Test
     public void testUpdateCustomerUsername_Success() {
@@ -164,10 +148,10 @@ public class CustomerServiceTest {
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findByEmail(email)).thenReturn(c1);
-
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
+       
         // Act
         Customer result = customerService.updateCustomerUsername(c1, "newUsername");
 
@@ -178,7 +162,6 @@ public class CustomerServiceTest {
     }
    
    
-    //Test update Customer password
     @Test
     public void testUpdateCustomerPassword_Success() {
         // Arrange
@@ -188,12 +171,13 @@ public class CustomerServiceTest {
         String address = "1234 Main St";
         String phoneNumber = "123-456-7890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findByEmail(email)).thenReturn(c1);
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
 
         // Act
         Customer result = customerService.updateCustomerPassword(c1, "newPassword");
 
         // Assert
+        assertNotNull(result);
         assertEquals("newPassword", result.getPassword());
     }
 
@@ -205,18 +189,18 @@ public class CustomerServiceTest {
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findByEmail(email)).thenReturn(c1);
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
 
         // Act
-        Customer result = customerService.updateCustomerEmail(c1, "newemail");
+        Customer result = customerService.updateCustomerEmail(c1, "newemail@gmail.com");
 
         // Assert
-        assertEquals("newemail", result.getEmail());
+        assertNotNull(result);
+        assertEquals("newemail@gmail.com", result.getEmail());
     }
 
-    // Test update Customer address
     @Test
     public void testUpdateCustomerAddress_Success() {
         // Arrange
@@ -224,19 +208,19 @@ public class CustomerServiceTest {
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findByEmail(email)).thenReturn(c1);
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
 
         // Act
         Customer result = customerService.updateCustomerAddress(c1, "newaddress");
 
         // Assert
-
+        assertNotNull(result);
         assertEquals("newaddress", result.getAddress());
+        verify(customerRepo, times(1)).save(any(Customer.class));
     }
 
-    // Test update Customer phone number
     @Test
     public void testUpdateCustomerPhoneNumber_Success() {
         // Arrange
@@ -244,15 +228,16 @@ public class CustomerServiceTest {
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-        when(customerRepo.findByEmail(email)).thenReturn(c1);
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
 
         // Act
-        Customer result = customerService.updateCustomerPhoneNumber(c1, "newPhoneNumber");
+        Customer result = customerService.updateCustomerPhoneNumber(c1, "0987654321");
 
         // Assert
-        assertEquals("newPhoneNumber", result.getPhoneNumber());
+        assertNotNull(result);
+        assertEquals("0987654321", result.getPhoneNumber());
     }
        
 
@@ -262,10 +247,9 @@ public class CustomerServiceTest {
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-
-        when(customerRepo.save(c1)).thenReturn(c1);
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
         Customer createdCustomer = customerService.createCustomer(name, password, email, address, phoneNumber);
 
         assertNotNull(createdCustomer);
@@ -273,28 +257,29 @@ public class CustomerServiceTest {
         verify(customerRepo, times(1)).save(any(Customer.class));
     }
 
+    
     @Test
     public void testCreateCustomer_EmailTaken() {
         String name = "Dana White";
         String password = "password1234";
         String email = "dana@gmail.com";
         String address = "1234 Main St";
-        String phoneNumber = "123-456-7890";
+        String phoneNumber = "1234567890";
         Customer c1 = new Customer(name, password, email, address, phoneNumber);
-
+        when(customerRepo.save(any(Customer.class))).thenReturn(c1);
         when(customerRepo.findByEmail(email)).thenReturn(c1);
 
         GameStoreException e = assertThrows(GameStoreException.class, () -> customerService.createCustomer(name, password, email, address, phoneNumber));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("This email is already in use.", e.getMessage());
     }
-
+    
     @Test
     public void testCreateCustomer_EmptyName() {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.createCustomer("", "password123", "email@example.com", "123 Main St", "123-456-7890"));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Name field cannot be empty.", exception.getMessage());
+        assertEquals("Username is required.", exception.getMessage());
     }
 
     @Test
@@ -302,7 +287,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.createCustomer("username", "", "email@example.com", "123 Main St", "123-456-7890"));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Password field cannot be empty.", exception.getMessage());
+        assertEquals("Password must be at least 8 characters long.", exception.getMessage());
     }
 
     @Test
@@ -310,7 +295,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.createCustomer("username", "password123", "", "123 Main St", "123-456-7890"));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Email field cannot be empty.", exception.getMessage());
+        assertEquals("Invalid email format.", exception.getMessage());
     }
 
     @Test
@@ -318,15 +303,15 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.createCustomer("username", "password123", "email@example.com", "", "123-456-7890"));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Address field cannot be empty.", exception.getMessage());
+        assertEquals("Address is required.", exception.getMessage());
     }
 
     @Test
-    public void testCreateCustomerEmpty_PhoneNumber() {
+    public void testCreateCustomer_EmptyPhoneNumber() {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.createCustomer("username", "password123", "email@example.com", "123 Main St", ""));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Phone number field cannot be empty.", exception.getMessage());
+        assertEquals("Invalid phone number format.", exception.getMessage());
     }
    
     @Test
@@ -336,7 +321,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.updateCustomerUsername(customer, ""));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("New username cannot be empty", exception.getMessage());
+        assertEquals("Username is required.", exception.getMessage());
     }
 
     @Test
@@ -346,7 +331,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.updateCustomerPassword(customer, ""));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("New password cannot be empty", exception.getMessage());
+        assertEquals("Password must be at least 8 characters long.", exception.getMessage());
     }
 
     @Test
@@ -356,7 +341,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.updateCustomerEmail(customer, ""));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("New email cannot be empty", exception.getMessage());
+        assertEquals("Invalid email format.", exception.getMessage());
     }
 
     @Test
@@ -366,7 +351,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.updateCustomerAddress(customer, ""));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("New address cannot be empty", exception.getMessage());
+        assertEquals("Address is required.", exception.getMessage());
     }
 
     @Test
@@ -376,7 +361,7 @@ public class CustomerServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, 
             () -> customerService.updateCustomerPhoneNumber(customer, ""));
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("New phone number cannot be empty", exception.getMessage());
+        assertEquals("Invalid phone number format.", exception.getMessage());
     }
 
     @Test
@@ -399,10 +384,11 @@ public class CustomerServiceTest {
 
     @Test
     public void testDeleteCustomerNotFound() {
+        // Create a customer with userID set to 2
+        Customer customer = new Customer();
+        customer.setUserID(1);
 
-        when(customerRepo.findByUserID(1)).thenReturn(null);
-
-        GameStoreException e = assertThrows(GameStoreException.class, () -> customerService.deleteCustomer(new Customer()));
+        GameStoreException e = assertThrows(GameStoreException.class, () -> customerService.deleteCustomer(customer));
         assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
         assertEquals("The customer to delete does not exist", e.getMessage());
     }

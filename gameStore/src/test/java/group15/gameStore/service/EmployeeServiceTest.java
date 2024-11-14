@@ -52,7 +52,7 @@ class EmployeeServiceTest {
             employeeService.createEmployee("", "password123", "user@example.com", true, false);
         });
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Username field cannot be empty.", exception.getMessage());
+        assertEquals("Username is required.", exception.getMessage());
     }
 
     @Test
@@ -70,7 +70,7 @@ class EmployeeServiceTest {
             employeeService.createEmployee("username", "password123", "", true, false);
         });
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Email field cannot be empty.", exception.getMessage());
+        assertEquals("Invalid email format.", exception.getMessage());
     }
 
     @Test
@@ -120,7 +120,7 @@ class EmployeeServiceTest {
             employeeService.getEmployeeById(1);
         });
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("There is no employee with this ID.", exception.getMessage());
+        assertEquals("Employee not found.", exception.getMessage());
     }
 
     @Test

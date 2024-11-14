@@ -11,14 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Category;
 import group15.gameStore.repository.CategoryRepository;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
 
     @Mock
@@ -165,7 +166,7 @@ public class CategoryServiceTest {
         });
 
         assertEquals(HttpStatus.NO_CONTENT, thrown.getStatus());
-        assertEquals("There are no category records found in the system.", thrown.getMessage());
+        assertEquals("No category records found in the system.", thrown.getMessage());
     }
 
     @Test
