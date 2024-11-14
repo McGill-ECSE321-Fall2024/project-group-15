@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
@@ -66,7 +67,7 @@ public class PaymentInfoServiceTest {
     }
 
     @Test
-    public void testCreatePaymentInfo_InvalidCardNumber() {
+    public void testCreatePaymentInfo_InvalidPaymentInfoAttribute() {
         GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
             paymentInfoService.createPaymentInfo(
                 "12345", 
@@ -75,7 +76,69 @@ public class PaymentInfoServiceTest {
                 "123 Test St", 
                 mockCustomer);
         });
-        assertEquals("Invalid card number. Must be 16 digits.", thrown.getMessage());
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInfo_NullCustomer() {
+        Customer c2 = null;
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.createPaymentInfo(
+                "1234567898765432", 
+                Date.valueOf("2025-12-31"), 
+                123, 
+                "123 Test St", 
+                c2);  
+            });
+
+        assertEquals("Customer must be valid and registered.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_Success() {
+        // Arrange
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("8765432187654321");
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2026-12-31"));
+        updatedPaymentInfo.setCvv(321);
+        updatedPaymentInfo.setBillingAddress("456 New Address St");
+        updatedPaymentInfo.setCustomer(mockCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+        when(paymentInfoRepo.save(any(PaymentInfo.class))).thenReturn(updatedPaymentInfo);
+
+        // Act
+        PaymentInfo result = paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, mockCustomer);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("8765432187654321", result.getCardNumber());
+        assertEquals(Date.valueOf("2026-12-31"), result.getExpiryDate());
+        assertEquals(321, result.getCvv());
+        assertEquals("456 New Address St", result.getBillingAddress());
+        verify(paymentInfoRepo, times(1)).save(mockPaymentInfo);
+    }
+
+        @Test
+    public void testUpdatePaymentInfo_UnauthorizedOrInvalidUpdate() {
+        // Arrange
+        PaymentInfo invalidUpdatedPaymentInfo = new PaymentInfo();
+        invalidUpdatedPaymentInfo.setCardNumber("invalidcard");
+        invalidUpdatedPaymentInfo.setExpiryDate(Date.valueOf("2020-12-31"));
+        invalidUpdatedPaymentInfo.setCvv(-1); 
+        invalidUpdatedPaymentInfo.setBillingAddress(""); 
+        invalidUpdatedPaymentInfo.setCustomer(mockCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+
+        // Act Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, invalidUpdatedPaymentInfo, mockCustomer);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, thrown.getStatus());
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
     }
 
     @Test
