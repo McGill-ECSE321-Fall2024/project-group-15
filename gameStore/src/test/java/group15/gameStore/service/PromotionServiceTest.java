@@ -16,8 +16,6 @@ import group15.gameStore.model.Game;
 import group15.gameStore.repository.PromotionRepository;
 import group15.gameStore.repository.GameRepository;
 import java.sql.Date;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class PromotionServiceTest {

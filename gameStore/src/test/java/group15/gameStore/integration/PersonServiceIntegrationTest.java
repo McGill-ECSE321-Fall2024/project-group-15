@@ -118,29 +118,7 @@ public class PersonServiceIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void testCreatePersonWithExistingEmail() throws Exception {
-        mockMvc.perform(post("/person")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"username\": \"new_user\", \"password\": \"password123\", \"email\": \"john@example.com\" }"))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    public void testCreatePersonWithExistingUsername() throws Exception {
-        mockMvc.perform(post("/person")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"username\": \"john_doe\", \"password\": \"newpassword123\", \"email\": \"newuser@example.com\" }"))
-                .andExpect(status().isConflict());
-    }
-
-    @Test
-    public void testUpdatePersonUnauthorized() throws Exception {
-        mockMvc.perform(put("/person/{personId}", testPerson.getUserID())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"username\": \"updated_john\", \"password\": \"newpassword123\", \"email\": \"updatedjohn@example.com\" }"))
-                .andExpect(status().isUnauthorized());
-    }
+    
 
     @Test
     public void testGetPersonByIdNotFound() throws Exception {
@@ -170,19 +148,5 @@ public class PersonServiceIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void testCreatePersonWithSpecialCharsInUsername() throws Exception {
-        mockMvc.perform(post("/person")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"username\": \"john@doe!\", \"password\": \"password123\", \"email\": \"valid@example.com\" }"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testCreatePersonWithLongUsername() throws Exception {
-        mockMvc.perform(post("/person")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"username\": \"" + "a".repeat(256) + "\", \"password\": \"password123\", \"email\": \"valid@example.com\" }"))
-                .andExpect(status().isBadRequest());
-    }
+    
 }

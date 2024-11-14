@@ -151,8 +151,8 @@ public class PromotionServiceIntegrationTest {
         // Arrange
         Promotion promo1 = new Promotion("PROMO2024", 10.0, Date.valueOf("2024-12-31"), game);
         Promotion promo2 = new Promotion("PROMO2025", 15.0, Date.valueOf("2025-12-31"), game);
-        promotionRepository.save(promo1);
-        promotionRepository.save(promo2);
+       promotionRepository.save(promo1);
+       promotionRepository.save(promo2);
 
         // Act & Assert (performing the request to get all promotions)
         mockMvc.perform(get("/promotions"))
