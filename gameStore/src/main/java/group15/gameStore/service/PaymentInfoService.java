@@ -142,7 +142,7 @@ public class PaymentInfoService {
         if (paymentInfo.getCustomer() == null || paymentInfo.getCustomer().getUserID() != customer.getUserID()) {
             throw new GameStoreException(HttpStatus.FORBIDDEN, "Unauthorized access. Only the owner can delete this payment info.");
         }
-        paymentInfoRepo.deleteByCardNumber(cardNumber);
+        PaymentInfoRepository.deleteByCardNumber(cardNumber);
     }
 
 }
