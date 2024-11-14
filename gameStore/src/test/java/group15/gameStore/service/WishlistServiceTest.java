@@ -4,14 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Wishlist;
+import group15.gameStore.repository.CustomerRepository;
+import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.WishlistRepository;
 
 @SpringBootTest
@@ -28,9 +33,20 @@ public class WishlistServiceTest {
     
         @Mock
         private WishlistRepository wishlistRepository;
+
+        @Mock
+        private CustomerRepository customerRepository;
+
+        @Mock
+        private GameRepository gameRepository;
     
         @InjectMocks
         private WishlistService wishlistService;
+
+        @BeforeEach
+        void setUp() {
+            MockitoAnnotations.openMocks(this);
+        }
     
         // Test for creating a wishlist
         @Test
@@ -66,13 +82,18 @@ public class WishlistServiceTest {
         @Test
         public void testGetWishlistById_Success() {
             //Arrange
-            String name = "Dana White";
-            String password = "password1234";
-            String email = "dana@gmail.com";
-            String address = "1234 Main St";
-            String phoneNumber = "123-456-7890";
-            Customer c1 = new Customer(name, password, email, address, phoneNumber);
+            // String name = "Dana White";
+            // String password = "password1234";
+            // String email = "dana@gmail.com";
+            // String address = "1234 Main St";
+            // String phoneNumber = "123-456-7890";
+            // Customer c1 = new Customer(name, password, email, address, phoneNumber);
+            Customer c1 = new Customer();
             Wishlist w1 = new Wishlist("Wishlist1", c1);
+            w1.setWishListId(1);
+            // customerRepository.save(c1);
+            // wishlistRepository.save(w1);
+            when(customerRepository.findById(c1.getUserID())).thenReturn(java.util.Optional.of(c1));
             when(wishlistRepository.findById(1)).thenReturn(java.util.Optional.of(w1));
 
             //Act
@@ -87,14 +108,6 @@ public class WishlistServiceTest {
         @Test
         public void testGetWishlistById_InvalidId() {
             //Arrange
-            String name = "Dana White";
-            String password = "password1234";
-            String email = "dana@gmail.com";
-            String address = "1234 Main St";
-            String phoneNumber = "123-456-7890";
-            Customer c1 = new Customer(name, password, email, address, phoneNumber);
-            Wishlist w1 = new Wishlist("Wishlist1", c1);
-            when(wishlistRepository.findById(1)).thenReturn(java.util.Optional.of(w1));
 
             //Act
             GameStoreException exception = assertThrows(GameStoreException.class, () -> {
@@ -117,11 +130,15 @@ public class WishlistServiceTest {
             String phoneNumber = "123-456-7890";
             Customer c1 = new Customer(name, password, email, address, phoneNumber);
             Wishlist w1 = new Wishlist("Wishlist1", c1);
+            w1.setWishListId(1);
+            wishlistRepository.save(w1);
             Game g1 = new Game();
-            when(wishlistRepository.findById(1)).thenReturn(java.util.Optional.of(w1));
+            g1.setGameID(1);
+            gameRepository.save(g1);
+            when(wishlistRepository.findById(w1.getWishListId())).thenReturn(java.util.Optional.of(w1));
 
             //Act
-            Wishlist result = wishlistService.addGameToWishlist(1, 1, c1);
+            Wishlist result = wishlistService.addGameToWishlist(w1.getWishListId(), 1, c1);
 
             //Assert
             assertNotNull(result);
