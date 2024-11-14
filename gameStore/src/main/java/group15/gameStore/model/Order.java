@@ -47,7 +47,7 @@ public class Order
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private Order() {
+  public Order() {
   }
 
   //------------------------
