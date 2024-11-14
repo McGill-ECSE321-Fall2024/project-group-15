@@ -27,6 +27,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
+import group15.gameStore.model.Employee;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
 import group15.gameStore.repository.EmployeeRepository;
@@ -98,6 +99,26 @@ public class GameServiceTest {
 				() -> gameService.createGame("", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER, VALID_MANAGER));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid game creation request: missing attributes", e.getMessage());
+    }
+
+    @Test
+    public void testCreateInvalidGameNegativeStock() {
+        GameStoreException e = assertThrows(GameStoreException.class,
+				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, -5, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER, VALID_MANAGER));
+		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+		assertEquals("The price or stock of a game cannot be negative", e.getMessage());
+    }
+
+    @Test
+    public void testCreateGameInvalidEmployee() {
+      when(mockEmployeeRepo.findByUserID(0)).thenReturn(null);
+      Manager invalidEmployee = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+      invalidEmployee.setUserID(0);
+
+      GameStoreException e = assertThrows(GameStoreException.class,
+				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER, invalidEmployee));
+		  assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+		  assertEquals("The employee does not exist", e.getMessage());
     }
 
     @Test
@@ -182,6 +203,16 @@ public class GameServiceTest {
 		assertEquals("The game to delete does not exist", e.getMessage());
 
     }
+
+    @Test
+    public void testDeleteInvalidGameAttributes() {
+        GameStoreException e = assertThrows(GameStoreException.class,
+				() -> gameService.deleteGame(null, manager));
+		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+		assertEquals("Invalid game creation request: missing attributes", e.getMessage());
+
+    }
+
 
     @Test
     public void testGetGameByValidID() {
