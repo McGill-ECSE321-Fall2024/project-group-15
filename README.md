@@ -51,6 +51,7 @@ The second deliverable focuses on implementing backend services using RESTful HT
 **Other Important Documents:**<br/>
 [Backend Services](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Backend-Services)<br/>
 [Software Quality Assurance Plan](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Software-Quality-Assurance-Plan)<br/>
+[Software Quality Assurance Report](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Software-Quality-Assurance-Report)<br/>
 
 **To Build System and Run Test**<br/>
 
