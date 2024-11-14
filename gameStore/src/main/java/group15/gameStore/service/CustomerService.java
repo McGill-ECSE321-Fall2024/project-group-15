@@ -75,6 +75,9 @@ public class CustomerService {
         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid email format.");
         }
+        if (customerRepository.findByEmail(email) != null) {
+            throw new GameStoreException(HttpStatus.CONFLICT, "Email is already taken.");
+        }
         if (address == null || address.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Address is required.");
         }

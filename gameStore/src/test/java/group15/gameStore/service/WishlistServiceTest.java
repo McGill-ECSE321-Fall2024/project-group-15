@@ -145,6 +145,4 @@ public class WishlistServiceTest {
             assertEquals(w1, result);
         }
 
-
-
 }
