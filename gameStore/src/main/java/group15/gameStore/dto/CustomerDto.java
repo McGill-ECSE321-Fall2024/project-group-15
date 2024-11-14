@@ -8,6 +8,10 @@ public class CustomerDto extends PersonDto {
     private String address;
     private String phoneNumber;
 
+    @SuppressWarnings("unused")
+    public CustomerDto(){
+    } 
+    
     // Constructor
     public CustomerDto(Customer customer) {
         this.userID = customer.getUserID();
