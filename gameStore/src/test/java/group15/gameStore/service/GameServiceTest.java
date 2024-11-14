@@ -27,7 +27,6 @@ import org.mockito.quality.Strictness;
 import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
-import group15.gameStore.model.Employee;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
 import group15.gameStore.repository.EmployeeRepository;

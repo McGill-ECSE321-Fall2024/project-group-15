@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import group15.gameStore.model.Promotion;
 import group15.gameStore.exception.GameStoreException;
@@ -41,15 +42,12 @@ public class PromotionServiceTest {
     void testCreatePromotion_Success() {
         // Arrange
         Game game = new Game();
-        game.setGameID(1); // Set the game ID or other necessary fields
+        game.setGameID(1); 
         Date validUntil = Date.valueOf("2024-12-31");
 
         Promotion mockPromotion = new Promotion("PROMO2024", 20.0, validUntil, game);
-        
-        // Mock game repository behavior
-        when(gameRepository.findGameByGameID(1)).thenReturn(game);
 
-        // Mock promotion repository behavior
+        when(gameRepository.findGameByGameID(1)).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenReturn(mockPromotion);
 
         // Act
@@ -60,7 +58,28 @@ public class PromotionServiceTest {
         assertEquals("PROMO2024", createdPromotion.getPromotionCode());
         assertEquals(20.0, createdPromotion.getDiscountPercentage());
         assertEquals(validUntil, createdPromotion.getValidUntil());
-        verify(promotionRepository, times(1)).save(any(Promotion.class)); // Verify repository save was called
+        assertEquals(game, createdPromotion.getGame());
+        verify(promotionRepository, times(1)).save(any(Promotion.class)); // Verify save was called once
+    }
+
+    @Test
+    void testCreatePromotion_GameNotFound() {
+        // Arrange
+        Game game = new Game();
+        game.setGameID(1); 
+        Date validUntil = Date.valueOf("2024-12-31");
+
+        when(gameRepository.findGameByGameID(1)).thenReturn(null);
+
+        // Assert
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            promotionService.createPromotion("PROMO2024", 20.0, validUntil, game);
+        });
+        
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Game must be valid and exist in the system.", exception.getMessage());
+
+        verify(promotionRepository, never()).save(any(Promotion.class));
     }
 
     @Test
@@ -135,6 +154,34 @@ public class PromotionServiceTest {
         });
         // Assert
         assertEquals("Promotion with the specified code does not exist.", thrown.getMessage());
+    }
+
+    @Test
+    void testDeletePromotion_Unauthorized() {
+        // Arrange
+        String promotionCode = "PROMO2024";
+        Game authorizedGame = new Game();
+        authorizedGame.setGameID(1);
+        
+        Game unauthorizedGame = new Game();
+        unauthorizedGame.setGameID(2);
+
+        Promotion promotion = new Promotion();
+        promotion.setPromotionCode(promotionCode);
+        promotion.setGame(authorizedGame);
+
+        when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(promotion);
+
+        // Act
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            promotionService.deletePromotion(promotionCode, unauthorizedGame);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
+        assertEquals("Unauthorized access. Only the associated game can delete this promotion.", thrown.getMessage());
+
+        verify(promotionRepository, never()).deleteByPromotionCode(promotionCode);
     }
 
     @Test

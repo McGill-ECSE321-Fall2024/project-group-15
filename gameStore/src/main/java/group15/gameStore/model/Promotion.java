@@ -37,7 +37,7 @@ public class Promotion
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private Promotion() {
+  public Promotion() {
   }
 
   //------------------------
