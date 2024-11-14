@@ -106,8 +106,6 @@ public class GameServiceTest {
     public void testUpdateValidGame() {
         Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
         manager.setUserID(0);
-        
-        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
@@ -190,9 +188,9 @@ public class GameServiceTest {
     @Test
     public void testGetGameByValidID() {
         Game gameToGet = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
-        gameToGet.setGameID(1);
+        gameToGet.setGameID(0);
 
-        when(mockGameRepo.findGameByGameID(1)).thenReturn(gameToGet);
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToGet);
 
         Game gottenGame = gameService.getGameByID(gameToGet.getGameID());
         assertNotNull(gottenGame);
@@ -366,8 +364,8 @@ public class GameServiceTest {
     @Test
     public void testUnarchiveInvalidGame() {
         Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
-        manager.setUserID(1);
-        when(mockEmployeeRepo.findByUserID(1)).thenReturn(manager);
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
         Game gameToUnarchive = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
         

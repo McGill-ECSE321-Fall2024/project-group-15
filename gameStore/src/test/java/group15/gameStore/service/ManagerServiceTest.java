@@ -45,10 +45,10 @@ public class ManagerServiceTest {
 
     private static final String VALID_USERNAME = "PaulManager";
 	private static final String VALID_EMAIL = "paul@mail.com";
-	private static final String VALID_PASSWORD = "Paul123";
+	private static final String VALID_PASSWORD = "Paul1234";
     private static final boolean VALID_ISACTIVE = true;
     private static final boolean VALID_ISMANAGER = true;
-    private static final Employee VALID_MANAGEREMPLOYEE = new Employee("SmithManager", "Smith123", "smith@mail.com", true, true);
+    private static final Employee VALID_MANAGEREMPLOYEE = new Employee("SmithManager", "Smith1234", "smith@mail.com", true, true);
 
     private static final String INVALID_USERNAME = "";
 
@@ -103,7 +103,7 @@ public class ManagerServiceTest {
         when(mockManagerRepo.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         
         Manager managerToUpdate = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
-        Manager managerUpdated = new Manager(VALID_USERNAME, "123Paul", VALID_EMAIL, VALID_ISACTIVE, true);
+        Manager managerUpdated = new Manager(VALID_USERNAME, "12345678Paul", VALID_EMAIL, VALID_ISACTIVE, true);
         managerToUpdate.setUserID(0);
         managerUpdated.setUserID(0);
 
@@ -114,7 +114,7 @@ public class ManagerServiceTest {
         assertNotNull(updatedManager);
 		assertEquals(VALID_USERNAME, updatedManager.getUsername());
 		assertEquals(VALID_EMAIL, updatedManager.getEmail());
-		assertEquals("123Paul", updatedManager.getPassword());
+		assertEquals("12345678Paul", updatedManager.getPassword());
         assertEquals(VALID_ISACTIVE, updatedManager.getIsActive());
         assertEquals(VALID_ISMANAGER, updatedManager.getIsManager());
         

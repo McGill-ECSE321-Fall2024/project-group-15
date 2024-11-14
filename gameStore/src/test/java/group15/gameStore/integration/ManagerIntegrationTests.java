@@ -36,7 +36,6 @@ import group15.gameStore.model.Manager;
 import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.ManagerRepository;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
