@@ -5,15 +5,19 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Person;
 import group15.gameStore.repository.PersonRepository;
 
 import java.util.List;
 
+@ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
     @Mock
@@ -56,7 +60,7 @@ class PersonServiceTest {
         String email = "testuser@example.com";
         
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> 
+        Exception exception = assertThrows(GameStoreException.class, () -> 
             personService.createPerson(username, password, email)
         );
         assertEquals("Username is required.", exception.getMessage());
@@ -88,6 +92,7 @@ class PersonServiceTest {
         // Arrange
         int personId = 1;
         Person person = new Person("testuser", "password123", "testuser@example.com");
+        person.setUserID(personId);
         when(personRepo.findByUserID(personId)).thenReturn(person);
 
         // Act
@@ -106,10 +111,10 @@ class PersonServiceTest {
         when(personRepo.findByUsername(username)).thenReturn(null);
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> 
+        Exception exception = assertThrows(GameStoreException.class, () -> 
             personService.getPersonByUsername(username)
         );
-        assertEquals("User not found", exception.getMessage());
+        assertEquals("User not found.", exception.getMessage());
     }
 
     @Test
@@ -132,10 +137,10 @@ class PersonServiceTest {
         when(personRepo.findAll()).thenReturn(List.of());
 
         // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> 
+        Exception exception = assertThrows(GameStoreException.class, () -> 
             personService.getAllPersons()
         );
-        assertEquals("No User records found in the system.", exception.getMessage());
+        assertEquals("No user records found in the system.", exception.getMessage());
     }
 }
 

@@ -1,5 +1,6 @@
 package group15.gameStore.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +44,7 @@ public class PaymentInfoServiceTest {
         mockPaymentInfo.setExpiryDate(Date.valueOf("2025-12-31"));
         mockPaymentInfo.setCvv(123);
         mockPaymentInfo.setBillingAddress("123 Test St");
+        mockPaymentInfo.setCustomer(mockCustomer);
     }
 
     @Test
@@ -94,7 +96,7 @@ public class PaymentInfoServiceTest {
             paymentInfoService.getPaymentInfoById(1);
         });
         
-        assertEquals("Payment Information not found", thrown.getMessage());
+        assertEquals("Payment Information not found.", thrown.getMessage());
     }
 
     @Test
@@ -114,12 +116,13 @@ public class PaymentInfoServiceTest {
             paymentInfoService.deletePaymentInfo("1234567812345678", mockCustomer);
         });
         
-        assertEquals("Payment info with the specified ID does not exist.", thrown.getMessage());
+        assertEquals("Payment info with the specified card number does not exist.", thrown.getMessage());
     }
 
     @Test
     public void testDeletePaymentInfo_Unauthorized() {
         Customer unauthorizedCustomer = new Customer();
+        unauthorizedCustomer.setUserID(2);
         unauthorizedCustomer.setPhoneNumber("0987654321");
 
         when(paymentInfoRepo.findByCardNumber("1234567812345678")).thenReturn(mockPaymentInfo);

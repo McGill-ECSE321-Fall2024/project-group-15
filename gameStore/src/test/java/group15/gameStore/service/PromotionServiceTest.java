@@ -1,17 +1,23 @@
 package group15.gameStore.service;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import group15.gameStore.model.Promotion;
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Game;
 import group15.gameStore.repository.PromotionRepository;
 import group15.gameStore.repository.GameRepository;
 import java.sql.Date;
 
+@ExtendWith(MockitoExtension.class)
 public class PromotionServiceTest {
 
     @InjectMocks
@@ -87,10 +93,12 @@ public class PromotionServiceTest {
         when(promotionRepository.findById(promotionId)).thenReturn(null);
 
         // Act
-        Promotion retrievedPromotion = promotionService.getPromotionById(promotionId);
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            promotionService.getPromotionById(promotionId);
+        });
 
         // Assert
-        assertNull(retrievedPromotion); // Should return null if not found
+        assertEquals("Promotion not found.", thrown.getMessage());
     }
 
     @Test
@@ -109,7 +117,7 @@ public class PromotionServiceTest {
         promotionService.deletePromotion(promotionCode, game);
 
         // Assert
-        verify(promotionRepository, times(1)).delete(mockPromotion); // Verify delete was called on the mock
+        verify(promotionRepository, times(1)).deleteByPromotionCode(promotionCode); // Verify delete by promotion code was called
     }
 
     @Test
@@ -122,9 +130,10 @@ public class PromotionServiceTest {
         when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(null);
 
         // Act
-        promotionService.deletePromotion(promotionCode, game);
-
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            promotionService.deletePromotion(promotionCode, game);
+        });
         // Assert
-        verify(promotionRepository, times(0)).delete(any(Promotion.class)); // Verify delete was NOT called
+        assertEquals("Promotion with the specified code does not exist.", thrown.getMessage());
     }
 }

@@ -161,11 +161,12 @@ public class PaymentInfoService {
         if (paymentInfo == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Payment info with the specified card number does not exist.");
         }
-
+        if (paymentInfo.getCustomer() == null) {
+            throw new GameStoreException(HttpStatus.FORBIDDEN, "Unauthorized access. Payment info does not have an associated customer.");
+        }
         if (paymentInfo.getCustomer().getUserID() != customer.getUserID()) {
             throw new GameStoreException(HttpStatus.FORBIDDEN, "Unauthorized access. Only the owner can delete this payment info.");
         }
-
         paymentInfoRepo.deleteByCardNumber(cardNumber);
     }
 
