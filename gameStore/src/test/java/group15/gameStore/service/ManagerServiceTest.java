@@ -22,7 +22,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
@@ -45,7 +44,7 @@ public class ManagerServiceTest {
 
     private static final String VALID_USERNAME = "PaulManager";
 	private static final String VALID_EMAIL = "paul@mail.com";
-	private static final String VALID_PASSWORD = "Paul123";
+	private static final String VALID_PASSWORD = "Paul12345";
     private static final boolean VALID_ISACTIVE = true;
     private static final boolean VALID_ISMANAGER = true;
     private static final Employee VALID_MANAGEREMPLOYEE = new Employee("SmithManager", "Smith123", "smith@mail.com", true, true);
@@ -103,7 +102,7 @@ public class ManagerServiceTest {
         when(mockManagerRepo.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         
         Manager managerToUpdate = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
-        Manager managerUpdated = new Manager(VALID_USERNAME, "123Paul", VALID_EMAIL, VALID_ISACTIVE, true);
+        Manager managerUpdated = new Manager(VALID_USERNAME, "12345Paul", VALID_EMAIL, VALID_ISACTIVE, true);
         managerToUpdate.setUserID(0);
         managerUpdated.setUserID(0);
 
@@ -114,7 +113,7 @@ public class ManagerServiceTest {
         assertNotNull(updatedManager);
 		assertEquals(VALID_USERNAME, updatedManager.getUsername());
 		assertEquals(VALID_EMAIL, updatedManager.getEmail());
-		assertEquals("123Paul", updatedManager.getPassword());
+		assertEquals("12345Paul", updatedManager.getPassword());
         assertEquals(VALID_ISACTIVE, updatedManager.getIsActive());
         assertEquals(VALID_ISMANAGER, updatedManager.getIsManager());
         

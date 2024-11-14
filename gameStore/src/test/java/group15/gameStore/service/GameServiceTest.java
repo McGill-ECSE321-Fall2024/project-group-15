@@ -24,7 +24,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 import group15.gameStore.exception.GameStoreException;
@@ -33,7 +32,6 @@ import group15.gameStore.model.Manager;
 import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.ManagerRepository;
-import group15.gameStore.service.GameService;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
@@ -107,7 +105,6 @@ public class GameServiceTest {
         Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
         manager.setUserID(0);
         
-        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
