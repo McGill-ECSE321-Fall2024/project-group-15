@@ -196,4 +196,105 @@ public class PaymentInfoServiceTest {
         
         assertEquals("Unauthorized access. Only the owner can delete this payment info.", thrown.getMessage());
     }
+
+    @Test
+    public void testCreatePaymentInfo_InvalidCVV() {
+        // Arrange
+        int invalidCvv = 9999; // CVV length exceeds the expected range
+        
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.createPaymentInfo(
+                "1234567812345678", 
+                Date.valueOf("2025-12-31"), 
+                invalidCvv, 
+                "123 Test St", 
+                mockCustomer);
+        });
+        
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInfo_NullExpiryDate() {
+        // Arrange
+        Date nullExpiryDate = null;
+        
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.createPaymentInfo(
+                "1234567812345678", 
+                nullExpiryDate, 
+                123, 
+                "123 Test St", 
+                mockCustomer);
+        });
+        
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_InvalidExpiryDate() {
+        // Arrange
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("8765432187654321");
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2020-01-01")); // Expiration date in the past
+        updatedPaymentInfo.setCvv(321);
+        updatedPaymentInfo.setBillingAddress("789 Past Date St");
+        updatedPaymentInfo.setCustomer(mockCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, mockCustomer);
+        });
+        
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_InvalidCardNumberFormat() {
+        // Arrange
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("abc123xyz"); // Non-numeric card number
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2026-12-31"));
+        updatedPaymentInfo.setCvv(123);
+        updatedPaymentInfo.setBillingAddress("456 New St");
+        updatedPaymentInfo.setCustomer(mockCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, mockCustomer);
+        });
+        
+        assertEquals("Payment Card information is invalid.", thrown.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInfo_UnauthorizedCustomer() {
+        // Arrange
+        Customer unauthorizedCustomer = new Customer();
+        unauthorizedCustomer.setUserID(2);
+        unauthorizedCustomer.setPhoneNumber("9876543210");
+        
+        PaymentInfo updatedPaymentInfo = new PaymentInfo();
+        updatedPaymentInfo.setCardNumber("8765432187654321");
+        updatedPaymentInfo.setExpiryDate(Date.valueOf("2026-12-31"));
+        updatedPaymentInfo.setCvv(321);
+        updatedPaymentInfo.setBillingAddress("456 Unauthorized St");
+        updatedPaymentInfo.setCustomer(unauthorizedCustomer);
+
+        when(paymentInfoRepo.findByPaymentInfoID(1)).thenReturn(mockPaymentInfo);
+
+        // Act & Assert
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            paymentInfoService.updatePaymentInfo(1, updatedPaymentInfo, unauthorizedCustomer);
+        });
+        
+        assertEquals("Invalid update request or unauthorized customer.", thrown.getMessage());
+    }
+
 }
