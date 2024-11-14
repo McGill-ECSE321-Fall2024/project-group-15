@@ -43,7 +43,7 @@ public class Review
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private Review() {
+  public Review() {
   }
 
   //------------------------
@@ -71,6 +71,13 @@ public class Review
   public Customer getCustomer() {
     return customer;
   }
+public boolean setCustomer(Customer aCustomer){
+  boolean wasSet = false;
+    customer = aCustomer;
+    wasSet = true;
+    return wasSet;
+}
+
   public boolean setReviewID(int aReviewID)
   {
     boolean wasSet = false;
