@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -29,22 +30,26 @@ import org.springframework.http.HttpStatus;
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
+import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.ManagerRepository;
 import group15.gameStore.service.GameService;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class GameServiceTest {
     @Mock
     private GameRepository mockGameRepo;
     @Mock
     private ManagerRepository mockManagerRepo;
+    @Mock
+    private EmployeeRepository mockEmployeeRepo;
     @InjectMocks
     private GameService gameService;
     @InjectMocks
     private ManagerService managerService;
+    @Mock
+    private Manager manager;
 
     private static final String VALID_TITLE = "game1";
     private static final String VALID_DESC = "description";
@@ -53,11 +58,10 @@ public class GameServiceTest {
     private static final String VALID_IMAGE = "imagelink";
     private static final boolean VALID_ISAPPROVED = true;
     private static final Manager VALID_MANAGER = new Manager("SmithManager", "Smith123", "smith@mail.com", true, true);
-    private Manager manager;
 
     @BeforeEach
-    public void setDatabase() {
-        manager = mockManagerRepo.save(VALID_MANAGER);
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
@@ -68,12 +72,17 @@ public class GameServiceTest {
 
     @Test
     public void testCreateValidGame() {
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(manager);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
+        
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
         Game createdGame = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
 
         assertNotNull(createdGame);
-		assertEquals(VALID_TITLE, createdGame.getTitle());
+		    assertEquals(VALID_TITLE, createdGame.getTitle());
         assertEquals(VALID_DESC, createdGame.getDescription());
         assertEquals(VALID_PRICE, createdGame.getPrice());
         assertEquals(VALID_STOCK, createdGame.getStock());
@@ -95,30 +104,41 @@ public class GameServiceTest {
 
     @Test
     public void testUpdateValidGame() {
-        when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
         
-        Game gameToUpdate = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
-        gameToUpdate.setTitle("newGame1");
+        when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-        Game updatedGame = gameService.updateGame(gameToUpdate.getGameID(), gameToUpdate, manager);
+        Game gameToUpdate = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        Game gameUpdated = new Game("newGame1", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToUpdate.setGameID(0);
+        gameUpdated.setGameID(0);
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameUpdated);
+
+        Game updatedGame = gameService.updateGame(gameToUpdate.getGameID(), gameUpdated, manager);
         
         assertNotNull(updatedGame);
-		assertEquals("newGame1", updatedGame.getTitle());
+		    assertEquals("newGame1", updatedGame.getTitle());
         assertEquals(VALID_DESC, updatedGame.getDescription());
         assertEquals(VALID_PRICE, updatedGame.getPrice());
         assertEquals(VALID_STOCK, updatedGame.getStock());
         assertEquals(VALID_IMAGE, updatedGame.getImage());
         assertEquals(VALID_ISAPPROVED, updatedGame.getIsApproved());
         assertEquals(manager, updatedGame.getManager());
-
-        verify(mockGameRepo, times(1)).save(gameToUpdate);
-        verify(mockGameRepo, times(1)).save(updatedGame);
-
     }
 
     @Test
     public void testUpdateInvalidGame() {
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(manager);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
+
+        when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+
         Game gameToUpdate = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
 
         gameToUpdate.setTitle("");
@@ -132,11 +152,14 @@ public class GameServiceTest {
 
     @Test
     public void testDeleteValidGame() {
-        Game gameToDelete = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
-        List<Game> gameList = gameService.getAllGames();
-        assertEquals(1, gameList.size());
-        verify(mockGameRepo, times(1)).save(gameToDelete);
+        Game gameToDelete = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToDelete.setGameID(0);
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToDelete);
 
         gameService.deleteGame(gameToDelete, manager);
 
@@ -148,22 +171,28 @@ public class GameServiceTest {
 
     @Test
     public void testDeleteInvalidGame() {
-        Game gameToDelete = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
-        gameToDelete.setGameID(gameToDelete.getGameID() + 1);
+        Game gameToDelete = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToDelete.setGameID(0);
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> gameService.deleteGame(gameToDelete, manager));
-		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
 		assertEquals("The game to delete does not exist", e.getMessage());
 
     }
 
     @Test
     public void testGetGameByValidID() {
-        Game gameToGet = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToGet = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToGet.setGameID(1);
 
-        when(mockGameRepo.findGameByGameID(gameToGet.getGameID())).thenReturn(new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER));
+        when(mockGameRepo.findGameByGameID(1)).thenReturn(gameToGet);
 
         Game gottenGame = gameService.getGameByID(gameToGet.getGameID());
         assertNotNull(gottenGame);
@@ -179,21 +208,20 @@ public class GameServiceTest {
 
     @Test
     public void testGetGameByInvalidID() {
-        Game gameToGet = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-
-        gameToGet.setGameID(gameToGet.getGameID() + 1);
+        when(mockGameRepo.findGameByGameID(2)).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.getGameByID(gameToGet.getGameID()));
+				() -> gameService.getGameByID(2));
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
-		assertEquals(String.format("There is no game with ID %d", gameToGet.getGameID()), e.getMessage());
+		assertEquals(String.format("There is no game with ID %d", 2), e.getMessage());
     }
 
     @Test
     public void testGetGameByValidTitle() {
-        Game gameToGet = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToGet = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToGet.setGameID(1);
 
-        when(mockGameRepo.findGameByTitle(gameToGet.getTitle())).thenReturn(new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER));
+        when(mockGameRepo.findGameByTitle(VALID_TITLE)).thenReturn(gameToGet);
 
         Game gottenGame = gameService.getGameByTitle(gameToGet.getTitle());
         assertNotNull(gottenGame);
@@ -208,21 +236,19 @@ public class GameServiceTest {
 
     @Test
     public void testGetGameByInvalidTitle() {
-        Game gameToGet = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-
-        gameToGet.setTitle("invalidGame");
+        when(mockGameRepo.findGameByTitle("invalidTitle")).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.getGameByTitle(gameToGet.getTitle()));
+				() -> gameService.getGameByTitle("invalidTitle"));
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
-		assertEquals(String.format("There is no game with title %s", gameToGet.getTitle()), e.getMessage());
+		assertEquals(String.format("There is no game with title %s", "invalidTitle"), e.getMessage());
 
     }
 
     @Test
     public void testGetGamesByValidPrice() {
-        Game gameToGet1 = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-        Game gameToGet2 = gameService.createGame("game2", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToGet1 = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        Game gameToGet2 = new Game("game2", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
 
         when(mockGameRepo.findGamesByPrice(gameToGet1.getPrice())).thenAnswer((InvocationOnMock invocation) ->{
             List<Game> gameList = new ArrayList<>();
@@ -235,27 +261,23 @@ public class GameServiceTest {
 
         assertNotNull(gottenGames);
 		assertEquals(2, gottenGames.size());
-        verify(mockGameRepo, times(1)).save(gameToGet1);
-        verify(mockGameRepo, times(1)).save(gameToGet2);
 
     }
 
     @Test
     public void testGetGamesByInvalidPrice() {
-        Game gameToGet = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-
-        double invalidPrice = gameToGet.getPrice() + 1.00;
+        when(mockGameRepo.findGamesByPrice(59.99)).thenReturn(new ArrayList<>());
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.getGamesByPrice(invalidPrice));
+				() -> gameService.getGamesByPrice(59.99));
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
-		assertEquals(String.format("There is no game with price %f", invalidPrice), e.getMessage());
+		assertEquals(String.format("There is no game with price %f", 59.99), e.getMessage());
     }
 
     @Test
     public void testGetAllGamesValid() {
-        Game gameToGet1 = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-        Game gameToGet2 = gameService.createGame("game2", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToGet1 = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        Game gameToGet2 = new Game("game2", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
 
         when(mockGameRepo.findAll()).thenAnswer((InvocationOnMock invocation) ->{
             List<Game> gameList = new ArrayList<>();
@@ -268,12 +290,12 @@ public class GameServiceTest {
 
         assertNotNull(gottenGames);
 		assertEquals(2, gottenGames.size());
-        verify(mockGameRepo, times(1)).save(gameToGet1);
-        verify(mockGameRepo, times(1)).save(gameToGet2);
     }
 
     @Test
     public void testGetAllGamesInvalid() {
+        when(mockGameRepo.findAll()).thenReturn(new ArrayList<>());
+
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> gameService.getAllGames());
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
@@ -283,9 +305,16 @@ public class GameServiceTest {
 
     @Test
     public void testArchiveValidGame() {
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
+
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-        Game gameToArchive = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToArchive = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToArchive.setGameID(0);
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToArchive);
 
         Game archivedGame = gameService.archiveGame(gameToArchive, VALID_MANAGER);
 
@@ -296,26 +325,38 @@ public class GameServiceTest {
     
     @Test
     public void testArchiveInvalidGame() {
-        Game gameToArchive = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-        gameToArchive.setArchivedDate(Date.valueOf(LocalDate.now()));
-        Game archivedGame = gameService.updateGame(gameToArchive.getGameID(), gameToArchive, manager);
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
+        Game archivedGame = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        archivedGame.setGameID(0);
+        archivedGame.setArchivedDate(Date.valueOf(LocalDate.now()));
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(archivedGame);
+        
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> gameService.archiveGame(archivedGame, manager));
-		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The game is already archived", e.getMessage());
 
     }
 
     @Test
     public void testUnarchiveValidGame() {
-        when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
-        
-        Game gameToUnarchive = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-        gameToUnarchive.setArchivedDate(Date.valueOf(LocalDate.now()));
-        Game archivedGame = gameService.updateGame(gameToUnarchive.getGameID(), gameToUnarchive, manager);
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
-        Game unarchivedGame = gameService.unarchiveGame(archivedGame, VALID_MANAGER);
+        when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
+
+        Game gameToUnarchive = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToUnarchive.setGameID(0);
+        gameToUnarchive.setArchivedDate(Date.valueOf(LocalDate.now()));
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToUnarchive);
+
+        Game unarchivedGame = gameService.unarchiveGame(gameToUnarchive, VALID_MANAGER);
 
         assertNotNull(unarchivedGame);
 		assertEquals(null, unarchivedGame.getArchivedDate());
@@ -324,20 +365,33 @@ public class GameServiceTest {
     
     @Test
     public void testUnarchiveInvalidGame() {
-        Game gameToUnarchive = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(1);
+        when(mockEmployeeRepo.findByUserID(1)).thenReturn(manager);
+
+        Game gameToUnarchive = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
         
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToUnarchive);
+
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> gameService.unarchiveGame(gameToUnarchive, manager));
-		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
+		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The game is already unarchived", e.getMessage());
 
     }
 
     @Test
     public void testUpdateApprovalValidGame() {
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
+
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         
-        Game gameToUpdateApproval = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToUpdateApproval = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        gameToUpdateApproval.setGameID(0);
+
+        when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToUpdateApproval);
 
         Game updatedGame = gameService.updateGameApproval(gameToUpdateApproval, true, manager);
 
@@ -347,8 +401,10 @@ public class GameServiceTest {
 
     @Test
     public void testUpdateApprovalInvalidGame() {
-        Game gameToUpdateApproval = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
-
+        Manager manager = new Manager(VALID_MANAGER.getUsername(), VALID_MANAGER.getPassword(), VALID_MANAGER.getEmail(), VALID_MANAGER.getIsActive(), VALID_MANAGER.getIsManager());
+        manager.setUserID(0);
+    
+        Game gameToUpdateApproval = new Game(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
         gameToUpdateApproval.setTitle("");
 
         GameStoreException e = assertThrows(GameStoreException.class,

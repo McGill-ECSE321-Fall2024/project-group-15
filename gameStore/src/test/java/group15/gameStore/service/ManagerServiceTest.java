@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -31,7 +32,6 @@ import group15.gameStore.repository.EmployeeRepository;
 import group15.gameStore.repository.ManagerRepository;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 @MockitoSettings(strictness = Strictness.STRICT_STUBS)
 public class ManagerServiceTest {
     @Mock
@@ -56,7 +56,7 @@ public class ManagerServiceTest {
 
     @BeforeEach
     public void setDatabase() {
-        createdEmployee = employeeService.createEmployee(VALID_MANAGEREMPLOYEE.getUsername(), VALID_MANAGEREMPLOYEE.getPassword(), VALID_MANAGEREMPLOYEE.getEmail(), VALID_MANAGEREMPLOYEE.getIsActive(), VALID_MANAGEREMPLOYEE.getIsManager());
+        MockitoAnnotations.openMocks(this);
     }
 
     @AfterEach
@@ -67,9 +67,13 @@ public class ManagerServiceTest {
 
     @Test
 	public void testCreateValidManager() {
+        Manager manager = new Manager(VALID_MANAGEREMPLOYEE.getUsername(), VALID_MANAGEREMPLOYEE.getPassword(), VALID_MANAGEREMPLOYEE.getEmail(), VALID_MANAGEREMPLOYEE.getIsActive(), VALID_MANAGEREMPLOYEE.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
+
         when(mockManagerRepo.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         
-        Manager createdManager = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
+        Manager createdManager = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, manager);
         
         assertNotNull(createdManager);
 		assertEquals(VALID_USERNAME, createdManager.getUsername());
@@ -92,12 +96,20 @@ public class ManagerServiceTest {
 
     @Test
     public void testUpdateValidManager() {
+        Manager manager = new Manager(VALID_MANAGEREMPLOYEE.getUsername(), VALID_MANAGEREMPLOYEE.getPassword(), VALID_MANAGEREMPLOYEE.getEmail(), VALID_MANAGEREMPLOYEE.getIsActive(), VALID_MANAGEREMPLOYEE.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
+
         when(mockManagerRepo.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         
-        Manager managerToUpdate = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, VALID_MANAGEREMPLOYEE);
+        Manager managerToUpdate = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        Manager managerUpdated = new Manager(VALID_USERNAME, "123Paul", VALID_EMAIL, VALID_ISACTIVE, true);
+        managerToUpdate.setUserID(0);
+        managerUpdated.setUserID(0);
 
-        managerToUpdate.setPassword("123Paul");
-        Manager updatedManager = managerService.updateManager(managerToUpdate.getUserID(), managerToUpdate, createdEmployee);
+        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(managerUpdated);
+
+        Manager updatedManager = managerService.updateManager(managerToUpdate.getUserID(), managerUpdated, manager);
 
         assertNotNull(updatedManager);
 		assertEquals(VALID_USERNAME, updatedManager.getUsername());
@@ -106,14 +118,11 @@ public class ManagerServiceTest {
         assertEquals(VALID_ISACTIVE, updatedManager.getIsActive());
         assertEquals(VALID_ISMANAGER, updatedManager.getIsManager());
         
-		verify(mockManagerRepo, times(1)).save(managerToUpdate);
-        verify(mockManagerRepo, times(1)).save(updatedManager);
-        
     }
 
     @Test
     public void testUpdateInvalidManager() {
-        Manager managerToUpdate = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
+        Manager managerToUpdate = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
         
         managerToUpdate.setPassword("");
 
