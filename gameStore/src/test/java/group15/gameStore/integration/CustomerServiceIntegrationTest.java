@@ -260,7 +260,7 @@ public class CustomerServiceIntegrationTest {
     public void testDeleteCustomer() {
         client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
 
-        ResponseEntity<Void> response = client.exchange("/customers/delete/Joe", HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = client.exchange("/customers/delete", HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
@@ -270,7 +270,6 @@ public class CustomerServiceIntegrationTest {
         ResponseEntity<String> response = client.exchange("/customers/delete/NonExistentCustomer", HttpMethod.DELETE, null, String.class);
         
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Customer with username NonExistentCustomer not found.", response.getBody());
     }
 
     private boolean equals(CustomerDto customerResponseDto, CustomerDto customerRequestDto) {

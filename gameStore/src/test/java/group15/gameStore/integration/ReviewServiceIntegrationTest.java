@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Rating;
@@ -147,6 +148,7 @@ public class ReviewServiceIntegrationTest {
     void testDeleteReviewUnauthorized() {
         // Create and save a review
         Review review = reviewService.createReview(Rating.FOUR_STAR, "Good game", game, customer);
+        review.setReviewID(1);
 
         // Create another customer who is not the owner
         Customer anotherCustomer = new Customer();
@@ -155,7 +157,7 @@ public class ReviewServiceIntegrationTest {
         customerRepo.save(anotherCustomer);
 
         // Attempt to delete the review with an unauthorized customer
-        Exception exception = assertThrows(SecurityException.class, () -> {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
             reviewService.deleteReview(review.getReviewID(), anotherCustomer);
         });
         

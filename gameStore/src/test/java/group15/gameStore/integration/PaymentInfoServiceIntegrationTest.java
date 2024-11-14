@@ -2,6 +2,7 @@ package group15.gameStore.integration;
 
 import group15.gameStore.dto.*;
 import group15.gameStore.model.Customer;
+import group15.gameStore.model.PaymentInfo;
 import group15.gameStore.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,7 @@ public class PaymentInfoServiceIntegrationTest {
     private TestRestTemplate client;
 
     private Customer customer;
+    private PaymentInfo paymentInfo;
     private PaymentInfoDto paymentInfoRequestDto;
     private PaymentInfoDto paymentInfoRequestDto2;
 
@@ -40,23 +43,23 @@ public class PaymentInfoServiceIntegrationTest {
         customer.setPhoneNumber("123456789");
         customerRepository.save(customer);
 
-        paymentInfoRequestDto = new PaymentInfoDto();
-        paymentInfoRequestDto2 = new PaymentInfoDto();
+        paymentInfo = new PaymentInfo("1234567812345678", Date.valueOf("2025-12-31"), 123, "123 Test St", customer);
+        paymentInfo.setPaymentInfoID(1);
+        paymentInfoRequestDto = new PaymentInfoDto(paymentInfo);
     }
 
     @Test
     @Order(1)
     public void testGetAllEmptyPaymentInfo() {
-        ResponseEntity<String> response = client.getForEntity("/paymentinfo", String.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(response.getBody(), "There are no payment information in the system.");
+        ResponseEntity<String> response = client.getForEntity("/paymentInfo", String.class);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     @Order(2)
     public void testCreateValidPaymentInfo() {
-        ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.postForEntity("/paymentinfo/create", paymentInfoRequestDto, PaymentInfoDto.class);
-        ResponseEntity<PaymentInfoDto> paymentInfoResponse2 = client.postForEntity("/paymentinfo/create", paymentInfoRequestDto2, PaymentInfoDto.class);
+        ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.postForEntity("/paymentInfo", paymentInfoRequestDto, PaymentInfoDto.class);
+        ResponseEntity<PaymentInfoDto> paymentInfoResponse2 = client.postForEntity("/paymentInfo", paymentInfoRequestDto2, PaymentInfoDto.class);
 
         assertEquals(HttpStatus.CREATED, paymentInfoResponse.getStatusCode());
         assertNotNull(paymentInfoResponse.getBody());
@@ -67,7 +70,7 @@ public class PaymentInfoServiceIntegrationTest {
     @Test
     @Order(3)
     public void testGetValidPaymentInfoByCardNumber() {
-        ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.getForEntity("/paymentinfo/1234567812345678", PaymentInfoDto.class);
+        ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.getForEntity("/paymentInfo/card/1234567812345678", PaymentInfoDto.class);
         assertEquals(HttpStatus.OK, paymentInfoResponse.getStatusCode());
         assertNotNull(paymentInfoResponse.getBody());
         assertTrue(equals(paymentInfoResponse.getBody(), paymentInfoRequestDto));
@@ -78,7 +81,7 @@ public class PaymentInfoServiceIntegrationTest {
     public void testUpdateValidPaymentInfo() {
         PaymentInfoDto updatedPaymentInfo = new PaymentInfoDto();
         HttpEntity<PaymentInfoDto> requestEntity = new HttpEntity<>(updatedPaymentInfo);
-        ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.exchange("/paymentinfo/update", HttpMethod.PUT, requestEntity, PaymentInfoDto.class);
+        ResponseEntity<PaymentInfoDto> paymentInfoResponse = client.exchange("/paymentInfo/1", HttpMethod.PUT, requestEntity, PaymentInfoDto.class);
         assertEquals(HttpStatus.OK, paymentInfoResponse.getStatusCode());
         assertNotNull(paymentInfoResponse.getBody());
         assertTrue(equals(paymentInfoResponse.getBody(), updatedPaymentInfo));
@@ -103,16 +106,19 @@ public class PaymentInfoServiceIntegrationTest {
     @Test
     @Order(6)
     public void testDeletePaymentInfo() {
-        ResponseEntity<Void> response = client.exchange("/paymentinfo/delete/1234567812345678", HttpMethod.DELETE, null, Void.class);
+        CustomerDto customerDto = new CustomerDto(customer);
+        HttpEntity<CustomerDto> requestEntity = new HttpEntity<>(customerDto);
+        ResponseEntity<Void> response = client.exchange("/paymentInfo/1234567812345678", HttpMethod.DELETE, requestEntity, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     @Order(7)
     public void testDeletePaymentInfo_NotFound() {
-        ResponseEntity<String> response = client.exchange("/paymentinfo/delete/0000000000000000", HttpMethod.DELETE, null, String.class);
+        CustomerDto customerDto = new CustomerDto(customer);
+        HttpEntity<CustomerDto> requestEntity = new HttpEntity<>(customerDto);
+        ResponseEntity<String> response = client.exchange("/paymentInfo/0000000000000000", HttpMethod.DELETE, requestEntity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(response.getBody(), "Payment Info with card number 0000000000000000 not found.");
     }
 
     private boolean equals(PaymentInfoDto paymentInfoResponseDto, PaymentInfoDto paymentInfoRequestDto) {

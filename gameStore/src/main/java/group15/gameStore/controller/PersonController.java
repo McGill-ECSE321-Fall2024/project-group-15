@@ -44,8 +44,11 @@ public class PersonController {
      */
     @PutMapping("/person/{personId}")
     public ResponseEntity<PersonDto> updatePerson(@PathVariable int personId,@RequestBody PersonDto personDto) {
-        Person person = personService.getPersonById(personDto.getUserID());
-        Person updatedPerson = personService.updatePerson(personId, person);
+        Person personToUpdate = new Person();
+        personToUpdate.setUsername(personDto.getUsername());
+        personToUpdate.setPassword(personDto.getPassword());
+        personToUpdate.setEmail(personDto.getEmail());
+        Person updatedPerson = personService.updatePerson(personId, personToUpdate);
         return new ResponseEntity<>(new PersonDto(updatedPerson), HttpStatus.OK);
     }
 
