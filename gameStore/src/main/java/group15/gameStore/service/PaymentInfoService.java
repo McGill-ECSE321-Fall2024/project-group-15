@@ -35,27 +35,15 @@ public class PaymentInfoService {
      */
     @Transactional
     public PaymentInfo createPaymentInfo(String aCardNumber, Date aExpiryDate, int aCvv, String aBillingAddress, Customer aCustomer){
-        if (aCardNumber == null || aCardNumber.length() != 16 || !aCardNumber.matches("\\d+")) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid card number. Must be 16 digits.");
-        }
-        if (aExpiryDate == null || aExpiryDate.before(new Date(System.currentTimeMillis()))) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid expiry date. Must be a future date.");
-        }
-        if (String.valueOf(aCvv).length() != 3) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid CVV. Must be a 3-digit number.");
-        }
-        if (aBillingAddress == null || aBillingAddress.isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Billing address cannot be empty.");
+        if (aCardNumber == null || aCardNumber.length() != 16 || !aCardNumber.matches("\\d+") || aExpiryDate == null || aExpiryDate.before(new Date(System.currentTimeMillis())) || String.valueOf(aCvv).length() != 3 || aBillingAddress == null || aBillingAddress.isEmpty()) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Payment Card information is invalid.");
         }
         if (aCustomer == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Customer must be provided.");
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Customer must be valid and registered.");
         }
         Customer customer = customerRepo.findByUserID(aCustomer.getUserID());
-        if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer must be valid and registered.");
-        }
     
-        PaymentInfo paymentInfo = new PaymentInfo(aCardNumber, aExpiryDate, aCvv, aBillingAddress, aCustomer);
+        PaymentInfo paymentInfo = new PaymentInfo(aCardNumber, aExpiryDate, aCvv, aBillingAddress, customer);
         paymentInfoRepo.save(paymentInfo);
         return paymentInfo;
     }
@@ -78,21 +66,13 @@ public class PaymentInfoService {
             throw new GameStoreException(HttpStatus.FORBIDDEN, "Invalid update request or unauthorized customer.");
         }
             String cardNumber = updatedPaymentInfo.getCardNumber();
-        if (cardNumber == null || cardNumber.length() != 16 || !cardNumber.matches("\\d+")) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid card number. Must be 16 digits.");
-        }
             Date expiryDate = updatedPaymentInfo.getExpiryDate();
-        if (expiryDate == null || expiryDate.before(new Date(System.currentTimeMillis()))) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid expiry date. Must be a future date.");
-        }
             int cvv = updatedPaymentInfo.getCvv();
-        if (cvv <= 0 || String.valueOf(cvv).length() != 3) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid CVV. Must be a 3-digit number.");
-        }
             String billingAddress = updatedPaymentInfo.getBillingAddress();
-        if (billingAddress == null || billingAddress.isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Billing address cannot be empty.");
+        if (cardNumber == null || cardNumber.length() != 16 || !cardNumber.matches("\\d+") || expiryDate == null || expiryDate.before(new Date(System.currentTimeMillis())) || cvv <= 0 || String.valueOf(cvv).length() != 3 || billingAddress == null || billingAddress.isEmpty()) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Payment Card information is invalid.");
         }
+    
         existingPaymentInfo.setCardNumber(cardNumber);
         existingPaymentInfo.setExpiryDate(expiryDate);
         existingPaymentInfo.setCvv(cvv);
@@ -125,13 +105,11 @@ public class PaymentInfoService {
     @Transactional
     public PaymentInfo getPaymentInfoByCardNumber(String cardNumber) {
         if (cardNumber == null || cardNumber.length() != 16 || !cardNumber.matches("\\d+")) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid card number. Must be 16 digits.");
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid card number");
         }
         
         PaymentInfo paymentInfo = paymentInfoRepo.findByCardNumber(cardNumber);
-        if (paymentInfo == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Payment info with the specified card number does not exist.");
-        }
+        
         return paymentInfo;
     }
 
@@ -161,10 +139,7 @@ public class PaymentInfoService {
         if (paymentInfo == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Payment info with the specified card number does not exist.");
         }
-        if (paymentInfo.getCustomer() == null) {
-            throw new GameStoreException(HttpStatus.FORBIDDEN, "Unauthorized access. Payment info does not have an associated customer.");
-        }
-        if (paymentInfo.getCustomer().getUserID() != customer.getUserID()) {
+        if (paymentInfo.getCustomer() == null || paymentInfo.getCustomer().getUserID() != customer.getUserID()) {
             throw new GameStoreException(HttpStatus.FORBIDDEN, "Unauthorized access. Only the owner can delete this payment info.");
         }
         paymentInfoRepo.deleteByCardNumber(cardNumber);

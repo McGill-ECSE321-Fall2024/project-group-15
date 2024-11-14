@@ -97,17 +97,12 @@ public class GameService {
         if (title.isBlank() || description.isBlank() || image.isBlank() || manager == null || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
-        if (price < 0) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price of a game cannot be negative");
+        if (price < 0 || stock < 0) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price or stock of a game cannot be negative");
         }
-        if (stock < 0) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The stock of a game cannot be negative");
-        }
-        if (managerRepo.findManagerByUserID(manager.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The manager '%s' does not exist", manager.getUsername()));
-        }
-        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
+        
+        if (employeeRepo.findByUserID(employee.getUserID()) == null || managerRepo.findManagerByUserID(manager.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND,"The employee does not exist");
         }
         Game game = new Game(title, description, price, stock, image, isApproved, manager);
         return gameRepo.save(game);
@@ -132,9 +127,6 @@ public class GameService {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
         }
         Game game = gameRepo.findGameByGameID(gameToDelete.getGameID());
-        if (game == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "The game to delete does not exist");
-        }
         gameRepo.delete(game);
     }
 
@@ -158,9 +150,6 @@ public class GameService {
         }
         //Search game
         Game game = gameRepo.findGameByGameID(gameToArchive.getGameID());
-        if (game == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "The game to archive does not exist");
-        }
         if (game.getArchivedDate() != null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The game is already archived");
         }
@@ -189,9 +178,6 @@ public class GameService {
         }
         //Search game
         Game game = gameRepo.findGameByGameID(gameToUnarchive.getGameID());
-        if (game == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "The game to unarchive does not exist");
-        }
         if (game.getArchivedDate() == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The game is already unarchived");
         }
@@ -217,24 +203,15 @@ public class GameService {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Game with the specified ID does not exist.");
         }
         String title = updatedGame.getTitle();
-        if (title == null || title.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Title is required.");
-        }
         String description = updatedGame.getDescription();
-        if (description == null || description.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Description is required.");
-        }
         double price = updatedGame.getPrice();
-        if (price < 0) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price of a game cannot be negative.");
-        }
         int stock = updatedGame.getStock();
-        if (stock < 0) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The stock of a game cannot be negative.");
-        }
         String image = updatedGame.getImage();
-        if (image == null || image.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Image URL is required.");
+        if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty() || image == null || image.trim().isEmpty()) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Game Attribute is required");
+        }
+        if (price < 0 || stock < 0) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price or stock of a game cannot be negative.");
         }
         existingGame.setTitle(title);
         existingGame.setDescription(description);
@@ -270,9 +247,6 @@ public class GameService {
         }
         //Search game
         Game game = gameRepo.findGameByGameID(gameToUpdate.getGameID());
-        if (game == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Cannot update the approval since the game does not exist");
-        }
         game.setIsApproved(newIsApproved);
         return gameRepo.save(game);
     }

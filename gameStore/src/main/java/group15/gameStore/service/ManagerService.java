@@ -89,11 +89,8 @@ public class ManagerService {
      */
     @Transactional
     public Manager createManager(String username, String password, String email, boolean isActive, Employee employee) {
-        if (username.isBlank() || password.isBlank() || email.isBlank() || employee == null) {
+        if (username.isBlank() || password.isBlank() || email.isBlank() || employee == null || username == null || username.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
-        }
-        if (username == null || username.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Username is required.");
         }
         if (password == null || password.length() < 8) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");
@@ -129,9 +126,6 @@ public class ManagerService {
         if (!employee.isIsManager()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can delete a manager account");
         }
-        if (managerRepo.findManagerByUserID(managerToDelete.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The manager to delete does not exist");
-        }
         managerRepo.delete(managerToDelete);
     }
 
@@ -151,10 +145,8 @@ public class ManagerService {
         if (updatedManager == null || employee == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid update request: missing manager or employee information.");
         }
-                Employee existingEmployee = employeeRepo.findByUserID(employee.getUserID());
-        if (existingEmployee == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' does not exist", employee.getUsername()));
-        }
+        Employee existingEmployee = employeeRepo.findByUserID(employee.getUserID());
+        
         if (!existingEmployee.getIsManager()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can update manager accounts.");
         }
@@ -163,9 +155,6 @@ public class ManagerService {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Cannot update manager: manager with the specified ID does not exist.");
         }
         String username = updatedManager.getUsername();
-        if (username == null || username.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Username is required.");
-        }
         String password = updatedManager.getPassword();
         if (password == null || password.length() < 8) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");

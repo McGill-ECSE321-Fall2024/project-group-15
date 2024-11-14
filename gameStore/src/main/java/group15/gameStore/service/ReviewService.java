@@ -38,27 +38,12 @@ public class ReviewService{
      */
     @Transactional
     public Review createReview(Rating aRating, String aDescription, Game aGame, Customer aCustomer) {
-        if (aRating == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "A rating is required");
-        }
-        if (aDescription == null || aDescription.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Description cannot be empty.");
-        }
-        if (aGame == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Game must be provided.");
+        if (aRating == null || aDescription == null || aDescription.trim().isEmpty() || aGame == null || aCustomer == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Review atttribute is required.");
         }
         Game game = gameRepo.findGameByGameID(aGame.getGameID());
-        if (game == null) {            
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Game must be valid and exist in the system.");
-        }
-        if (aCustomer == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Customer must be provided.");
-        }
+   
         Customer customer = customerRepo.findByUserID(aCustomer.getUserID());
-        if (customer == null) {            
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer must be valid and registered.");
-        }
-
         Review review = new Review(aRating, aDescription, game, customer);
         reviewRepo.save(review);
         return review;
@@ -82,12 +67,9 @@ public class ReviewService{
         throw new GameStoreException(HttpStatus.FORBIDDEN, "Invalid update request or unauthorized customer.");
     }
     Rating rating = updatedReview.getRating();
-    if (rating == null) {
-        throw new GameStoreException(HttpStatus.BAD_REQUEST, "A rating is required.");
-    }
     String description = updatedReview.getDescription();
-    if (description == null || description.trim().isEmpty()) {
-        throw new GameStoreException(HttpStatus.BAD_REQUEST, "Description cannot be empty.");
+    if (rating == null || description == null || description.trim().isEmpty()) {
+        throw new GameStoreException(HttpStatus.BAD_REQUEST, "A rating or description is required.");
     }
     existingReview.setRating(rating);
     existingReview.setDescription(description);

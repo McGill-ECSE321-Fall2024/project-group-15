@@ -64,11 +64,8 @@ public class OrderService {
      */
     @Transactional
     public Order createOrder(String orderNumber, Status orderStatus, double price, Customer customer) {
-        if (orderNumber == null || orderNumber.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Order number is required.");
-        }
-        if (orderStatus == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Order status is required.");
+        if (orderNumber == null || orderNumber.trim().isEmpty() || orderStatus == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Order number or Order Status is required.");
         }
         if (price < 0) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price of an order cannot be negative.");
@@ -96,9 +93,6 @@ public class OrderService {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
         }
         Order order = orderRepo.findOrderByOrderID(orderToDelete.getOrderID());
-        if (order == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "The order to delete does not exist");
-        }
         orderRepo.delete(order);
     }
 
@@ -123,12 +117,9 @@ public class OrderService {
             throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
         }
         String orderNumber = updatedOrder.getOrderNumber();
-        if (orderNumber == null || orderNumber.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Order number is required.");
-        }
         Status orderStatus = updatedOrder.getOrderStatus();
-        if (orderStatus == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Order status is required.");
+        if (orderNumber == null || orderNumber.trim().isEmpty() || orderStatus == null) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Order number or Order status is required.");
         }
         double price = updatedOrder.getPrice();
         if (price < 0) {
