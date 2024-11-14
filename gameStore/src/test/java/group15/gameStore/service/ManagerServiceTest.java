@@ -134,17 +134,16 @@ public class ManagerServiceTest {
 
     @Test
     public void testDeleteValidManager() {
-        //when(mockManagerRepo.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
-        
-        Manager managerToDelete = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
+        Manager manager = new Manager(VALID_MANAGEREMPLOYEE.getUsername(), VALID_MANAGEREMPLOYEE.getPassword(), VALID_MANAGEREMPLOYEE.getEmail(), VALID_MANAGEREMPLOYEE.getIsActive(), VALID_MANAGEREMPLOYEE.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
-        List<Manager> managerList = managerService.getAllManagers();
+        Manager managerToDelete = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        managerToDelete.setUserID(0);
 
-        assertNotNull(managerList);
-		assertEquals(1, managerList.size());
-        verify(mockManagerRepo, times(1)).save(managerToDelete);
+        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(managerToDelete);
 
-        managerService.deleteManager(managerToDelete, createdEmployee);
+        managerService.deleteManager(managerToDelete, manager);
 
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> managerService.getAllManagers());
@@ -155,21 +154,27 @@ public class ManagerServiceTest {
 
     @Test
     public void testDeleteInvalidManager() {
-        Manager managerToDelete = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
+        Manager manager = new Manager(VALID_MANAGEREMPLOYEE.getUsername(), VALID_MANAGEREMPLOYEE.getPassword(), VALID_MANAGEREMPLOYEE.getEmail(), VALID_MANAGEREMPLOYEE.getIsActive(), VALID_MANAGEREMPLOYEE.getIsManager());
+        manager.setUserID(0);
+        when(mockEmployeeRepo.findByUserID(0)).thenReturn(manager);
 
-        managerToDelete.setUserID(managerToDelete.getUserID() + 1);
+        Manager managerToDelete = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        managerToDelete.setUserID(0);
+
+        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> managerService.deleteManager(managerToDelete, createdEmployee));
+				() -> managerService.deleteManager(managerToDelete, manager));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The manager to delete does not exist", e.getMessage());
     }
 
     @Test
     public void testGetManagerByValidID() {
-        Manager managerToGet = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
+        Manager managerToGet = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        managerToGet.setUserID(0);
 
-        when(mockManagerRepo.findManagerByUserID(managerToGet.getUserID())).thenReturn(new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, VALID_ISMANAGER));
+        when(mockManagerRepo.findManagerByUserID(0)).thenReturn(managerToGet);
 
         Manager gottenManager = managerService.getManagerByID(managerToGet.getUserID());
 
@@ -184,22 +189,21 @@ public class ManagerServiceTest {
 
     @Test
     public void testGetManagerByInvalidID() {
-        Manager managerToGet = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
-        
-        managerToGet.setUserID(managerToGet.getUserID() + 1);
+        when(mockManagerRepo.findManagerByUserID(2)).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> managerService.getManagerByID(managerToGet.getUserID()));
+				() -> managerService.getManagerByID(2));
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
-		assertEquals(String.format("There is no manager with ID %d", managerToGet.getUserID()), e.getMessage());
+		assertEquals(String.format("There is no manager with ID %d", 2), e.getMessage());
 
     }
 
     @Test
     public void testGetManagerByValidEmail() {
-        Manager managerToGet = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
+        Manager managerToGet = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        managerToGet.setUserID(1);
 
-        when(mockManagerRepo.findManagerByEmail(managerToGet.getEmail())).thenReturn(new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, VALID_ISMANAGER));
+        when(mockManagerRepo.findManagerByEmail(VALID_EMAIL)).thenReturn(managerToGet);
 
         Manager gottenManager = managerService.getManagerByEmail(managerToGet.getEmail());
 
@@ -214,9 +218,10 @@ public class ManagerServiceTest {
 
     @Test
     public void testGetManagerByInvalidEmail() {
-        Manager managerToGet = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
-        
+        Manager managerToGet = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
         managerToGet.setEmail("sam@mail.com");
+
+        when(mockManagerRepo.findManagerByEmail("sam@mail.com")).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> managerService.getManagerByEmail(managerToGet.getEmail()));
@@ -227,8 +232,8 @@ public class ManagerServiceTest {
 
     @Test
     public void testGetManagersByValidUsername() {
-        Manager managerToGet1 = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
-        Manager managerToGet2 = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, "paul2@mail.com", VALID_ISACTIVE, createdEmployee);
+        Manager managerToGet1 = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        Manager managerToGet2 = new Manager(VALID_USERNAME, VALID_PASSWORD, "paul2@mail.com", VALID_ISACTIVE, true);
 
         when(mockManagerRepo.findManagersByUsername(managerToGet1.getUsername())).thenAnswer((InvocationOnMock invocation) ->{
             List<Manager> managerList = new ArrayList<>();
@@ -241,15 +246,13 @@ public class ManagerServiceTest {
 
         assertNotNull(gottenManagers);
 		assertEquals(2, gottenManagers.size());
-        verify(mockManagerRepo, times(1)).save(managerToGet1);
-        verify(mockManagerRepo, times(1)).save(managerToGet2);
 
     }
 
     @Test
     public void testGetManagersByInvalidUsername() {
-        Manager managerToGet = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
-
+        when(mockManagerRepo.findManagersByUsername("invalidUsername")).thenReturn(new ArrayList<>());
+        
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> managerService.getManagersByUsername("invalidUsername"));
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
@@ -259,8 +262,8 @@ public class ManagerServiceTest {
 
     @Test
     public void testGetAllManagersValid() {
-        Manager managerToGet1 = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, createdEmployee);
-        Manager managerToGet2 = managerService.createManager("PaulManager2", VALID_PASSWORD, "paul2@mail.com", VALID_ISACTIVE, createdEmployee);
+        Manager managerToGet1 = new Manager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, true);
+        Manager managerToGet2 = new Manager("PaulManager2", VALID_PASSWORD, "paul2@mail.com", VALID_ISACTIVE, true);
 
         when(mockManagerRepo.findAll()).thenAnswer((InvocationOnMock invocation) ->{
             List<Manager> managerList = new ArrayList<>();
@@ -273,8 +276,6 @@ public class ManagerServiceTest {
 
         assertNotNull(allManagers);
 		assertEquals(2, allManagers.size());
-        verify(mockManagerRepo, times(1)).save(managerToGet1);
-        verify(mockManagerRepo, times(1)).save(managerToGet2);
     }
 
     @Test
