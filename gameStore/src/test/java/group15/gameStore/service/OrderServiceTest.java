@@ -155,7 +155,6 @@ public class OrderServiceTest {
     @Test
     public void testDeleteOrder_OrderNotFound() {
         when(orderRepo.findOrderByOrderID(order.getOrderID())).thenReturn(null);
-        when(employeeRepo.findByUserID(employee.getUserID())).thenReturn(employee);
 
         GameStoreException exception = assertThrows(GameStoreException.class, () ->
                 orderService.deleteOrder(order, employee));
@@ -243,7 +242,7 @@ public class OrderServiceTest {
 
         GameStoreException exception = assertThrows(GameStoreException.class, () ->
                 orderService.updateOrder(1, updatedOrder, employee));
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
         assertEquals("Price must be non-negative.", exception.getMessage());
     }
 }
