@@ -1,6 +1,7 @@
 package group15.gameStore.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
@@ -168,4 +169,115 @@ class EmployeeServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
         assertEquals("Employee with the specified ID does not exist.", exception.getMessage());
     }
+
+    @Test
+    void testCreateEmployee_InvalidEmailFormat() {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.createEmployee("username", "password123", "invalidEmail", true, false);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Invalid email format.", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateEmployee_InvalidPassword() {
+        Employee existingEmployee = new Employee("oldUsername", "oldPassword", "old@example.com", true, false);
+        when(employeeRepo.findByUserID(1)).thenReturn(existingEmployee);
+
+        Employee updatedEmployee = new Employee("newUsername", "short", "new@example.com", false, true);
+
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.updateEmployee(1, updatedEmployee);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Password must be at least 8 characters long.", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateEmployee_InvalidEmailFormat() {
+        Employee existingEmployee = new Employee("oldUsername", "oldPassword", "old@example.com", true, false);
+        when(employeeRepo.findByUserID(1)).thenReturn(existingEmployee);
+
+        Employee updatedEmployee = new Employee("newUsername", "newPassword123", "invalidEmail", false, true);
+
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.updateEmployee(1, updatedEmployee);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Invalid email format.", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateEmployee_EmptyUsername() {
+        Employee existingEmployee = new Employee("oldUsername", "oldPassword", "old@example.com", true, false);
+        when(employeeRepo.findByUserID(1)).thenReturn(existingEmployee);
+
+        Employee updatedEmployee = new Employee("", "newPassword123", "new@example.com", false, true);
+
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.updateEmployee(1, updatedEmployee);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Username is required.", exception.getMessage());
+    }
+
+    @Test
+    void testGetEmployeeByEmail_Success() {
+        Employee employee = new Employee("username", "password123", "user@example.com", true, false);
+        when(employeeRepo.findByEmail("user@example.com")).thenReturn(employee);
+
+        Employee result = employeeService.getEmployeeByEmail("user@example.com");
+
+        assertEquals(employee, result);
+        verify(employeeRepo, times(1)).findByEmail("user@example.com");
+    }
+
+    @Test
+    void testGetEmployeeByEmail_EmployeeNotFound() {
+        when(employeeRepo.findByEmail("nonexistent@example.com")).thenReturn(null);
+
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.getEmployeeByEmail("nonexistent@example.com");
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Employee not found.", exception.getMessage());
+    }
+
+    @Test
+    void testCreateEmployee_NullPassword() {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.createEmployee("username", null, "user@example.com", true, false);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Password must be at least 8 characters long.", exception.getMessage());
+    }
+
+    @Test
+    void testCreateEmployee_NullUsername() {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.createEmployee(null, "password123", "user@example.com", true, false);
+        });
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+        assertEquals("Username is required.", exception.getMessage());
+    }
+
+    @Test
+    void testUpdateEmployee_NullEmployee() {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.updateEmployee(1, null);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Employee with the specified ID does not exist.", exception.getMessage());
+    }
+
+    @Test
+    void testGetEmployeeByEmail_NullEmail() {
+        GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+            employeeService.getEmployeeByEmail(null);
+        });
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        assertEquals("Employee not found.", exception.getMessage());
+    }
+
+
 }
