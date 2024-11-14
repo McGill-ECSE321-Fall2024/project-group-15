@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,7 +40,7 @@ public class WishlistController {
      * @param customerDto the CustomerDto containing the customer details
      * @return the created wishlist and HTTP Status "CREATED"
      */
-    @PutMapping("/wishlist/create/{userId}/{wishlistName}")
+    @PostMapping("/wishlist/create/{userId}/{wishlistName}")
     public ResponseEntity<WishlistDto> createWishlist(@PathVariable int userId, @PathVariable String wishlistName,@RequestBody CustomerDto customerDto) {
         Customer customer = customerService.getCustomerByID(customerDto.getUserId());
         Wishlist createdWishlist = wishlistService.createWishlist(userId, wishlistName, customer);
