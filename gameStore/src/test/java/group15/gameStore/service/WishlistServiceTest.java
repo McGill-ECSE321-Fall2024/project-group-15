@@ -140,4 +140,68 @@ public class WishlistServiceTest {
             assertEquals(w1, result);
         }
 
+        // Test for adding a game to a wishlist with invalid wishlist id
+        @Test
+        public void testAddGameToWishlist_InvalidWishlistId() {
+            //Arrange
+            String name = "Dana White";
+            String password = "password1234";
+            String email = "dana@gmail.com";
+            String address = "1234 Main St";
+            String phoneNumber = "123-456-7890";
+            Customer c1 = new Customer(name, password, email, address, phoneNumber);
+            Game g1 = new Game();
+            g1.setGameID(1);
+
+            //Act
+            GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+                wishlistService.addGameToWishlist(2, g1.getGameID(), c1);
+            });
+
+            //Assert
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+            assertEquals("Wishlist with the specified ID does not exist.", exception.getMessage());
+        }
+
+        // Test for adding a game to a wishlist with invalid game id
+        @Test
+        public void testAddGameToWishlist_InvalidGameId() {
+            //Arrange
+            String name = "Dana White";
+            String password = "password1234";
+            String email = "dana@gmail.com";
+            String address = "1234 Main St";
+            String phoneNumber = "123-456-7890";
+            Customer c1 = new Customer(name, password, email, address, phoneNumber);
+            Wishlist w1 = new Wishlist("Wishlist1", c1);
+
+            //Act
+            GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+                wishlistService.addGameToWishlist(w1.getWishListId(), 2, c1);
+            });
+
+            //Assert
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+            assertEquals("Wishlist with the specified ID does not exist.", exception.getMessage());
+        }
+
+        // Test for deleting a wishlist with invalid id
+        @Test
+        public void testDeleteWishlist_InvalidId() {
+            //Arrange
+
+            //Act
+            GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+                wishlistService.deleteWishlist(2, new Customer());
+            });
+
+            //Assert
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+            assertEquals("Wishlist with the specified ID does not exist.", exception.getMessage());
+        }
+
+
+
+
+
 }
