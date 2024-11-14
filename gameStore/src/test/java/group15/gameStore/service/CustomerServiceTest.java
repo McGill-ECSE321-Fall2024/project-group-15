@@ -361,11 +361,20 @@ public class CustomerServiceTest {
 
     @Test
     public void testDeleteCustomer_Success() {
-        when(customerRepo.findByUserID(mockCustomer.getUserID())).thenReturn(mockCustomer);
+        int customerId = 1;
+        String name = "Dana White";
+        String password = "password1234";
+        String email = "dana@gmail.com";
+        String address = "1234 Main St";
+        String phoneNumber = "123-456-7890";
+        Customer c1 = new Customer(name, password, email, address, phoneNumber);
+        c1.setUserID(customerId);
 
-        customerService.deleteCustomer(mockCustomer);
+        when(customerRepo.findByUserID(customerId)).thenReturn(c1);
 
-        verify(customerRepo, times(1)).delete(mockCustomer);
+        customerService.deleteCustomer(c1);
+
+        verify(customerRepo, times(1)).delete(c1);
     }
 
     @Test
