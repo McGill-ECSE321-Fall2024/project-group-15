@@ -39,16 +39,26 @@ import group15.gameStore.repository.WishlistRepository;
 public class WishlistIntegrationTest {
     @Autowired
 	private TestRestTemplate client;
+
+    @Autowired
+    private WishlistRepository wishlistRepository;
+
 	@Autowired
 	private CustomerRepository customerRepository;
+
     @Autowired
     private GameRepository gameRepository;
 
     private Game game;
     private Customer customer;
-    private WishlistDto wishlistDto;
+    private WishlistDto validwishlistDto;
     private WishlistDto wishlistDto2;
     private CustomerDto customerDto;
+
+    private int validCustomerId;
+    private int validWishlistId;
+    private int validGameId;
+
 
 
 	// private static final String VALID_NAME = "Tim";
@@ -61,28 +71,43 @@ public class WishlistIntegrationTest {
 	@BeforeEach
     public void setUp() {
         customer = new Customer();
-        customer.setUserID(1);
         customer.setUsername("John Doe");
         customer.setPhoneNumber("123456789");
+        customer.setEmail("john@mail.mcgill.ca");
+        customer.setAddress("1234 McGill College");
+        customer.setPassword("johndoe123");
         customerRepository.save(customer);
 
+        this.validCustomerId = customer.getUserID();
+
+
         game = new Game();
-        game.setGameID(1);
         game.setTitle("Test Game");
         gameRepository.save(game);
+        this.validGameId = game.getGameID();
+
+        Wishlist wishlist = new Wishlist("wishlist1", customer);
+        wishlistRepository.save(wishlist);
+        this.validWishlistId = wishlist.getWishListId();
 
         customerDto = new CustomerDto(customer);
-        wishlistDto = new WishlistDto();
+        validwishlistDto = new WishlistDto();
         wishlistDto2 = new WishlistDto();
+    }
+
+    @AfterAll
+    public void clearDatabase() {
+        customerRepository.deleteAll();
+        gameRepository.deleteAll();
     }
 
 
     // Test to create a valid wishlist
 	@Test
 	@Order(1)
-	public void testCreateValidPerson() {
+	public void testCreateValidWishlist() {
         // Act
-        ResponseEntity<WishlistDto> response = client.postForEntity("/wishlist/create/1/wishlist1", customerDto, WishlistDto.class);
+        ResponseEntity<WishlistDto> response = client.postForEntity("/wishlist/create/" + validCustomerId + "/wishlist1", customerDto, WishlistDto.class);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -94,7 +119,7 @@ public class WishlistIntegrationTest {
     @Order(2)
     public void testAddGameToWishlist() {
         // Act
-        ResponseEntity<WishlistDto> response = client.exchange("/wishlist/addgame/1/1", HttpMethod.PUT, new HttpEntity<>(customerDto), WishlistDto.class);
+        ResponseEntity<WishlistDto> response = client.exchange("/wishlist/addgame/" + validWishlistId+"/" + validGameId, HttpMethod.PUT, new HttpEntity<>(customerDto), WishlistDto.class);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -125,7 +150,7 @@ public class WishlistIntegrationTest {
         assertNotNull(response.getBody());
     }
 
-    
+
 
 
 }

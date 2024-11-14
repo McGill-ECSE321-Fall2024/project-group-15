@@ -24,7 +24,7 @@ public class CustomerService {
     public Customer getCustomerByID(int customerID) {
         Customer customer = customerRepository.findById(customerID).orElse(null);
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no customer with ID %d", customerID));
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, String.format("There is no customer with ID %d", customerID));
         }
         return customer;
     }
@@ -37,7 +37,7 @@ public class CustomerService {
     public Customer getCustomerByEmail(String email) {
         Customer customer = customerRepository.findByEmail(email);
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("There is no customer with email %s", email));
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, String.format("There is no customer with email %s", email));
         }
         return customer;
     }
@@ -50,7 +50,7 @@ public class CustomerService {
     public List<Customer> findAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
         if (customers.isEmpty()) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "There are no customers in the system");
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, "There are no customers in the system");
         }
         return customers;
     }
@@ -112,7 +112,7 @@ public class CustomerService {
      */
     public Customer updateCustomerUsername(Customer customer, String newUsername) {
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer not found.");
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, "Customer not found.");
         }
         if (newUsername == null || newUsername.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Username is required.");
@@ -130,7 +130,7 @@ public class CustomerService {
      */
     public Customer updateCustomerPassword(Customer customer, String newPassword) {
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer not found.");
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, "Customer not found.");
         }
         if (newPassword == null || newPassword.length() < 8) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");
@@ -148,7 +148,7 @@ public class CustomerService {
      */
     public Customer updateCustomerEmail(Customer customer, String newEmail) {
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer not found.");
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, "Customer not found.");
         }
         if (newEmail == null || !newEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid email format.");
@@ -166,7 +166,7 @@ public class CustomerService {
      */
     public Customer updateCustomerAddress(Customer customer, String newAddress) {
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer not found.");
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, "Customer not found.");
         }
         if (newAddress == null || newAddress.trim().isEmpty()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Address is required.");
@@ -184,7 +184,7 @@ public class CustomerService {
      */
     public Customer updateCustomerPhoneNumber(Customer customer, String newPhoneNumber) {
         if (customer == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "Customer not found.");
+            throw new GameStoreException(HttpStatus.BAD_GATEWAY, "Customer not found.");
         }
         if (newPhoneNumber == null || !newPhoneNumber.matches("\\d{10,15}")) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid phone number format.");
