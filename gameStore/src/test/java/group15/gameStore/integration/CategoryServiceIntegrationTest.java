@@ -2,6 +2,8 @@ package group15.gameStore.integration;
 
 import group15.gameStore.dto.*;
 import group15.gameStore.repository.CategoryRepository;
+import group15.gameStore.service.CategoryService;
+
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CategoryServiceIntegrationTest {
 
+    @SuppressWarnings("unused")
+    @Autowired
+    private CategoryService categoryService;
+    
     @Autowired
     private CategoryRepository categoryRepo;
 
@@ -32,11 +38,13 @@ public class CategoryServiceIntegrationTest {
 
     @BeforeEach
     public void setUp() {
+        categoryRepo.deleteAll();
+
         categoryRequestDto = new CategoryDto();
+        categoryRequestDto2 = new CategoryDto();
         categoryRequestDto.setName("Action");
         categoryRequestDto2.setName("Adventure");
-
-        categoryRepo.deleteAll();
+        //categoryRepo.save(categoryRequestDto);
     }
 
     @Test

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import group15.gameStore.model.Review;
+import group15.gameStore.model.Wishlist;
 import jakarta.transaction.Transactional;
 import group15.gameStore.model.Customer;
 import group15.gameStore.model.Game;
@@ -26,6 +27,9 @@ public class ReviewRepositoryTest {
     
     @Autowired
     private GameRepository gameRepo;
+
+    @Autowired
+    private WishlistRepository wishlistRepo;
     
     @Autowired
     private CustomerRepository customerRepo;
@@ -39,26 +43,29 @@ public class ReviewRepositoryTest {
     //private Game testGame2 = new Game("Test Game", "A description of the game", 59.99, 0, null, false);
     private Customer testCustomer = new Customer("ChadTheGamer", "00password", "chad@gmail.com","123SesameStreet", "012345678");
 
+    private Wishlist testWishlist = new Wishlist("My Wishlist", testCustomer);
 
     @BeforeEach
     public void setUp() {
         // Clear the database before each test
         repo.deleteAll();
+        wishlistRepo.deleteAll();
         gameRepo.deleteAll();
         customerRepo.deleteAll();
         managerRepo.deleteAll();
 
         // Create and save a Game to be used in the tests
         testManager = managerRepo.save(testManager);
-
-        testGame = gameRepo.save(testGame);
         testCustomer = customerRepo.save(testCustomer);
+        testWishlist = wishlistRepo.save(testWishlist);
+        testGame = gameRepo.save(testGame);
     }
 
     @AfterEach
     public void tearDown() {
         // Clear the database after each test
         repo.deleteAll();
+        wishlistRepo.deleteAll();
         gameRepo.deleteAll();
         customerRepo.deleteAll();
         managerRepo.deleteAll();
@@ -107,8 +114,10 @@ public class ReviewRepositoryTest {
     @Test
     public void testFindReviewsByDescription() {
         // Create and save reviews
-        Review review = new Review(Rating.FOUR_STAR, "Incredible gameplay!", testGame,testCustomer);
-        repo.save(review);
+        Review review1 = new Review(Rating.FOUR_STAR, "Incredible gameplay!", testGame,testCustomer);
+        Review review2 = new Review(Rating.FIVE_STAR, "Best. Game. Ever.", testGame,testCustomer);
+        repo.save(review1);
+        repo.save(review2);
 
         // Find review by keyword in description (case-insensitive)
         List<Review> reviewsWithKeyword = repo.findByDescriptionContainingIgnoreCase("incredible");
