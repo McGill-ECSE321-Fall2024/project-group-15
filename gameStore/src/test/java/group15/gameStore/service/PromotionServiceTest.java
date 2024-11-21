@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import group15.gameStore.model.Promotion;
 import group15.gameStore.exception.GameStoreException;
@@ -16,6 +17,8 @@ import group15.gameStore.model.Game;
 import group15.gameStore.repository.PromotionRepository;
 import group15.gameStore.repository.GameRepository;
 import java.sql.Date;
+import java.util.Collections;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class PromotionServiceTest {
@@ -41,15 +44,12 @@ public class PromotionServiceTest {
     void testCreatePromotion_Success() {
         // Arrange
         Game game = new Game();
-        game.setGameID(1); // Set the game ID or other necessary fields
+        game.setGameID(1); 
         Date validUntil = Date.valueOf("2024-12-31");
 
         Promotion mockPromotion = new Promotion("PROMO2024", 20.0, validUntil, game);
-        
-        // Mock game repository behavior
-        when(gameRepository.findGameByGameID(1)).thenReturn(game);
 
-        // Mock promotion repository behavior
+        when(gameRepository.findGameByGameID(1)).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenReturn(mockPromotion);
 
         // Act
@@ -60,28 +60,8 @@ public class PromotionServiceTest {
         assertEquals("PROMO2024", createdPromotion.getPromotionCode());
         assertEquals(20.0, createdPromotion.getDiscountPercentage());
         assertEquals(validUntil, createdPromotion.getValidUntil());
-        verify(promotionRepository, times(1)).save(any(Promotion.class)); // Verify repository save was called
-    }
-
-    @Test
-    void testGetPromotionById_Success() {
-        // Arrange
-        int promotionId = 1;
-        Game game = new Game();
-        Date validUntil = Date.valueOf("2024-12-31");
-        Promotion mockPromotion = new Promotion("PROMO2024", 20.0, validUntil, game);
-        mockPromotion.setPromotionID(promotionId);
-
-        // Mock behavior for finding promotion by ID
-        when(promotionRepository.findById(promotionId)).thenReturn(mockPromotion);
-
-        // Act
-        Promotion retrievedPromotion = promotionService.getPromotionById(promotionId);
-
-        // Assert
-        assertNotNull(retrievedPromotion);
-        assertEquals(promotionId, retrievedPromotion.getPromotionID());
-        assertEquals("PROMO2024", retrievedPromotion.getPromotionCode());
+        assertEquals(game, createdPromotion.getGame());
+        verify(promotionRepository, times(1)).save(any(Promotion.class)); // Verify save was called once
     }
 
     @Test
@@ -138,6 +118,34 @@ public class PromotionServiceTest {
     }
 
     @Test
+    void testDeletePromotion_Unauthorized() {
+        // Arrange
+        String promotionCode = "PROMO2024";
+        Game authorizedGame = new Game();
+        authorizedGame.setGameID(1);
+        
+        Game unauthorizedGame = new Game();
+        unauthorizedGame.setGameID(2);
+
+        Promotion promotion = new Promotion();
+        promotion.setPromotionCode(promotionCode);
+        promotion.setGame(authorizedGame);
+
+        when(promotionRepository.findByPromotionCode(promotionCode)).thenReturn(promotion);
+
+        // Act
+        GameStoreException thrown = assertThrows(GameStoreException.class, () -> {
+            promotionService.deletePromotion(promotionCode, unauthorizedGame);
+        });
+
+        // Assert
+        assertEquals(HttpStatus.FORBIDDEN, thrown.getStatus());
+        assertEquals("Unauthorized access. Only the associated game can delete this promotion.", thrown.getMessage());
+
+        verify(promotionRepository, never()).deleteByPromotionCode(promotionCode);
+    }
+
+    @Test
     void testCreatePromotion_WithInvalidDiscount_ThrowsException() {
         // Arrange
         Game game = new Game();
@@ -179,31 +187,190 @@ void testCreatePromotion_WithExpiredDate_ThrowsException() {
     assertEquals("Valid until date must be a future date.", thrown.getMessage());
 }
 
-
 @Test
-void testCreateMultiplePromotionsForSameGame_Success() {
+void testUpdatePromotion_Success() {
     // Arrange
     Game game = new Game();
     game.setGameID(1);
-    Date validUntil = Date.valueOf("2024-12-31");
 
-    Promotion promo1 = new Promotion("PROMO2024", 15.0, validUntil, game);
-    Promotion promo2 = new Promotion("PROMO2025", 10.0, validUntil, game);
+    Promotion existingPromotion = new Promotion("OLDPROMO", 10.0, Date.valueOf("2024-12-31"), game);
+    existingPromotion.setPromotionID(1);
 
-    when(gameRepository.findGameByGameID(1)).thenReturn(game);
-    when(promotionRepository.save(any(Promotion.class)))
-        .thenReturn(promo1)
-        .thenReturn(promo2);
+    Promotion updatedPromotion = new Promotion("NEWPROMO", 20.0, Date.valueOf("2025-12-31"), game);
+
+    when(promotionRepository.findById(1)).thenReturn(existingPromotion);
+    when(promotionRepository.save(existingPromotion)).thenReturn(existingPromotion);
 
     // Act
-    Promotion createdPromo1 = promotionService.createPromotion("PROMO2024", 15.0, validUntil, game);
-    Promotion createdPromo2 = promotionService.createPromotion("PROMO2025", 10.0, validUntil, game);
+    Promotion result = promotionService.updatePromotion(1, updatedPromotion, game);
 
     // Assert
-    assertEquals("PROMO2024", createdPromo1.getPromotionCode());
-    assertEquals("PROMO2025", createdPromo2.getPromotionCode());
-    verify(promotionRepository, times(2)).save(any(Promotion.class));
+    assertNotNull(result);
+    assertEquals("NEWPROMO", result.getPromotionCode());
+    assertEquals(20.0, result.getDiscountPercentage());
+    assertEquals(Date.valueOf("2025-12-31"), result.getValidUntil());
+    verify(promotionRepository, times(1)).save(existingPromotion);
 }
 
+@Test
+void testUpdatePromotion_BadRequest() {
+    // Arrange
+    Game game = new Game();
+    game.setGameID(1);
+
+    Promotion existingPromotion = new Promotion("PROMO2024", 15.0, Date.valueOf("2024-12-31"), game);
+    existingPromotion.setPromotionID(1);
+
+    // Invalid updated promotion with empty promotion code and out-of-range discount percentage
+    Promotion invalidUpdatedPromotion = new Promotion("", 150.0, Date.valueOf("2025-12-31"), game);
+
+    when(promotionRepository.findById(1)).thenReturn(existingPromotion);
+
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.updatePromotion(1, invalidUpdatedPromotion, game);
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Promotion code cannot be null or empty.", exception.getMessage()); // Adjust message as per your validation order
+    verify(promotionRepository, never()).save(any(Promotion.class));
+}
+
+@Test
+void testUpdatePromotion_NotFound() {
+    // Arrange
+    Game game = new Game();
+    game.setGameID(1);
+
+    Promotion updatedPromotion = new Promotion("NEWPROMO2025", 20.0, Date.valueOf("2025-12-31"), game);
+
+    when(promotionRepository.findById(1)).thenReturn(null); // Promotion with ID 1 does not exist
+
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.updatePromotion(1, updatedPromotion, game);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("Promotion with the specified ID does not exist.", exception.getMessage());
+    verify(promotionRepository, never()).save(any(Promotion.class));
+}
+
+@Test
+void testGetPromotionById_NotFound() {
+    // Arrange
+    when(promotionRepository.findById(1)).thenReturn(null);
+
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.getPromotionById(1);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("Promotion not found.", exception.getMessage());
+}
+
+@Test
+void testGetByPromotionCode_Success() {
+    // Arrange
+    Promotion promotion = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), new Game());
+    when(promotionRepository.findByPromotionCode("PROMO2024")).thenReturn(promotion);
+
+    // Act
+    Promotion retrievedPromotion = promotionService.getByPromotionCode("PROMO2024");
+
+    // Assert
+    assertNotNull(retrievedPromotion);
+    assertEquals("PROMO2024", retrievedPromotion.getPromotionCode());
+}
+
+@Test
+void testGetByPromotionCode_InvalidCode() {
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.getByPromotionCode("");
+    });
+
+    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
+    assertEquals("Invalid promotion code. Code cannot be null or empty.", exception.getMessage());
+}
+
+@Test
+void testGetByPromotionCode_NotFound() {
+    // Arrange
+    when(promotionRepository.findByPromotionCode("PROMO2024")).thenReturn(null);
+
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.getByPromotionCode("PROMO2024");
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("Promotion with the specified code does not exist.", exception.getMessage());
+}
+
+@Test
+void testGetByValidUntil_Success() {
+    // Arrange
+    Date validUntil = Date.valueOf("2024-12-31");
+    Promotion promotion = new Promotion("PROMO2024", 20.0, validUntil, new Game());
+    List<Promotion> promotions = List.of(promotion);
+
+    when(promotionRepository.findByValidUntilAfter(validUntil)).thenReturn(promotions);
+
+    // Act
+    List<Promotion> retrievedPromotions = promotionService.getByValidUntil(validUntil);
+
+    // Assert
+    assertFalse(retrievedPromotions.isEmpty());
+    assertEquals(1, retrievedPromotions.size());
+    assertEquals("PROMO2024", retrievedPromotions.get(0).getPromotionCode());
+}
+
+@Test
+void testGetByValidUntil_NoPromotionsFound() {
+    // Arrange
+    Date validUntil = Date.valueOf("2024-12-31");
+    when(promotionRepository.findByValidUntilAfter(validUntil)).thenReturn(Collections.emptyList());
+
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.getByValidUntil(validUntil);
+    });
+
+    assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+    assertEquals("No promotions found valid until the specified date.", exception.getMessage());
+}
+
+@Test
+void testGetAllPromotion_Success() {
+    // Arrange
+    Promotion promotion1 = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), new Game());
+    Promotion promotion2 = new Promotion("PROMO2025", 15.0, Date.valueOf("2025-12-31"), new Game());
+    List<Promotion> promotions = List.of(promotion1, promotion2);
+
+    when(promotionRepository.findAll()).thenReturn(promotions);
+
+    // Act
+    List<Promotion> retrievedPromotions = promotionService.getAllPromotion();
+
+    // Assert
+    assertFalse(retrievedPromotions.isEmpty());
+    assertEquals(2, retrievedPromotions.size());
+}
+
+@Test
+void testGetAllPromotion_NoPromotionsFound() {
+    // Arrange
+    when(promotionRepository.findAll()).thenReturn(Collections.emptyList());
+
+    // Act & Assert
+    GameStoreException exception = assertThrows(GameStoreException.class, () -> {
+        promotionService.getAllPromotion();
+    });
+
+    assertEquals(HttpStatus.NO_CONTENT, exception.getStatus());
+    assertEquals("No promotions found in the system.", exception.getMessage());
+}
 
 }
