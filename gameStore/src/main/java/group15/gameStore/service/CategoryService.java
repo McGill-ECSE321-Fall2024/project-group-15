@@ -54,8 +54,8 @@ public class CategoryService {
         }
 
         existingCategory.setName(updatedCategory.getName());
-
-        return categoryRepo.save(existingCategory);
+        categoryRepo.save(existingCategory);
+        return existingCategory;
     }
 
     /**

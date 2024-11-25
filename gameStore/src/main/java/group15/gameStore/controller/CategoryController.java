@@ -2,6 +2,7 @@ package group15.gameStore.controller;
 
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,21 +36,6 @@ public class CategoryController{
         Category createdCategory = categoryService.createCategory(categoryDto.getName());
         return new ResponseEntity<>(new CategoryDto(createdCategory), HttpStatus.CREATED);
     }
-    /**
-    * UpdateCategory: updates an existing category
-    * @param categoryId the ID of the category to update
-    * @param categoryDto the CategoryDto containing updated category details
-    * @return the updated category and the HTTP status "OK"
-    */
-    @PutMapping("/category/{categoryId}")
-    public ResponseEntity<CategoryDto> updateCategory(@PathVariable int categoryId,
-            @RequestBody CategoryDto categoryDto) {
-
-            Category existingCategory = categoryService.getCategoryById(categoryDto.getCategoryID());
-            Category updatedCategory = categoryService.updateCategory(categoryId, existingCategory);
-            return new ResponseEntity<>(new CategoryDto(updatedCategory), HttpStatus.OK);
-
-    }
 
     /**
      * GetCategoryById: retrieves a category by ID
@@ -57,7 +43,7 @@ public class CategoryController{
      * @return the desired category information and the HTTP status "OK"
      */
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable int categoryId) {
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable("categoryId") int categoryId) {
         Category category = categoryService.getCategoryById(categoryId);
         return new ResponseEntity<>(new CategoryDto(category), HttpStatus.OK);
     }
@@ -68,7 +54,7 @@ public class CategoryController{
      * @return the desired category information and the HTTP status "OK"
      */
     @GetMapping("/category/name/{name}")
-    public ResponseEntity<List<CategoryDto>> getCategoryByName(@PathVariable String name) {
+    public ResponseEntity<List<CategoryDto>> getCategoryByName(@PathVariable("categoryName") String name) {
         List<Category> categories = categoryService.getCategoryByName(name);
         List<CategoryDto> responseDtoList = categories.stream().map(CategoryDto::new).collect(Collectors.toList());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
@@ -85,13 +71,29 @@ public class CategoryController{
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }
 
+        /**
+    * UpdateCategory: updates an existing category
+    * @param categoryId the ID of the category to update
+    * @param categoryDto the CategoryDto containing updated category details
+    * @return the updated category and the HTTP status "OK"
+    */
+    @PutMapping("/category/{categoryId}")
+    public ResponseEntity<CategoryDto> updateCategory(@PathVariable("categoryId") int categoryId,
+            @RequestBody CategoryDto categoryDto) {
+
+            Category existingCategory = categoryService.getCategoryById(categoryDto.getCategoryID());
+            Category updatedCategory = categoryService.updateCategory(categoryId, existingCategory);
+            return new ResponseEntity<>(new CategoryDto(updatedCategory), HttpStatus.OK);
+
+    }
+
     /**
     * DeleteCategory: deletes a category by category ID
     * @param categoryId the ID of the category to delete
     * @return HTTP status "NO CONTENT" if the deletion is successful
     */
     @DeleteMapping("/category/{categoryId}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable int categoryId) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("categoryId") int categoryId) {
         
         categoryService.deleteCategoryByCategoryID(categoryId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

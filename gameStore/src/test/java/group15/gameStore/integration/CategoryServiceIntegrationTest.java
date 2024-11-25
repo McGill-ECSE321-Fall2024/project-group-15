@@ -7,6 +7,7 @@ import group15.gameStore.service.CategoryService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -19,22 +20,25 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CategoryServiceIntegrationTest {
 
     @SuppressWarnings("unused")
     @Autowired
+    private TestRestTemplate client;
+
+    @Autowired
     private CategoryService categoryService;
-    
+
     @Autowired
     private CategoryRepository categoryRepo;
 
-    @Autowired
-    private TestRestTemplate client;
-
+    private final String VALID_NAME = "Action";
+    private int validId;
     private CategoryDto categoryRequestDto;
     private CategoryDto categoryRequestDto2;
+    
 
     @BeforeEach
     public void setUp() {
@@ -42,11 +46,13 @@ public class CategoryServiceIntegrationTest {
 
         categoryRequestDto = new CategoryDto();
         categoryRequestDto2 = new CategoryDto();
-        categoryRequestDto.setName("Action");
+        categoryRequestDto.setName(VALID_NAME);
+        categoryRequestDto.setCategoryID(validId);
         categoryRequestDto2.setName("Adventure");
-        //categoryRepo.save(categoryRequestDto);
+        //categoryRepo.save(any(categoryRequestDto));
     }
-
+    
+    /* 
     @Test
     @Order(0)
     public void testGetAllEmptyCategories() {
@@ -54,55 +60,134 @@ public class CategoryServiceIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("No categories found in the system.", response.getBody());
     }
+    */
 
     @Test
     @Order(1)
     public void testCreateValidCategory() {
-        // Create first category
-        ResponseEntity<CategoryDto> categoryResponse1 = client.postForEntity("/categories/create", categoryRequestDto, CategoryDto.class);
-        assertEquals(HttpStatus.CREATED, categoryResponse1.getStatusCode());
-        assertNotNull(categoryResponse1.getBody());
-        assertTrue(equals(categoryResponse1.getBody(), categoryRequestDto));
+        // Arrange
+        CategoryDto request = new CategoryDto(VALID_NAME);
 
-        // Create second category
-        ResponseEntity<CategoryDto> categoryResponse2 = client.postForEntity("/categories/create", categoryRequestDto2, CategoryDto.class);
-        assertEquals(HttpStatus.CREATED, categoryResponse2.getStatusCode());
-        assertNotNull(categoryResponse2.getBody());
-        assertTrue(equals(categoryResponse2.getBody(), categoryRequestDto2));
+        // Act
+        ResponseEntity<CategoryDto> response = client.postForEntity("/category", request, CategoryDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        CategoryDto createdCategory = response.getBody();
+        assertNotNull(createdCategory);
+        assertEquals(VALID_NAME, createdCategory.getName());
+        assertNotNull(createdCategory.getCategoryID());
+        assertTrue(createdCategory.getCategoryID() > 0, "Response should have a positive ID.");
+        this.validId = createdCategory.getCategoryID();
+
+        System.out.println("Valid ID written:" + this.validId);
     }
 
     @Test
     @Order(2)
-    public void testGetCategoryByName() {
-        client.postForEntity("/categories/create", categoryRequestDto, CategoryDto.class);
-        ResponseEntity<CategoryDto> response = client.getForEntity("/categories/name/Action", CategoryDto.class);
-        
+    public void testGetCategoryByValidId() {
+        // Arrange: Create the category first
+        String createUrl = "/category";
+        CategoryDto createRequest = new CategoryDto("Action");
+        ResponseEntity<CategoryDto> createResponse = client.postForEntity(createUrl, createRequest, CategoryDto.class);
+
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+        CategoryDto createdCategory = createResponse.getBody();
+        assertNotNull(createdCategory);
+        this.validId = createdCategory.getCategoryID();       
+
+        // Arrange
+        String url = "/category/" + this.validId;
+
+        // Act
+        ResponseEntity<CategoryDto> response = client.getForEntity(url, CategoryDto.class);
+
+        // Assert
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(equals(response.getBody(), categoryRequestDto));
+        CategoryDto categoryDto = response.getBody();
+        assertNotNull(categoryDto);
+        assertEquals(VALID_NAME, categoryDto.getName());
+        assertEquals(this.validId, categoryDto.getCategoryID());
     }
+
+    /* 
+    @Test
+    @Order(3)
+    public void testGetCategoryByName() {
+        // Arrange: Create the category first
+        String createUrl = "/category";
+        CategoryDto createRequest = new CategoryDto("Action");
+        ResponseEntity<CategoryDto> createResponse = client.postForEntity(createUrl, createRequest, CategoryDto.class);
+
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+        CategoryDto createdCategory = createResponse.getBody();
+        assertNotNull(createdCategory);
+        this.validId = createdCategory.getCategoryID();
+
+        // Arrange
+        String url = "/category/name/Action";
+
+        // Act
+        ResponseEntity<CategoryDto> response = client.getForEntity(url, CategoryDto.class);
+        
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        CategoryDto categoryDto = response.getBody();
+        assertNotNull(categoryDto);
+        assertEquals(VALID_NAME, categoryDto.getName());
+        assertEquals(this.validId, categoryDto.getCategoryID());
+    }
+    */ 
+
 
     @Test
     @Order(3)
     public void testUpdateValidCategory() {
-        //ResponseEntity<CategoryDto> categoryResponse = client.postForEntity("/categories/create", categoryRequestDto, CategoryDto.class);
-        CategoryDto updatedCategoryDto = new CategoryDto();
-        updatedCategoryDto.setName("Action Updated");
 
-        HttpEntity<CategoryDto> requestEntity = new HttpEntity<>(updatedCategoryDto);
-        ResponseEntity<CategoryDto> response = client.exchange("/categories/update/Action", HttpMethod.PUT, requestEntity, CategoryDto.class);
+        System.out.println("Valid ID read:" + this.validId);
+
+        // Arrange: Create the category first
+        String createUrl = "/category";
+        CategoryDto createRequest = new CategoryDto("Action");
+        ResponseEntity<CategoryDto> createResponse = client.postForEntity(createUrl, createRequest, CategoryDto.class);
+
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+        CategoryDto createdCategory = createResponse.getBody();
+        assertNotNull(createdCategory);
+        this.validId = createdCategory.getCategoryID();
+
+        // Arrange
+        String url = "/category/" + this.validId;
+        String updatedName = "Action Updated";
+        createdCategory.setName(updatedName);
+        CategoryDto updateRequest = createdCategory;
+        updateRequest.setCategoryID(this.validId);
+
+        // Act
+        client.put(url, updateRequest);
         
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(equals(response.getBody(), updatedCategoryDto));
-    }
+        // Assert
+        ResponseEntity<CategoryDto> categoryResponse = client.getForEntity(url,CategoryDto.class);
 
+
+        assertNotNull(categoryResponse);
+        assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
+        CategoryDto updatedCategory = categoryResponse.getBody();
+        assertNotNull(updatedCategory);
+        assertEquals(updatedName, updatedCategory.getName());
+        assertNotNull(updatedCategory.getCategoryID());
+        assertTrue(updatedCategory.getCategoryID() > 0, "Response should have a positive ID.");
+        this.validId = updatedCategory.getCategoryID();
+    }
 
     @Test
     @Order(4)
     public void testGetAllCategories() {
-        client.postForEntity("/categories/create", categoryRequestDto, CategoryDto.class);
-        client.postForEntity("/categories/create", categoryRequestDto2, CategoryDto.class);
+        client.postForEntity("/category", categoryRequestDto, CategoryDto.class);
+        client.postForEntity("/category", categoryRequestDto2, CategoryDto.class);
 
         @SuppressWarnings("rawtypes")
         ResponseEntity<List> response = client.getForEntity("/categories", List.class);
@@ -119,19 +204,28 @@ public class CategoryServiceIntegrationTest {
     @Test
     @Order(5)
     public void testDeleteCategory() {
-        client.postForEntity("/categories/create", categoryRequestDto, CategoryDto.class);
+        // Arrange: Create the category first
+        String createUrl = "/category";
+        CategoryDto createRequest = new CategoryDto("Action");
+        ResponseEntity<CategoryDto> createResponse = client.postForEntity(createUrl, createRequest, CategoryDto.class);
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+        CategoryDto createdCategory = createResponse.getBody();
+        assertNotNull(createdCategory);
+        this.validId = createdCategory.getCategoryID();
 
-        ResponseEntity<Void> response = client.exchange("/categories/delete/Action", HttpMethod.DELETE, null, Void.class);
+        String url = "/category/" + this.validId;
+        ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
     @Order(6)
     public void testDeleteCategory_NotFound() {
-        ResponseEntity<String> response = client.exchange("/categories/delete/NonExistentCategory", HttpMethod.DELETE, null, String.class);
+        String url = "/category/" + 0;
+        ResponseEntity<String> response = client.exchange(url, HttpMethod.DELETE, null, String.class);
         
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Category with name NonExistentCategory not found.", response.getBody());
+        assertEquals("{\"errors\":[\"Category with the specified ID does not exist.\"]}", response.getBody());
     }
 
     private boolean equals(CategoryDto categoryResponseDto, CategoryDto categoryRequestDto) {

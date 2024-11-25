@@ -66,12 +66,12 @@ public class CustomerServiceIntegrationTest {
     @Test
     @Order(1)
     public void testCreateValidCustomer() {
-        ResponseEntity<CustomerDto> customerResponse1 = client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
+        ResponseEntity<CustomerDto> customerResponse1 = client.postForEntity("/customer/create", customerRequestDto, CustomerDto.class);
         assertEquals(HttpStatus.CREATED, customerResponse1.getStatusCode());
         assertNotNull(customerResponse1.getBody());
         assertTrue(equals(customerResponse1.getBody(), customerRequestDto));
 
-        ResponseEntity<CustomerDto> customerResponse2 = client.postForEntity("/customers/create", customerRequestDto2, CustomerDto.class);
+        ResponseEntity<CustomerDto> customerResponse2 = client.postForEntity("/customer/create", customerRequestDto2, CustomerDto.class);
         assertEquals(HttpStatus.CREATED, customerResponse2.getStatusCode());
         assertNotNull(customerResponse2.getBody());
         assertTrue(equals(customerResponse2.getBody(), customerRequestDto2));
