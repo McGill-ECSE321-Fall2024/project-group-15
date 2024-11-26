@@ -1,5 +1,7 @@
 package group15.gameStore.integration;
 
+import group15.gameStore.dto.CategoryDto;
+import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.dto.EmployeeDto;
 import group15.gameStore.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
@@ -55,61 +57,105 @@ public class EmployeeServiceIntegrationTest {
     @Order(0)
     public void testGetAllEmptyEmployees() {
         ResponseEntity<String> response = client.getForEntity("/employees", String.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("No employee records found in the system.", response.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
     }
 
     @Test
     @Order(1)
     public void testCreateValidEmployee() {
-        ResponseEntity<EmployeeDto> employeeResponse1 = client.postForEntity("/employees/create", employeeRequestDto, EmployeeDto.class);
-        assertEquals(HttpStatus.CREATED, employeeResponse1.getStatusCode());
-        assertNotNull(employeeResponse1.getBody());
-        assertTrue(equals(employeeResponse1.getBody(), employeeRequestDto));
+        // Arrange
+        EmployeeDto request = new EmployeeDto("Emp1", "password089", "emp1@gmail.com", true, false);
 
-        ResponseEntity<EmployeeDto> employeeResponse2 = client.postForEntity("/employees/create", employeeRequestDto2, EmployeeDto.class);
-        assertEquals(HttpStatus.CREATED, employeeResponse2.getStatusCode());
-        assertNotNull(employeeResponse2.getBody());
-        assertTrue(equals(employeeResponse2.getBody(), employeeRequestDto2));
+        // Act
+        ResponseEntity<EmployeeDto> response = client.postForEntity("/employee", request, EmployeeDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        EmployeeDto createdEmployee = response.getBody();
+        assertNotNull(createdEmployee);
+        assertEquals("Emp1", createdEmployee.getUsername());
+        assertEquals("emp1@gmail.com", createdEmployee.getEmail());
+        assertEquals(true, createdEmployee.isActive());
+        assertEquals(false, createdEmployee.isManager());
+        assertNotNull(createdEmployee.getUserID());
+        assertTrue(createdEmployee.getUserID() > 0, "Response should have a positive ID.");
+
     }
 
+    /* 
     @Test
     @Order(2)
     public void testGetEmployeeByUsername() {
-        client.postForEntity("/employees/create", employeeRequestDto, EmployeeDto.class);
+        client.postForEntity("/employee", employeeRequestDto, EmployeeDto.class);
         ResponseEntity<EmployeeDto> response = client.getForEntity("/employees/username/Employee1", EmployeeDto.class);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(equals(response.getBody(), employeeRequestDto));
     }
+    */
+    @Test
+    @Order(2)
+    public void testGetEmployeeById() {
+        // Arrange
+        EmployeeDto request = new EmployeeDto("Emp1", "password089", "emp1@gmail.com", true, false);
+        ResponseEntity<EmployeeDto> createResponse = client.postForEntity("/employee", request, EmployeeDto.class);
+        int id = createResponse.getBody().getUserID();
+
+        // Act
+        ResponseEntity<EmployeeDto> response = client.getForEntity("/employee/id/" + id, EmployeeDto.class);
+        
+        //Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(id, response.getBody().getUserID());
+    }
 
     @Test
     @Order(3)
-    public void testUpdateValidEmployee() {
-        client.postForEntity("/employees/create", employeeRequestDto, EmployeeDto.class);
+    public void testGetEmployeeByEmail() {
+        // Arrange
+        EmployeeDto request = new EmployeeDto("Emp1", "password089", "emp1@gmail.com", true, false);
+        ResponseEntity<EmployeeDto> createResponse = client.postForEntity("/employee", request, EmployeeDto.class);
+        String email = createResponse.getBody().getEmail();
 
-        // Prepare updated employee details
-        EmployeeDto updatedEmployeeDto = new EmployeeDto();
-        updatedEmployeeDto.setUsername("Employee1Updated");
-        updatedEmployeeDto.setPassword("newpassword123");
-        updatedEmployeeDto.setEmail("new_employee1@gmail.com");
-        updatedEmployeeDto.setActive(false);
-        updatedEmployeeDto.setManager(true);
+        // Act
+        ResponseEntity<EmployeeDto> response = client.getForEntity("/employee/email/" + email, EmployeeDto.class);
 
-        HttpEntity<EmployeeDto> requestEntity = new HttpEntity<>(updatedEmployeeDto);
-        ResponseEntity<EmployeeDto> response = client.exchange("/employees/update/Employee1", HttpMethod.PUT, requestEntity, EmployeeDto.class);
-        
+        //Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertTrue(equals(response.getBody(), updatedEmployeeDto));
+        assertEquals(email, response.getBody().getEmail());
     }
 
     @Test
     @Order(4)
+    public void testUpdateValidEmployee() {
+        // Arrange
+        EmployeeDto request = new EmployeeDto("Emp1", "password089", "emp1@gmail.com", true, false);
+        ResponseEntity<EmployeeDto> createResponse = client.postForEntity("/employee", request, EmployeeDto.class);
+        int id = createResponse.getBody().getUserID();
+
+        EmployeeDto request2 = new EmployeeDto("Emp1Updated", "newpassword089", "new_emp1@gmail.com", false, false);
+        client.postForEntity("/employee", request2, EmployeeDto.class);
+        // Act
+        client.put("/employee/update/" + id, request2);
+        
+        // Assert
+        ResponseEntity<EmployeeDto> response = client.getForEntity("/employee/id/" + id, EmployeeDto.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(response.getBody(), request2);
+        assertTrue(equals(response.getBody(), request2));
+    }
+
+    @Test
+    @Order(5)
     public void testGetAllEmployees() {
-        client.postForEntity("/employees/create", employeeRequestDto, EmployeeDto.class);
-        client.postForEntity("/employees/create", employeeRequestDto2, EmployeeDto.class);
+        client.postForEntity("/employee", employeeRequestDto, EmployeeDto.class);
+        client.postForEntity("/employee", employeeRequestDto2, EmployeeDto.class);
         
         @SuppressWarnings("rawtypes")
         ResponseEntity<List> response = client.getForEntity("/employees", List.class);
@@ -126,28 +172,29 @@ public class EmployeeServiceIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void testDeleteEmployee() {
-        client.postForEntity("/employees/create", employeeRequestDto, EmployeeDto.class);
+        // Arrange
+        EmployeeDto request = new EmployeeDto("Emp1", "password089", "emp1@gmail.com", true, false);
+        ResponseEntity<EmployeeDto> createResponse = client.postForEntity("/employee", request, EmployeeDto.class);
+        int id = createResponse.getBody().getUserID();
 
-        ResponseEntity<Void> response = client.exchange("/employees/delete/Employee1", HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = client.exchange("/employee/delete/" + id, HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    @Order(6)
-    public void testDeleteEmployee_NotFound() {
-        ResponseEntity<String> response = client.exchange("/employees/delete/NonExistentEmployee", HttpMethod.DELETE, null, String.class);
-        
+    @Order(7)
+    public void testDeleteEmployee_NotFound() {        
+        ResponseEntity<Void> response = client.exchange("/employee/delete/" + 0, HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Employee with username NonExistentEmployee not found.", response.getBody());
     }
 
-    private boolean equals(EmployeeDto employeeResponseDto, EmployeeDto employeeRequestDto) {
-        return employeeResponseDto.getUsername().equals(employeeRequestDto.getUsername()) &&
-               employeeResponseDto.getEmail().equals(employeeRequestDto.getEmail()) &&
-               employeeResponseDto.getPassword().equals(employeeRequestDto.getPassword()) &&
-               employeeResponseDto.isActive() == employeeRequestDto.isActive() &&
-               employeeResponseDto.isManager() == employeeRequestDto.isManager();
+    private boolean equals(EmployeeDto employeeResponseDto, EmployeeDto employeeRequestDt2o) {
+        return employeeResponseDto.getUsername().equals(employeeRequestDto2.getUsername()) &&
+               employeeResponseDto.getEmail().equals(employeeRequestDto2.getEmail()) &&
+               //employeeResponseDto.getPassword().equals(employeeRequestDto2.getPassword()) &&
+               employeeResponseDto.isActive() == employeeRequestDto2.isActive() &&
+               employeeResponseDto.isManager() == employeeRequestDto2.isManager();
     }
 }

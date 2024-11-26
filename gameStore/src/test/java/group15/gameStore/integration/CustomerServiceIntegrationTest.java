@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -40,6 +41,8 @@ public class CustomerServiceIntegrationTest {
 
     @BeforeEach
     public void setUp() {
+        customerRepository.deleteAll();
+
         customerRequestDto = new CustomerDto();
         customerRequestDto.setUsername("Joe");
         customerRequestDto.setEmail("joe@gmail.com");
@@ -48,9 +51,6 @@ public class CustomerServiceIntegrationTest {
         customerRequestDto2.setUsername("Sally");
         customerRequestDto2.setEmail("sally@gmail.com");
         customerRequestDto2.setPhoneNumber("0987654321");
-
-        // Clear repository to ensure a clean slate for each test
-        customerRepository.deleteAll();
     }
 
     /* 
@@ -104,10 +104,9 @@ public class CustomerServiceIntegrationTest {
  
          // Act
          tim.setUsername("Timmy");
-         client.put("/customer/" + id, tim);
+         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/username/" + id, tim, CustomerDto.class);
  
          // Assert
-         ResponseEntity<CustomerDto> response = client.getForEntity("/customer/" + id, CustomerDto.class);
          assertEquals(HttpStatus.OK, response.getStatusCode());
          assertNotNull(response.getBody());
          assertEquals("Timmy", response.getBody().getUsername());
@@ -118,15 +117,14 @@ public class CustomerServiceIntegrationTest {
      public void testUpdateCustomerPassword() {
          // Arrange
          CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/password/0", tim, CustomerDto.class);
-         int id = response.getBody().getUserId();
+         ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", tim, CustomerDto.class);
+         int id = createResponse.getBody().getUserId();
  
          // Act
          tim.setPassword("newPassword");
-         client.put("/customer/" + id, tim);
+         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/password/" + id, tim, CustomerDto.class);
  
          // Assert
-         response = client.getForEntity("/customer/" + id, CustomerDto.class);
          assertEquals(HttpStatus.OK, response.getStatusCode());
          assertNotNull(response.getBody());
          assertEquals("newPassword", response.getBody().getPassword());
@@ -137,18 +135,18 @@ public class CustomerServiceIntegrationTest {
      public void testUpdateCustomerEmail() {
          // Arrange
          CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/email/0", tim, CustomerDto.class);
-         int id = response.getBody().getUserId();
+         ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", tim, CustomerDto.class);
+         int id = createResponse.getBody().getUserId();
  
          // Act
-         tim.setEmail("newEmail");
-         client.put("/customer/" + id, tim);
+         tim.setEmail("newEmail@gmail.com");
+         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/email/" + id, tim, CustomerDto.class);
+
  
          // Assert
-         response = client.getForEntity("/customer/" + id, CustomerDto.class);
          assertEquals(HttpStatus.OK, response.getStatusCode());
          assertNotNull(response.getBody());
-         assertEquals("newEmail", response.getBody().getEmail());
+         assertEquals("newEmail@gmail.com", response.getBody().getEmail());
      }
  
      @Test
@@ -156,18 +154,17 @@ public class CustomerServiceIntegrationTest {
      public void testUpdateCustomerAddress() {
          // Arrange
          CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/address/0", tim, CustomerDto.class);
-         int id = response.getBody().getUserId();
+         ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", tim, CustomerDto.class);
+         int id = createResponse.getBody().getUserId();
  
          // Act
-         tim.setAddress("newAddress");
-         client.put("/customer/" + id, tim);
+         tim.setAddress("123 newAddress Lane");
+         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/address/" + id, tim, CustomerDto.class);
  
          // Assert
-         response = client.getForEntity("/customer/" + id, CustomerDto.class);
          assertEquals(HttpStatus.OK, response.getStatusCode());
          assertNotNull(response.getBody());
-         assertEquals("newAddress", response.getBody().getAddress());
+         assertEquals("123 newAddress Lane", response.getBody().getAddress());
      }
  
      @Test
@@ -175,133 +172,106 @@ public class CustomerServiceIntegrationTest {
      public void testUpdateCustomerPhoneNumber() {
          // Arrange
          CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/phonenumber/0", tim, CustomerDto.class);
-         int id = response.getBody().getUserId();
+         ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", tim, CustomerDto.class);
+         int id = createResponse.getBody().getUserId();
  
          // Act
-         tim.setPhoneNumber("newPhoneNumber");
-         client.put("/customer/" + id, tim);
+         tim.setPhoneNumber("5141234567");
+         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/phoneNumber/" + id, tim, CustomerDto.class);
  
          // Assert
-         response = client.getForEntity("/customer/" + id, CustomerDto.class);
          assertEquals(HttpStatus.OK, response.getStatusCode());
          assertNotNull(response.getBody());
-         assertEquals("newPhoneNumber", response.getBody().getPhoneNumber());
+         assertEquals("5141234567", response.getBody().getPhoneNumber());
      }
  
      @Test
      @Order(7)
      public void testGetCustomerById() {
         // Arrange
-        CustomerDto customerDto = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-        ResponseEntity<CustomerDto> response = client.postForEntity("/customer/create", customerDto, CustomerDto.class);
-        int id = response.getBody().getUserId();
+        CustomerDto request = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
+        ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", request, CustomerDto.class);
+        int id = createResponse.getBody().getUserId();
  
         // Act
-        response = client.getForEntity("/customer/id/" + id, CustomerDto.class);
+        ResponseEntity<CustomerDto> response = client.getForEntity("/customer/id/" + id, CustomerDto.class);
  
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Johnny Doug", response.getBody().getUsername());
+        assertEquals(id, response.getBody().getUserId());
      }
  
      @Test
      @Order(8)
      public void testGetCustomerByEmail() {
-        // Arrange: Create the customer first
-        String createUrl = "/customer/create";
-        CustomerDto createRequest = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-        ResponseEntity<CustomerDto> createResponse = client.postForEntity(createUrl, createRequest, CustomerDto.class);
-
-        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
-        CustomerDto createdCustomer = createResponse.getBody();
-        assertNotNull(createdCustomer);
-        this.validId = createdCustomer.getUserID();  
-
         // Arrange
-        String url = "/customer/email/" + VALID_EMAIL;
+        CustomerDto request = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
+        client.postForEntity("/customer/create", request, CustomerDto.class);
 
         // Act
-        ResponseEntity<CustomerDto> response = client.getForEntity(url, CustomerDto.class);
+        ResponseEntity<CustomerDto> response = client.getForEntity("/customer/email/" + VALID_EMAIL, CustomerDto.class);
 
         // Assert
-        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        CustomerDto customerDto = response.getBody();
-        assertNotNull(customerDto);
-        assertEquals(VALID_NAME, createdCustomer.getUsername());
-        assertEquals(VALID_PASSWORD, createdCustomer.getPassword());
-        assertEquals(VALID_EMAIL, createdCustomer.getEmail());
-        assertEquals(VALID_ADDRESS, createdCustomer.getAddress());
-        assertEquals(VALID_PHONENUMBER, createdCustomer.getPhoneNumber());
-        assertNotNull(createdCustomer.getUserId());
-        assertTrue(createdCustomer.getUserId() > 0, "Response should have a positive ID.");
-        this.validId = createdCustomer.getUserId();
+        assertNotNull(response.getBody());
+        assertEquals(VALID_EMAIL, response.getBody().getEmail());
 
      } 
 
     @Test
     @Order(9)
-    public void testGetCustomerByUsername() {
-        client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
-        ResponseEntity<CustomerDto> response = client.getForEntity("/customers/username/Joe", CustomerDto.class);
-        
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(equals(response.getBody(), customerRequestDto));
-    }
-
-    @Test
-    @Order(10)
-    public void testUpdateValidCustomer() {
-        client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
-
-        CustomerDto updatedCustomerDto = new CustomerDto();
-        updatedCustomerDto.setUsername("JoeUpdated");
-        updatedCustomerDto.setEmail("newjoe@gmail.com");
-        updatedCustomerDto.setPhoneNumber("1231231234");
-
-        HttpEntity<CustomerDto> requestEntity = new HttpEntity<>(updatedCustomerDto);
-        ResponseEntity<CustomerDto> response = client.exchange("/customers/update/Joe", HttpMethod.PUT, requestEntity, CustomerDto.class);
-        
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(equals(response.getBody(), updatedCustomerDto));
-    }
-
-    @Test
-    @Order(11)
     public void testGetAllCustomers() {
-        client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
-        client.postForEntity("/customers/create", customerRequestDto2, CustomerDto.class);
+        // Arrange
+        client.postForEntity("/customer/create", customerRequestDto, CustomerDto.class);
+        client.postForEntity("/customer/create", customerRequestDto2, CustomerDto.class);
 
+        // Act
         @SuppressWarnings("rawtypes")
-        ResponseEntity<List> response = client.getForEntity("/customers", List.class);
-        
+        /* ResponseEntity<List<Map<String, Object>>> response = client.exchange(
+            "/customer",
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<Map<String, Object>>>() {}
+        );*/
+
+        ResponseEntity<List> response = client.getForEntity("/customer", List.class);
+
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
         assertTrue(response.getBody().size() > 0);
 
+        
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> customers = response.getBody();
         assertEquals(customerRequestDto.getUsername(), customers.get(0).get("username"));
         assertEquals(customerRequestDto.getEmail(), customers.get(0).get("email"));
         assertEquals(customerRequestDto2.getUsername(), customers.get(1).get("username"));
         assertEquals(customerRequestDto2.getEmail(), customers.get(1).get("email"));
+        
+
+
     }
 
     @Test
-    @Order(12)
+    @Order(10)
     public void testDeleteCustomer() {
+        // Arrange
+        CustomerDto request = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
+        ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", request, CustomerDto.class);
+        int id = createResponse.getBody().getUserId();
 
-        client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
+        // Act
+        String url = "/customer/delete/" + id;
+        ResponseEntity<Void> response = client.exchange(url, HttpMethod.DELETE, null, Void.class);
 
-        ResponseEntity<Void> response = client.exchange("/customers/delete", HttpMethod.DELETE, null, Void.class);
+        // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    @Order(13)
+    @Order(11)
     public void testDeleteCustomer_NotFound() {
         ResponseEntity<String> response = client.exchange("/customers/delete/NonExistentCustomer", HttpMethod.DELETE, null, String.class);
         

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,8 +43,8 @@ public class EmployeeController{
      * @param employeeDto the EmployeeDto containing updated employee details
      * @return the updated employee and the HTTP status "OK"
      */
-    @PutMapping("/employee/{employeeId}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable int employeeId, 
+    @PutMapping("/employee/update/{employeeId}")
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("employeeId") int employeeId, 
             @RequestBody EmployeeDto employeeDto) {
         
         Employee existingEmployee = employeeService.getEmployeeById(employeeDto.getUserID());
@@ -57,8 +58,8 @@ public class EmployeeController{
      * @param employeeId the ID of the employee to retrieve
      * @return the desired employee information and the HTTP status "OK"
      */
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable int employeeId) {
+    @GetMapping("/employee/id/{employeeId}")
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable("employeeId") int employeeId) {
         Employee employee = employeeService.getEmployeeById(employeeId);
         return new ResponseEntity<>(new EmployeeDto(employee), HttpStatus.OK);
     }
@@ -69,7 +70,7 @@ public class EmployeeController{
     * @return the desired employee information and the HTTP status "OK"
     */
     @GetMapping("/employee/email/{email}")
-    public ResponseEntity<EmployeeDto> getEmployeeByEmail(@PathVariable String email) {
+    public ResponseEntity<EmployeeDto> getEmployeeByEmail(@PathVariable("email") String email) {
         Employee employee = employeeService.getEmployeeByEmail(email);
         return new ResponseEntity<>(new EmployeeDto(employee), HttpStatus.OK);
     }
@@ -81,6 +82,9 @@ public class EmployeeController{
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
         List<Employee> employees = employeeService.getAllEmployees();
+        if (employees.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         List<EmployeeDto> responseDtoList = employees.stream().map(EmployeeDto::new).collect(Collectors.toList());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }
@@ -90,8 +94,8 @@ public class EmployeeController{
      * @param employeeId the ID of the employee to delete
      * @return HTTP status "NO CONTENT" if the deletion is successful
      */
-    @DeleteMapping("/employee/{employeeId}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable int employeeId) {
+    @DeleteMapping("/employee/delete/{employeeId}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable("employeeId") int employeeId) {
         employeeService.deleteEmployeeById(employeeId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -54,15 +54,13 @@ public class CategoryServiceIntegrationTest {
         //categoryRepo.save(any(categoryRequestDto));
     }
     
-    /* 
     @Test
     @Order(0)
     public void testGetAllEmptyCategories() {
         ResponseEntity<String> response = client.getForEntity("/categories", String.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("No categories found in the system.", response.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        assertNull(response.getBody());
     }
-    */
 
     @Test
     @Order(1)

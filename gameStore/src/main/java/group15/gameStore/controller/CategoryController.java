@@ -67,6 +67,9 @@ public class CategoryController{
     @GetMapping("/categories")
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
+        if (categories.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         List<CategoryDto> responseDtoList = categories.stream().map(CategoryDto::new).collect(Collectors.toList());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }
