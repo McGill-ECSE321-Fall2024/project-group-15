@@ -71,7 +71,7 @@ export default {
     // Fetch categories from the backend (for future scalability)
     async fetchCategories() {
       try {
-        const response = await axios.get("/api/categories");
+        const response = axios.get("/categories");
         console.log("Categories fetched successfully:", response.data);
         this.categories = response.data; // Set categories data
       } catch (error) {
@@ -87,18 +87,20 @@ export default {
 
     // Add a new category to the system
     async addCategory() {
-      if (!this.newCategory.trim()) {
+      try{
+        if (!this.newCategory.trim()) {
         alert("Please enter a valid category name.");
         return;
       }
 
-      // Check if the category already exists
-      if (this.categories.some(category => category.name === this.newCategory.trim())) {
+      const categoryNamesSet = new Set((this.categories || []).map(category => category.name));
+
+        // Check if the category already exists
+        if (categoryNamesSet.has(this.newCategory.trim())) {
         alert("Category already exists.");
         return;
-      }
+        }
 
-      try {
         await axios.post("/api/category", { name: this.newCategory.trim() });
         this.categories.push({ name: this.newCategory.trim() }); // Add the new category to the list
         this.newCategory = ""; // Clear the input field

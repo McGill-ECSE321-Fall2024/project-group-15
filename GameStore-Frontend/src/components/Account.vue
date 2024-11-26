@@ -287,13 +287,13 @@
   </style>
   
   <script>
-  export default {
     import axios from "axios";
+  export default {
 
-    const axiosClient = axios.create({
+    /*const axiosClient = axios.create({
       // NOTE: it's baseURL, not baseUrl
       baseURL: "http://localhost:5173/account"
-    });
+    });*/
     
     name: 'Account',
     data() {
