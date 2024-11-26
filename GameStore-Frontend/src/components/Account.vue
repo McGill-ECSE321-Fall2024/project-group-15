@@ -57,56 +57,12 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    name: 'Account',
-    data() {
-      return {
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-        showCurrentPassword: false, // Controls visibility of current password
-        errorMessage: '',
-        successMessage: '',
-      };
-    },
-    methods: {
-      // Toggle visibility of the current password
-      toggleShowCurrentPassword() {
-        this.showCurrentPassword = !this.showCurrentPassword;
-      },
-      handlePasswordChange() {
-        // Simple validation for password matching
-        if (this.newPassword !== this.confirmPassword) {
-          this.errorMessage = "New passwords don't match.";
-          this.successMessage = '';
-          return;
-        }
-  
-        // Assume a simple check for the current password (replace with actual logic)
-        if (this.currentPassword === "password123") { // Just an example condition
-          // Simulate a password change process
-          this.successMessage = 'Your password has been successfully changed!';
-          this.errorMessage = '';
-          
-          // Reset the form fields after successful password change
-          this.currentPassword = '';
-          this.newPassword = '';
-          this.confirmPassword = '';
-        } else {
-          this.errorMessage = 'Current password is incorrect.';
-          this.successMessage = '';
-        }
-      },
-    },
-  };
-  </script>
-  
   <style scoped>
   .account-page {
     padding: 20px;
     font-family: Arial, sans-serif;
     background-color: #f5f5f5;
+    margin-top: 60px; /* Ensures content is positioned below the navbar */
   }
   
   h1 {
@@ -160,6 +116,10 @@
     cursor: pointer;
     font-size: 14px;
     margin-left: 10px;
+    padding: 0;
+    display: inline-flex; /* Ensures the button is properly aligned */
+    justify-content: center;
+    align-items: center;
   }
   
   .submit-button {
@@ -192,4 +152,49 @@
     margin-top: 15px;
   }
   </style>
+  
+  <script>
+  export default {
+    name: 'Account',
+    data() {
+      return {
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+        showCurrentPassword: false, // Controls visibility of current password
+        errorMessage: '',
+        successMessage: '',
+      };
+    },
+    methods: {
+      // Toggle visibility of the current password
+      toggleShowCurrentPassword() {
+        this.showCurrentPassword = !this.showCurrentPassword;
+      },
+      handlePasswordChange() {
+        // Simple validation for password matching
+        if (this.newPassword !== this.confirmPassword) {
+          this.errorMessage = "New passwords don't match.";
+          this.successMessage = '';
+          return;
+        }
+  
+        // Assume a simple check for the current password (replace with actual logic)
+        if (this.currentPassword === "password123") { // Just an example condition
+          // Simulate a password change process
+          this.successMessage = 'Your password has been successfully changed!';
+          this.errorMessage = '';
+  
+          // Reset the form fields after successful password change
+          this.currentPassword = '';
+          this.newPassword = '';
+          this.confirmPassword = '';
+        } else {
+          this.errorMessage = 'Current password is incorrect.';
+          this.successMessage = '';
+        }
+      },
+    },
+  };
+  </script>
   

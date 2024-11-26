@@ -27,6 +27,7 @@ export default {
   top: 0;
   z-index: 10;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  height: 60px; /* Ensure navbar has a fixed height */
 }
 
 .nav-link {
@@ -57,6 +58,5 @@ export default {
   .nav-link {
     margin: 5px 0;
   }
-
 }
 </style>

@@ -1,48 +1,48 @@
 <template>
-    <div class="category-management-page">
-      <NavBar />
-      <div class="category-management-container">
-        <h1>Manage Categories</h1>
-        <div class="search-section">
+  <div class="category-management-page">
+    <NavBar />
+    <div class="category-management-container">
+      <h1>Manage Categories</h1>
+      <div class="search-section">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search for games by title..."
+          @keyup.enter="searchGame"
+        />
+        <button @click="searchGame">Search</button>
+      </div>
+
+      <!-- Game Search Result -->
+      <div v-if="selectedGame" class="game-search-result">
+        <h2>{{ selectedGame.title }}</h2>
+        <img :src="selectedGame.image" alt="Game Image" class="game-image" />
+        <select v-model="selectedCategory">
+          <option value="">Select Category</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </select>
+        <button @click="assignCategory">Assign to Category</button>
+      </div>
+
+      <!-- Add Category Section -->
+      <div class="add-category-section">
+        <button @click="toggleAddCategory" class="add-category-button">
+          Add Category
+        </button>
+        <div v-if="showAddCategoryInput" class="add-category-form">
           <input
             type="text"
-            v-model="searchQuery"
-            placeholder="Search for games by title..."
-            @keyup.enter="searchGame"
+            v-model="newCategory"
+            placeholder="Enter category name..."
           />
-          <button @click="searchGame">Search</button>
-        </div>
-  
-        <!-- Game Search Result -->
-        <div v-if="selectedGame" class="game-search-result">
-          <h2>{{ selectedGame.title }}</h2>
-          <img :src="selectedGame.image" alt="Game Image" class="game-image" />
-          <select v-model="selectedCategory">
-            <option value="">Select Category</option>
-            <option v-for="category in categories" :key="category" :value="category">
-              {{ category }}
-            </option>
-          </select>
-          <button @click="assignCategory">Assign to Category</button>
-        </div>
-  
-        <!-- Add Category Section -->
-        <div class="add-category-section">
-          <button @click="toggleAddCategory" class="add-category-button">
-            Add Category
-          </button>
-          <div v-if="showAddCategoryInput" class="add-category-form">
-            <input
-              type="text"
-              v-model="newCategory"
-              placeholder="Enter category name..."
-            />
-            <button @click="addCategory">Submit</button>
-          </div>
+          <button @click="addCategory">Submit</button>
         </div>
       </div>
     </div>
-  </template>  
+  </div>
+</template>
 
 <script>
 import NavBar from "./NavBar.vue";
@@ -58,7 +58,7 @@ export default {
       searchQuery: "",
       selectedGame: null,
       selectedCategory: "",
-      categories: [], // Categories to be manually loaded on demand
+      categories: ["Action", "Adventure", "Puzzle", "RPG", "Sandbox"], // Predefined categories
       showAddCategoryInput: false,
       newCategory: "",
     };
@@ -76,9 +76,15 @@ export default {
         return;
       }
 
+      // Check if the category already exists
+      if (this.categories.includes(this.newCategory.trim())) {
+        alert("Category already exists.");
+        return;
+      }
+
       try {
         await axios.post("/category", { name: this.newCategory });
-        this.categories.push(this.newCategory); // Add the new category to the list
+        this.categories.push(this.newCategory.trim()); // Add the new category to the list
         this.newCategory = ""; // Clear the input field
         this.showAddCategoryInput = false;
         alert("Category added successfully!");
@@ -108,7 +114,7 @@ export default {
       }
     },
 
-    // Fetch categories from the backend
+    // Fetch categories from the backend (for future scalability)
     async fetchCategories() {
       try {
         const response = await axios.get("/categories");
@@ -146,6 +152,7 @@ export default {
   padding: 20px;
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
+  margin-top: 60px; /* Ensure content starts below navbar (adjust this as per your navbar height) */
 }
 
 .category-management-container {

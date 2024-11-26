@@ -53,7 +53,7 @@
             title: "Super Mario Odyssey",
             price: 49.99,
             quantity: 1,
-            image: "https://example.com/mario.jpg",
+            image: "https://images.app.goo.gl/Rs8CMTz3n37i6oSr9",
           },
           {
             id: 3,
