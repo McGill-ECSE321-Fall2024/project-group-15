@@ -68,6 +68,7 @@ public class ManagerIntegrationTests {
     @Test
 	@Order(1)
     public void testCreateValidManager() {
+        // Arrange
         EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGEREMPLOYEE);
         ManagerDto managerDto = new ManagerDto(manager);
 
