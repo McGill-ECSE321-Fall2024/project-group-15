@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import group15.gameStore.dto.CategoryDto;
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.model.Customer;
 import group15.gameStore.service.CustomerService;
@@ -25,16 +26,20 @@ public class CustomerController {
     
     //getCustomerByID
     @GetMapping("/customer/{cid}")
-    public CustomerDto getCustomerByID(@PathVariable int cid) {
-        CustomerDto customerDto = new CustomerDto(customerService.getCustomerByID(cid));
-        return customerDto;
+    public ResponseEntity<CustomerDto> getCustomerByID(@PathVariable int cid) {
+        Customer customer = customerService.getCustomerByID(cid);
+        return new ResponseEntity<>(new CustomerDto(customer), HttpStatus.OK);
+        //CustomerDto customerDto = new CustomerDto(customerService.getCustomerByID(cid));
+        //return customerDto;
     }
 
     //getCustomerByEmail
     @GetMapping("/customer/{email}")
-    public CustomerDto getCustomerByEmail(@PathVariable String email) {
-        CustomerDto customerDto = new CustomerDto(customerService.getCustomerByEmail(email));
-        return customerDto;
+    public ResponseEntity<CustomerDto> getCustomerByEmail(@PathVariable String email) {
+        Customer customer = customerService.getCustomerByEmail(email);
+        //CustomerDto customerDto = new CustomerDto(customerService.getCustomerByEmail(email));
+        return new ResponseEntity<>(new CustomerDto(customer), HttpStatus.OK);
+        // return customerDto;
     }
 
     //findAllCustomers

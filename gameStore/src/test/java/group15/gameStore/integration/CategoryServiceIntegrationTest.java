@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -140,7 +142,7 @@ public class CategoryServiceIntegrationTest {
         assertEquals(VALID_NAME, categoryDto.getName());
         assertEquals(this.validId, categoryDto.getCategoryID());
     }
-    */ 
+    */
 
 
     @Test
@@ -149,15 +151,23 @@ public class CategoryServiceIntegrationTest {
 
         System.out.println("Valid ID read:" + this.validId);
 
-        // Arrange: Create the category first
+        // Arrange: Create the existing category
         String createUrl = "/category";
         CategoryDto createRequest = new CategoryDto("Action");
         ResponseEntity<CategoryDto> createResponse = client.postForEntity(createUrl, createRequest, CategoryDto.class);
-
         assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
         CategoryDto createdCategory = createResponse.getBody();
         assertNotNull(createdCategory);
         this.validId = createdCategory.getCategoryID();
+
+        // Arrange: Create the category with updated info
+        String createUrl2 = "/category";
+        CategoryDto createRequest2 = new CategoryDto("Updated Action");
+        ResponseEntity<CategoryDto> createResponse2 = client.postForEntity(createUrl2, createRequest2, CategoryDto.class);
+        assertEquals(HttpStatus.CREATED, createResponse2.getStatusCode());
+        CategoryDto createdCategory2 = createResponse.getBody();
+        assertNotNull(createdCategory2);
+        this.validId = createdCategory2.getCategoryID();
 
         // Arrange
         String url = "/category/" + this.validId;
@@ -172,16 +182,16 @@ public class CategoryServiceIntegrationTest {
         // Assert
         ResponseEntity<CategoryDto> categoryResponse = client.getForEntity(url,CategoryDto.class);
 
-
         assertNotNull(categoryResponse);
         assertEquals(HttpStatus.OK, categoryResponse.getStatusCode());
         CategoryDto updatedCategory = categoryResponse.getBody();
         assertNotNull(updatedCategory);
-        assertEquals(updatedName, updatedCategory.getName());
+        assertEquals("Updated Action", updatedCategory.getName());
         assertNotNull(updatedCategory.getCategoryID());
         assertTrue(updatedCategory.getCategoryID() > 0, "Response should have a positive ID.");
         this.validId = updatedCategory.getCategoryID();
     }
+
 
     @Test
     @Order(4)

@@ -43,7 +43,7 @@ public class PersonController {
      * @return the updated user information and the HTTP status "OK"
      */
     @PutMapping("/person/{personId}")
-    public ResponseEntity<PersonDto> updatePerson(@PathVariable int personId,@RequestBody PersonDto personDto) {
+    public ResponseEntity<PersonDto> updatePerson(@PathVariable("personId") int personId, @RequestBody PersonDto personDto) {
         Person personToUpdate = new Person();
         personToUpdate.setUsername(personDto.getUsername());
         personToUpdate.setPassword(personDto.getPassword());
@@ -58,7 +58,7 @@ public class PersonController {
      * @return return desired user information and the HTTP status "OK"
      */
     @GetMapping("/person/{personId}")
-    public ResponseEntity<PersonDto> getPersonById(@PathVariable int personId) {
+    public ResponseEntity<PersonDto> getPersonById(@PathVariable("personId") int personId) {
         Person person = personService.getPersonById(personId);
         PersonDto responseDto = new PersonDto(person);
         return new ResponseEntity<>(responseDto, HttpStatus.OK); 
@@ -70,7 +70,7 @@ public class PersonController {
      * @return the desired user information and the HTTP status "OK"
      */
     @GetMapping("/person/username/{username}")
-    public ResponseEntity<PersonDto> getPersonByUsername(@PathVariable String username) {
+    public ResponseEntity<PersonDto> getPersonByUsername(@PathVariable("username") String username) {
         Person person = personService.getPersonByUsername(username);
         PersonDto responseDto = new PersonDto(person);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);    
@@ -101,7 +101,7 @@ public class PersonController {
      * @return HTTP status "NO CONTENT" if deletion is successful, "FORBIDDEN" if authorization fails
      */
     @DeleteMapping("/person/{username}")
-    public ResponseEntity<Void> deletePersonByUsername(@PathVariable String username, @RequestBody PersonDto personDto) {
+    public ResponseEntity<Void> deletePersonByUsername(@PathVariable("username") String username, @RequestBody PersonDto personDto) {
         Person personToDelete = personService.getPersonByUsername(username);
 
         // Check authorization using the request DTO

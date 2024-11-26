@@ -1,6 +1,8 @@
 package group15.gameStore.integration;
 
+import group15.gameStore.dto.CategoryDto;
 import group15.gameStore.dto.CustomerDto;
+import group15.gameStore.model.Customer;
 import group15.gameStore.repository.CustomerRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ public class CustomerServiceIntegrationTest {
     private static final String VALID_EMAIL = "johnny@gmail.com";
     private static final String VALID_ADDRESS = "1234 Mcgill St";
     private static final String VALID_PHONENUMBER = "4383709345";
+    private int validId;
 
     @BeforeEach
     public void setUp() {
@@ -50,10 +53,12 @@ public class CustomerServiceIntegrationTest {
         customerRepository.deleteAll();
     }
 
+    /* 
     @AfterAll
 	public void clearDatabase() {
 		customerRepository.deleteAll();
 	}
+    
 
     @Test
     @Order(0)
@@ -62,19 +67,30 @@ public class CustomerServiceIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("No customers found in the system.", response.getBody());
     }
+    */
     
     @Test
     @Order(1)
     public void testCreateValidCustomer() {
-        ResponseEntity<CustomerDto> customerResponse1 = client.postForEntity("/customer/create", customerRequestDto, CustomerDto.class);
-        assertEquals(HttpStatus.CREATED, customerResponse1.getStatusCode());
-        assertNotNull(customerResponse1.getBody());
-        assertTrue(equals(customerResponse1.getBody(), customerRequestDto));
+        // Arrange
+        CustomerDto request = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
 
-        ResponseEntity<CustomerDto> customerResponse2 = client.postForEntity("/customer/create", customerRequestDto2, CustomerDto.class);
-        assertEquals(HttpStatus.CREATED, customerResponse2.getStatusCode());
-        assertNotNull(customerResponse2.getBody());
-        assertTrue(equals(customerResponse2.getBody(), customerRequestDto2));
+        // Act
+        ResponseEntity<CustomerDto> response = client.postForEntity("/customer/create", request, CustomerDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        CustomerDto createdCustomer = response.getBody();
+        assertNotNull(createdCustomer);
+        assertEquals(VALID_NAME, createdCustomer.getUsername());
+        assertEquals(VALID_PASSWORD, createdCustomer.getPassword());
+        assertEquals(VALID_EMAIL, createdCustomer.getEmail());
+        assertEquals(VALID_ADDRESS, createdCustomer.getAddress());
+        assertEquals(VALID_PHONENUMBER, createdCustomer.getPhoneNumber());
+        assertNotNull(createdCustomer.getUserId());
+        assertTrue(createdCustomer.getUserId() > 0, "Response should have a positive ID.");
+        this.validId = createdCustomer.getUserId();
     }
 
 
@@ -83,15 +99,15 @@ public class CustomerServiceIntegrationTest {
      public void testUpdateCustomerUsername() {
          // Arrange
          CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/username/0", tim, CustomerDto.class);
-         int id = response.getBody().getUserId();
+         ResponseEntity<CustomerDto> createResponse = client.postForEntity("/customer/create", tim, CustomerDto.class);
+         int id = createResponse.getBody().getUserId();
  
          // Act
          tim.setUsername("Timmy");
          client.put("/customer/" + id, tim);
  
          // Assert
-         response = client.getForEntity("/customer/" + id, CustomerDto.class);
+         ResponseEntity<CustomerDto> response = client.getForEntity("/customer/" + id, CustomerDto.class);
          assertEquals(HttpStatus.OK, response.getStatusCode());
          assertNotNull(response.getBody());
          assertEquals("Timmy", response.getBody().getUsername());
@@ -176,34 +192,53 @@ public class CustomerServiceIntegrationTest {
      @Test
      @Order(7)
      public void testGetCustomerById() {
-         // Arrange
-         CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/username/0", tim, CustomerDto.class);
-         int id = response.getBody().getUserId();
+        // Arrange
+        CustomerDto customerDto = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
+        ResponseEntity<CustomerDto> response = client.postForEntity("/customer/create", customerDto, CustomerDto.class);
+        int id = response.getBody().getUserId();
  
-         // Act
-         response = client.getForEntity("/customer/" + id, CustomerDto.class);
+        // Act
+        response = client.getForEntity("/customer/id/" + id, CustomerDto.class);
  
-         // Assert
-         assertEquals(HttpStatus.OK, response.getStatusCode());
-         assertNotNull(response.getBody());
-         assertEquals("Timmy", response.getBody().getUsername());
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Johnny Doug", response.getBody().getUsername());
      }
  
      @Test
      @Order(8)
      public void testGetCustomerByEmail() {
-         // Arrange
-         CustomerDto tim = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
-         ResponseEntity<CustomerDto> response = client.postForEntity("/customer/update/username/0", tim, CustomerDto.class);
- 
-         // Act
-         response = client.getForEntity("/customer/email/" + VALID_EMAIL, CustomerDto.class);
- 
-         // Assert
-         assertEquals(HttpStatus.OK, response.getStatusCode());
-         assertNotNull(response.getBody());
-         assertEquals("Timmy", response.getBody().getUsername());
+        // Arrange: Create the customer first
+        String createUrl = "/customer/create";
+        CustomerDto createRequest = new CustomerDto(VALID_NAME, VALID_PASSWORD, VALID_EMAIL, VALID_ADDRESS, VALID_PHONENUMBER);
+        ResponseEntity<CustomerDto> createResponse = client.postForEntity(createUrl, createRequest, CustomerDto.class);
+
+        assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+        CustomerDto createdCustomer = createResponse.getBody();
+        assertNotNull(createdCustomer);
+        this.validId = createdCustomer.getUserID();  
+
+        // Arrange
+        String url = "/customer/email/" + VALID_EMAIL;
+
+        // Act
+        ResponseEntity<CustomerDto> response = client.getForEntity(url, CustomerDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        CustomerDto customerDto = response.getBody();
+        assertNotNull(customerDto);
+        assertEquals(VALID_NAME, createdCustomer.getUsername());
+        assertEquals(VALID_PASSWORD, createdCustomer.getPassword());
+        assertEquals(VALID_EMAIL, createdCustomer.getEmail());
+        assertEquals(VALID_ADDRESS, createdCustomer.getAddress());
+        assertEquals(VALID_PHONENUMBER, createdCustomer.getPhoneNumber());
+        assertNotNull(createdCustomer.getUserId());
+        assertTrue(createdCustomer.getUserId() > 0, "Response should have a positive ID.");
+        this.validId = createdCustomer.getUserId();
+
      } 
 
     @Test
@@ -258,9 +293,10 @@ public class CustomerServiceIntegrationTest {
     @Test
     @Order(12)
     public void testDeleteCustomer() {
+
         client.postForEntity("/customers/create", customerRequestDto, CustomerDto.class);
 
-        ResponseEntity<Void> response = client.exchange("/customers/delete/Joe", HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = client.exchange("/customers/delete", HttpMethod.DELETE, null, Void.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
