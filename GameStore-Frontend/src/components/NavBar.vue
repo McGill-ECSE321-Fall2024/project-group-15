@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar">
     <nav>
-      <a href="/" class="nav-link">Home</a>
+      <a href="/home" class="nav-link">Home</a>
       <a href="/games" class="nav-link">Games</a>
       <a href="/categories" class="nav-link">Categories</a>
       <a href="/account" class="nav-link">Account</a>

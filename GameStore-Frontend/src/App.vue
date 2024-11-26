@@ -53,6 +53,7 @@ body {
 .fade-enter, 
 .fade-leave-to {
   opacity: 0;
+}
   
   nav {
   display: flex;
