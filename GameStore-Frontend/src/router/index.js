@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Game from '../components/Game.vue'; 
+import Game from '../components/GameDetails.vue'; 
 import SearchBar from '../components/SearchBar.vue'; 
+import GameList from "@/components/GameList.vue";
 import Home from '../components/Home.vue'; 
 import Account from '../components/Settings.vue'; 
+import AddGame from '@/components/AddGame.vue';
+import Category from '../components/Category.vue'
 
 
 const router = createRouter({
@@ -15,8 +18,8 @@ const router = createRouter({
   },
   {
     path: '/games',
-    name: 'Games',
-    component: SearchBar, 
+    name: 'GameList',
+    component: GameList, 
   },
   {
     path: '/games/:id',
@@ -24,12 +27,22 @@ const router = createRouter({
     component: Game, 
     props: true, // Allow route params as props
   },
+  {
+    path: '/games/add-game',
+    name: 'AddGame',
+    component: AddGame, 
+  },
+  {
+    path: '/categories',
+    name: 'Category',
+    component: Category,
+  }
   /*{
     path: '/account',
     name: 'Account',
     component: Account,
-  }*/,
-  ],
-}) 
+  }*/
+],
+})
 
 export default router
