@@ -5,6 +5,7 @@
       <a href="/games" class="nav-link">Games</a>
       <a href="/categories" class="nav-link">Categories</a>
       <a href="/account" class="nav-link">Account</a>
+      <a href="/cart" class="nav-link">Cart</a>
     </nav>
   </div>
 </template>
@@ -56,5 +57,6 @@ export default {
   .nav-link {
     margin: 5px 0;
   }
+
 }
 </style>
