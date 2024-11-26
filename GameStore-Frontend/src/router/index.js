@@ -1,35 +1,48 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Game from '../components/Game.vue'; 
-import SearchBar from '../components/SearchBar.vue'; 
-import Home from '../components/Home.vue'; 
-import Account from '../components/Settings.vue'; 
+import { createRouter, createWebHistory } from 'vue-router';
+import Login from '../components/Login.vue'; // Login page for the homepage
+import Home from '../components/Home.vue'; // Home page after login
+import Game from '../components/Game.vue'; // Game details page
+import SearchBar from '../components/SearchBar.vue'; // Search bar page for games
+import Cart from '../components/Cart.vue'; // Cart page
+import Account from '../components/Account.vue'; // Account page
 
-
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
+const routes = [
+  {
     path: '/',
+    name: 'Login', // Set the login page as the homepage
+    component: Login,
+  },
+  {
+    path: '/home', // The home page after login
     name: 'Home',
     component: Home,
   },
   {
     path: '/games',
     name: 'Games',
-    component: SearchBar, 
+    component: SearchBar,
   },
   {
     path: '/games/:id',
     name: 'GameDetails',
-    component: Game, 
+    component: Game,
     props: true, // Allow route params as props
   },
-  /*{
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: Cart,
+  },
+  {
     path: '/account',
     name: 'Account',
     component: Account,
-  }*/,
-  ],
-}) 
+  },
+];
 
-export default router
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;
