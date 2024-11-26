@@ -34,14 +34,14 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 #app {
   display: flex;
   flex-direction: column;
-  height: 100vh; 
-  width: 100vw; 
+  height: 100vh;
+  width: 100vw;
   margin: 0;
   padding: 0;
 }
@@ -54,8 +54,8 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
-  
-  nav {
+
+nav {
   display: flex;
   gap: 1rem;
   justify-content: center;
@@ -79,5 +79,12 @@ body {
 
 main {
   padding: 2rem;
+}
+
+/* Added to create space for the fixed navbar */
+.main-content {
+  margin-top: 60px; /* Adjust based on navbar height */
+  padding: 20px;
+  overflow-y: auto;
 }
 </style>

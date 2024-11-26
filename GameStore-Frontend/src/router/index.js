@@ -4,7 +4,7 @@ import Game from '../components/GameDetails.vue';
 import SearchBar from '../components/SearchBar.vue'; 
 import GameList from "@/components/GameList.vue";
 import Home from '../components/Home.vue'; 
-import Account from '../components/Settings.vue'; 
+import Account from '../components/Account.vue'; 
 import AddGame from '@/components/AddGame.vue';
 import Category from '../components/Category.vue'
 import Cart from '../components/Cart.vue'; // Cart page
