@@ -1,58 +1,62 @@
 <template>
-  <nav class="navbar">
-    <div class="navbar-container">
-      <!-- Logo -->
-      <router-link to="/" class="navbar-logo">GameStore</router-link>
-      
-      <!-- Navigation Links -->
-      <div class="navbar-links">
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/games" class="nav-link">Games</router-link>
-        <router-link to="/about" class="nav-link">About</router-link>
-        <router-link to="/cart" class="nav-link">Cart</router-link>
-      </div>
-    </div>
-  </nav>
+  <div class="nav-bar">
+    <nav>
+      <a href="/" class="nav-link">Home</a>
+      <a href="/games" class="nav-link">Games</a>
+      <a href="/categories" class="nav-link">Categories</a>
+      <a href="/account" class="nav-link">Account</a>
+      <a href="/cart" class="nav-link">Cart</a>
+    </nav>
+  </div>
 </template>
 
-<style>
-/* Styles for the navigation bar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: #333;
-  color: white;
-}
+<script>
+export default {
+  name: "Navbar",
+};
+</script>
 
-.navbar-container {
+<style scoped>
+.nav-bar {
+  background: #2c3e50; /* Dark blue-gray background */
+  padding: 10px 20px;
   display: flex;
-  align-items: center;
+  justify-content: center;
+  position: fixed;
   width: 100%;
-}
-
-.navbar-logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
-  margin-right: 1rem;
-}
-
-.navbar-links {
-  display: flex;
-  gap: 1rem;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
-  font-size: 1rem;
-  transition: color 0.3s ease;
+  font-size: 18px;
+  margin: 0 15px;
+  padding: 8px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .nav-link:hover {
-  color: #ff9800;
+  background-color: #1abc9c; /* Green hover background */
+  color: white; /* Ensure text is white */
+}
+
+.nav-link:active {
+  background-color: #16a085; /* Slightly darker green for active state */
+}
+
+@media (max-width: 768px) {
+  .nav-bar {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .nav-link {
+    margin: 5px 0;
+  }
+
 }
 </style>

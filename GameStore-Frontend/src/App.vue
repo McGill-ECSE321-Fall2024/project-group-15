@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
@@ -27,16 +27,34 @@ export default {
 };
 </script>
 
-<style>
-
 <style scoped>
-header {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; 
 }
 
-nav {
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; 
+  width: 100vw; 
+  margin: 0;
+  padding: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, 
+.fade-leave-to {
+  opacity: 0;
+  
+  nav {
   display: flex;
   gap: 1rem;
   justify-content: center;

@@ -1,10 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'; // Login page for the homepage
-import Home from '../components/Home.vue'; // Home page after login
-import Game from '../components/Game.vue'; // Game details page
-import SearchBar from '../components/SearchBar.vue'; // Search bar page for games
+import Game from '../components/GameDetails.vue'; 
+import SearchBar from '../components/SearchBar.vue'; 
+import GameList from "@/components/GameList.vue";
+import Home from '../components/Home.vue'; 
+import Account from '../components/Settings.vue'; 
+import AddGame from '@/components/AddGame.vue';
+import Category from '../components/Category.vue'
 import Cart from '../components/Cart.vue'; // Cart page
-import Account from '../components/Account.vue'; // Account page
+
 
 const routes = [
   {
@@ -19,14 +23,25 @@ const routes = [
   },
   {
     path: '/games',
-    name: 'Games',
-    component: SearchBar,
+    name: 'GameList',
+    component: GameList, 
+
   },
   {
     path: '/games/:id',
     name: 'GameDetails',
     component: Game,
     props: true, // Allow route params as props
+  },
+  {
+    path: '/games/add-game',
+    name: 'AddGame',
+    component: AddGame, 
+  },
+  {
+    path: '/categories',
+    name: 'Category',
+    component: Category,
   },
   {
     path: '/cart',
