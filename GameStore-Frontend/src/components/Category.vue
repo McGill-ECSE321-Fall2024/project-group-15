@@ -19,8 +19,8 @@
         <img :src="selectedGame.image" alt="Game Image" class="game-image" />
         <select v-model="selectedCategory">
           <option value="">Select Category</option>
-          <option v-for="category in categories" :key="category" :value="category">
-            {{ category }}
+          <option v-for="category in categories" :key="category.id" :value="category.name">
+            {{ category.name }}
           </option>
         </select>
         <button @click="assignCategory">Assign to Category</button>
@@ -58,12 +58,28 @@ export default {
       searchQuery: "",
       selectedGame: null,
       selectedCategory: "",
-      categories: ["Action", "Adventure", "Puzzle", "RPG", "Sandbox"], // Predefined categories
+      categories: [], // Categories will be fetched from the backend
       showAddCategoryInput: false,
       newCategory: "",
     };
   },
+  created() {
+    // Fetch categories when component is created
+    this.fetchCategories();
+  },
   methods: {
+    // Fetch categories from the backend (for future scalability)
+    async fetchCategories() {
+      try {
+        const response = await axios.get("/api/categories");
+        console.log("Categories fetched successfully:", response.data);
+        this.categories = response.data; // Set categories data
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        alert("Failed to fetch categories. Check the console for more details.");
+      }
+    },
+
     // Toggle the visibility of the Add Category input field
     toggleAddCategory() {
       this.showAddCategoryInput = !this.showAddCategoryInput;
@@ -77,14 +93,14 @@ export default {
       }
 
       // Check if the category already exists
-      if (this.categories.includes(this.newCategory.trim())) {
+      if (this.categories.some(category => category.name === this.newCategory.trim())) {
         alert("Category already exists.");
         return;
       }
 
       try {
-        await axios.post("/category", { name: this.newCategory });
-        this.categories.push(this.newCategory.trim()); // Add the new category to the list
+        await axios.post("/api/category", { name: this.newCategory.trim() });
+        this.categories.push({ name: this.newCategory.trim() }); // Add the new category to the list
         this.newCategory = ""; // Clear the input field
         this.showAddCategoryInput = false;
         alert("Category added successfully!");
@@ -102,7 +118,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`/game/title/${this.searchQuery}`);
+        const response = await axios.get(`/api/game/title/${this.searchQuery}`);
         this.selectedGame = response.data;
 
         // Fetch categories only when a game is selected
@@ -114,17 +130,6 @@ export default {
       }
     },
 
-    // Fetch categories from the backend (for future scalability)
-    async fetchCategories() {
-      try {
-        const response = await axios.get("/categories");
-        this.categories = response.data.map((category) => category.name);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        alert("Failed to fetch categories.");
-      }
-    },
-
     // Assign the selected game to a category
     async assignCategory() {
       if (!this.selectedCategory || !this.selectedGame) {
@@ -133,7 +138,7 @@ export default {
       }
 
       try {
-        await axios.post("/category/assign", {
+        await axios.post("/api/category/assign", {
           gameId: this.selectedGame.id,
           category: this.selectedCategory,
         });

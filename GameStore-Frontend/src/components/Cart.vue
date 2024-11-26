@@ -40,29 +40,7 @@
     components: { NavBar },
     data() {
       return {
-        cartItems: [
-          {
-            id: 1,
-            title: "The Legend of Zelda: Tears of the Kingdom",
-            price: 59.99,
-            quantity: 2,
-            image: "https://example.com/zelda.jpg",
-          },
-          {
-            id: 2,
-            title: "Super Mario Odyssey",
-            price: 49.99,
-            quantity: 1,
-            image: "https://images.app.goo.gl/Rs8CMTz3n37i6oSr9",
-          },
-          {
-            id: 3,
-            title: "Animal Crossing: New Horizons",
-            price: 39.99,
-            quantity: 3,
-            image: "https://example.com/animal-crossing.jpg",
-          },
-        ],
+        cartItems: [] // Start with an empty cart
       };
     },
     created() {
@@ -75,6 +53,16 @@
         if (savedCart.length > 0) {
           this.cartItems = savedCart;
         }
+      },
+      addGameToCart(game) {
+        // Check if game is already in the cart
+        const existingGame = this.cartItems.find(item => item.id === game.id);
+        if (existingGame) {
+          existingGame.quantity++;
+        } else {
+          this.cartItems.push({...game, quantity: 1});
+        }
+        this.updateCart();
       },
       increaseQuantity(index) {
         this.cartItems[index].quantity++;
@@ -108,8 +96,8 @@
       clearCart() {
         localStorage.removeItem("cart");
         this.cartItems = [];
-      },
-    },
+      }
+    }
   };
   </script>
   

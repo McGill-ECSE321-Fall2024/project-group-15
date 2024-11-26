@@ -1,14 +1,13 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 import Login from '../components/Login.vue'; // Login page for the homepage
 import Game from '../components/GameDetails.vue'; 
-import SearchBar from '../components/SearchBar.vue'; 
+import SearchResults from '../components/SearchResults.vue'; // Add this import for the search results page
 import GameList from "@/components/GameList.vue";
 import Home from '../components/Home.vue'; 
 import Account from '../components/Account.vue'; 
 import AddGame from '@/components/AddGame.vue';
-import Category from '../components/Category.vue'
+import Category from '../components/Category.vue';
 import Cart from '../components/Cart.vue'; // Cart page
-
 
 const routes = [
   {
@@ -24,8 +23,7 @@ const routes = [
   {
     path: '/games',
     name: 'GameList',
-    component: GameList, 
-
+    component: GameList,
   },
   {
     path: '/games/:id',
@@ -52,6 +50,12 @@ const routes = [
     path: '/account',
     name: 'Account',
     component: Account,
+  },
+  // New route for Search Results
+  {
+    path: '/search-results',
+    name: 'SearchResults',
+    component: SearchResults,
   },
 ];
 

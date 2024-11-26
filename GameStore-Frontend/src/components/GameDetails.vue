@@ -1,202 +1,118 @@
 <template>
     <div class="game-details-page">
       <NavBar />
-      <div class="search-bar-container">
-        <input
-          type="text"
-          v-model="searchQuery"
-          @input="searchGame"
-          placeholder="Search for games by name..."
-          class="search-bar"
-        />
-      </div>
-      <div class="game-details-container">
-        <div class="game-image-section">
-          <img :src="game.image" alt="Game Image" class="game-image" />
-        </div>
-        <div class="game-info-section">
-          <h1 class="game-title">{{ game.title }}</h1>
-          <p class="game-description">{{ game.description }}</p>
-          <p class="game-price">Price: ${{ game.price.toFixed(2) }}</p>
-          <p class="game-stock">In Stock: {{ game.stock }}</p>
-          <div class="game-actions">
-            <button @click="editGame">Edit Game</button>
-            <button @click="deleteGame">Delete Game</button>
-          </div>
-        </div>
+      <div class="game-details">
+        <img :src="game.image" alt="Game Image" class="game-image" />
+        <h2>{{ game.title }}</h2>
+        <p>{{ game.description }}</p>
+        <p><strong>Category:</strong> {{ game.category }}</p>
+        <p><strong>Price:</strong> ${{ game.price.toFixed(2) }}</p>
+        <p><strong>Rating:</strong> {{ game.rating }}</p>
+        <button @click="addToCart(game)">Add to Cart</button>
       </div>
     </div>
-</template>
+  </template>
   
-<script>
-    import NavBar from "./NavBar.vue";
-    import axios from "./axios";
+  <script>
+  import NavBar from "./NavBar.vue";
+  import axios from "axios";
   
-    export default {
-        name: "GameDetailsPage",
-        components: { NavBar },
-        data() {
-            return {
-            game: {}, // Holds the game details
-            searchQuery: "", // Search input
-        };
+  export default {
+    name: "GameDetails",
+    components: { NavBar },
+    data() {
+      return {
+        game: null,  // To store the game details
+        cart: []
+      };
     },
     created() {
-      this.getGame(); // Fetch the game when the page is loaded
+      const gameId = this.$route.params.id;
+      this.fetchGameDetails(gameId);
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        this.cart = JSON.parse(savedCart);
+      }
     },
     methods: {
-      async getGame() {
-        const gameId = this.$route.params.id; // Assume the game ID is passed via route
-        try {
-          const response = await axios.get(`http://localhost:8080/game/${gameId}`);
-          this.game = response.data;
-        } catch (error) {
-          console.error("Error fetching game details:", error);
-        }
+      fetchGameDetails(gameId) {
+        // Static list of games for demonstration purposes
+        const games = [
+          { id: 1, title: "Game One", description: "Description for Game One", price: 29.99, image: "https://via.placeholder.com/200", category: "Action", rating: "FIVE_STAR" },
+          { id: 2, title: "Game Two", description: "Description for Game Two", price: 19.99, image: "https://via.placeholder.com/200", category: "RPG", rating: "FOUR_STAR" },
+          { id: 3, title: "Game Three", description: "Description for Game Three", price: 49.99, image: "https://via.placeholder.com/200", category: "Adventure", rating: "THREE_STAR" },
+          { id: 4, title: "Game Four", description: "Description for Game Four", price: 39.99, image: "https://via.placeholder.com/200", category: "Strategy", rating: "FIVE_STAR" },
+          { id: 5, title: "Game Five", description: "Description for Game Five", price: 59.99, image: "https://via.placeholder.com/200", category: "Action", rating: "FIVE_STAR" }
+        ];
+        // Find the game that matches the gameId
+        this.game = games.find(game => game.id === parseInt(gameId));
       },
-      async searchGame() {
-        if (!this.searchQuery.trim()) return;
+      addToCart(game) {
+        // Check if the game is already in the cart
+        const existingGame = this.cart.find(item => item.id === game.id);
+        
+        if (existingGame) {
+          // If game already in the cart, increment quantity
+          existingGame.quantity += 1;
+        } else {
+          // If game not in the cart, add it with quantity 1
+          this.cart.push({ ...game, quantity: 1 });
+        }
   
-        try {
-          const response = await axios.get(
-            `http://localhost:8080/game/title/${this.searchQuery}`
-          );
-          this.game = response.data;
-        } catch (error) {
-          console.error("Error searching for game:", error);
-          alert("Game not found. Please try another search.");
-        }
-      },
-      editGame() {
-        this.$router.push({ name: "EditGame", params: { id: this.game.id } });
-      },
-      async deleteGame() {
-        try {
-          await axios.delete(`http://localhost:8080/game/${this.game.id}`);
-          alert("Game deleted successfully!");
-          this.$router.push("/games"); // Redirect to the list of games after deletion
-        } catch (error) {
-          console.error("Error deleting game:", error);
-          alert("Failed to delete the game. Please try again.");
-        }
-      },
-    },
+        // Update the cart in localStorage
+        localStorage.setItem('cart', JSON.stringify(this.cart));
+  
+        // Provide user feedback
+        alert(`${game.title} has been added to your cart! Quantity: ${existingGame ? existingGame.quantity : 1}`);
+      }
+    }
   };
   </script>
   
   <style scoped>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-  }
-  
   .game-details-page {
     padding: 20px;
-    margin: auto;
-    max-width: 1200px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f5f5f5;
+    margin-top: 60px; /* Added margin to avoid nav bar overlap */
+  }
+  
+  .game-details {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-  
-  .search-bar-container {
-    margin: 20px 0;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .search-bar {
-    width: 80%;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .game-details-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-top: 20px;
-  }
-  
-  .game-image-section {
-    flex: 1;
     text-align: center;
   }
   
   .game-image {
-    width: 300px;
-    height: 300px;
+    max-width: 300px;
+    height: auto;
     object-fit: cover;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
-  .game-info-section {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .game-title {
+  h2 {
     font-size: 2rem;
     font-weight: bold;
-    color: #333;
-    margin: 0;
-  }
-  
-  .game-description {
-    font-size: 1.2rem;
-    color: #555;
-  }
-  
-  .game-price,
-  .game-stock {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #0040ff;
-  }
-  
-  .game-actions {
-    display: flex;
-    gap: 10px;
     margin-top: 20px;
   }
   
+  p {
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+  
   button {
+    margin-top: 20px;
+    background-color: #007bff;
+    color: white;
     padding: 10px 20px;
-    font-size: 1rem;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
   }
   
-  button:first-child {
-    background-color: #0040ff;
-    color: white;
-  }
-  
-  button:first-child:hover {
-    background-color: #002080;
-  }
-  
-  button:last-child {
-    background-color: #ff4d4d;
-    color: white;
-  }
-  
-  button:last-child:hover {
-    background-color: #b30000;
+  button:hover {
+    background-color: #0056b3;
   }
   </style>
   

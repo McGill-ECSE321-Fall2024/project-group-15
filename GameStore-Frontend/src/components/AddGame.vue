@@ -1,168 +1,219 @@
 <template>
-    <div class="add-game-page">
-      <NavBar />
-      <div class="add-game-form-container">
-        <h1>Add a New Game</h1>
-        <form @submit.prevent="submitGame">
-          <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" id="title" v-model="title" required />
-          </div>
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" v-model="description" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" id="price" v-model="price" step="0.01" min="0" required />
-          </div>
-          <div class="form-group">
-            <label for="stock">Stock</label>
-            <input type="number" id="stock" v-model="stock" min="0" required />
-          </div>
-          <div class="form-group">
-            <label for="image">Image URL</label>
-            <input type="url" id="image" v-model="image" required />
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="submit-button">Add Game</button>
-            <button type="button" class="cancel-button" @click="cancel">Cancel</button>
-          </div>
-        </form>
-      </div>
+  <div class="add-game-page">
+    <NavBar />
+    <div class="add-game-form-container">
+      <h1>Add a New Game</h1>
+      <form @submit.prevent="submitGame">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" v-model="title" required />
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" v-model="description" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input type="number" id="price" v-model="price" step="0.01" min="0" required />
+        </div>
+        <div class="form-group">
+          <label for="stock">Stock</label>
+          <input type="number" id="stock" v-model="stock" min="0" required />
+        </div>
+        <div class="form-group">
+          <label for="image">Image URL</label>
+          <input type="url" id="image" v-model="image" required />
+        </div>
+        
+        <!-- Category Dropdown -->
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select v-model="category" id="category" required>
+            <option value="" disabled>Select a category</option>
+            <option v-for="category in categories" :key="category.id" :value="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Review Dropdown (1-5 Stars) -->
+        <div class="form-group">
+          <label for="review">Review (1-5 stars)</label>
+          <select v-model="review" id="review" required>
+            <option value="" disabled>Select a rating</option>
+            <option v-for="n in 5" :key="n" :value="n">
+              {{ n }} Star{{ n > 1 ? 's' : '' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="submit-button">Add Game</button>
+          <button type="button" class="cancel-button" @click="cancel">Cancel</button>
+        </div>
+      </form>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
-  </template>
-  
-  <script>
-  import NavBar from "./NavBar.vue";
-  import axios from "axios";
-  
-  export default {
-    name: "AddGame",
-    components: {
-      NavBar,
-    },
-    data() {
-      return {
-        title: "",
-        description: "",
-        price: 0,
-        stock: 0,
-        image: "",
+  </div>
+</template>
+
+<script>
+import NavBar from "./NavBar.vue";
+import axios from "axios";
+
+export default {
+  name: "AddGame",
+  components: {
+    NavBar,
+  },
+  data() {
+    return {
+      title: "",
+      description: "",
+      price: 0,
+      stock: 0,
+      image: "",
+      review: "",  // Selected review rating (1-5)
+      category: "", // Selected category ID
+      categories: [], // Available categories
+      errorMessage: "", // Error message
+    };
+  },
+  async created() {
+    try {
+      const response = await axios.get("http://localhost:8080/categories");
+      this.categories = response.data; // Populate categories from backend
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      this.errorMessage = "Failed to load categories. Please try again later.";
+    }
+  },
+  methods: {
+    async submitGame() {
+      const gameData = {
+        title: this.title,
+        description: this.description,
+        price: this.price,
+        stock: this.stock,
+        image: this.image,
+        categoryId: this.category, // Category ID for selection
+        review: this.review, // Review rating (1-5 stars)
       };
-    },
-    methods: {
-      async submitGame() {
-        const gameData = {
-          title: this.title,
-          description: this.description,
-          price: this.price,
-          stock: this.stock,
-          image: this.image,
-        };
-  
-        try {
-          await axios.post("http://localhost:8080/game", gameData);
+
+      try {
+        const response = await axios.post("http://localhost:8080/game", gameData);
+        if (response.status === 201) {
           alert("Game added successfully!");
-          this.$router.push("/games"); // Redirect to the list of games
-        } catch (error) {
-          console.error("Error adding game:", error);
-          alert("Failed to add game. Please try again.");
+          this.$router.push("/games"); // Redirect to the game list page
         }
-      },
-      cancel() {
-        this.$router.push("/games"); // Redirect back to the games page
-      },
+      } catch (error) {
+        console.error("Error adding game:", error);
+        if (error.response && error.response.data) {
+          this.errorMessage = `Failed to add game: ${error.response.data.message || 'Unknown error'}`;
+        } else {
+          this.errorMessage = "Failed to add game. Please try again.";
+        }
+      }
     },
-  };
-  </script>
-  
-  <style scoped>
-  /* Same styling as before */
-  .add-game-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    min-height: 100vh;
-  }
-  
-  .add-game-form-container {
-    background: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .add-game-form-container h1 {
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    color: #333;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-    text-align: left;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .form-group textarea {
-    resize: vertical;
-    height: 100px;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-  
-  .submit-button {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .submit-button:hover {
-    background-color: #218838;
-  }
-  
-  .cancel-button {
-    background-color: #dc3545;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .cancel-button:hover {
-    background-color: #c82333;
-  }
-  </style>
-  
+    cancel() {
+      this.$router.push("/games"); // Redirect back to the games page
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Styling for add game page */
+.add-game-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.add-game-form-container {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.add-game-form-container h1 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  height: 100px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.submit-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #218838;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-button:hover {
+  background-color: #c82333;
+}
+
+.error-message {
+  margin-top: 20px;
+  color: red;
+  font-size: 1rem;
+}
+</style>
