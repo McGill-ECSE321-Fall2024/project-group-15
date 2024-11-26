@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Customer;
 import group15.gameStore.repository.CustomerRepository;
+import jakarta.transaction.Transactional;
 
 
 @Service
@@ -95,6 +96,7 @@ public class CustomerService {
      * @throws GameStoreException if the customer to delete does not exist
      * @return void
      */
+    @Transactional
     public void deleteCustomer(Customer customerToDelete) {
         if (customerRepository.findByUserID(customerToDelete.getUserID()) == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The customer to delete does not exist");
