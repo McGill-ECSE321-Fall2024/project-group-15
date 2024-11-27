@@ -45,7 +45,7 @@ export default {
           id: 1,
           title: "The Witcher 3: Wild Hunt",
           price: 39.99,
-          image: "https://upload.wikimedia.org/wikipedia/commons/1/1c/The_Witcher_3_Wild_Hunt_Logo.svg",
+          image: "https://store-images.s-microsoft.com/image/apps.20648.69531514236615003.534d4f71-03cb-4592-929a-b00a7de28b58.54adf0c7-6e6f-4d36-b639-503087c6fab2?q=90&w=177&h=177",
           rating: "FIVE_STAR",
           category: "Action"
         },
@@ -53,7 +53,7 @@ export default {
           id: 2,
           title: "Red Dead Redemption 2",
           price: 59.99,
-          image: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Red_Dead_Redemption_2_logo.svg",
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/44/Red_Dead_Redemption_II.jpg/220px-Red_Dead_Redemption_II.jpg",
           rating: "FIVE_STAR",
           category: "RPG"
         },
@@ -61,7 +61,7 @@ export default {
           id: 3,
           title: "Cyberpunk 2077",
           price: 49.99,
-          image: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Cyberpunk_2077_logo.svg",
+          image: "https://image.api.playstation.com/vulcan/ap/rnd/202111/3013/6bAF2VVEamgKclalI0oBnoAe.jpg",       
           rating: "FOUR_STAR",
           category: "Adventure"
         },
@@ -69,7 +69,7 @@ export default {
           id: 4,
           title: "Assassin's Creed Odyssey",
           price: 29.99,
-          image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Assassin%27s_Creed_Odyssey_Logo.svg",
+          image: "https://i.imgur.com/txaFxgA.jpg",
           rating: "FIVE_STAR",
           category: "Strategy"
         },
@@ -77,7 +77,7 @@ export default {
           id: 5,
           title: "Minecraft",
           price: 26.95,
-          image: "https://images.app.goo.gl/iAtmrBFPtHCZfyBD7",
+          image: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg",
           rating: "THREE_STAR",
           category: "Action"
         }
