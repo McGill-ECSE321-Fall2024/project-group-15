@@ -1,5 +1,6 @@
 package group15.gameStore.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,9 @@ public class ManagerController{
      * @return the created manager and HTTP Status "CREATED"
      */
     @PostMapping("/manager")
-    public ResponseEntity<ManagerDto> createManager(@RequestBody ManagerDto managerDto, @RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<ManagerDto> createManager(@RequestBody ArrayList<Object> Dtos) {
+        ManagerDto managerDto = (ManagerDto) Dtos.get(0);
+        EmployeeDto employeeDto = (EmployeeDto) Dtos.get(1);
         Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
         Manager createdManager = managerService.createManager(
                 managerDto.getUsername(), managerDto.getPassword(), managerDto.getEmail(), 
@@ -53,7 +56,9 @@ public class ManagerController{
      * @return the updated manager and the HTTP status "OK"
      */
     @PutMapping("/manager/{managerId}")
-    public ResponseEntity<ManagerDto> updateManager(@PathVariable int managerId, @RequestBody ManagerDto managerDto,@RequestBody EmployeeDto employeeDto) {
+    public ResponseEntity<ManagerDto> updateManager(@PathVariable int managerId, @RequestBody ArrayList<Object> Dtos) {
+        ManagerDto managerDto = (ManagerDto) Dtos.get(0);
+        EmployeeDto employeeDto = (EmployeeDto) Dtos.get(1);
         Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
         Manager existingManager = managerService.getManagerByID(managerDto.getUserID());
         Manager updatedManager = managerService.updateManager(managerId, existingManager, employee);

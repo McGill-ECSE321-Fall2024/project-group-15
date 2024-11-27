@@ -72,7 +72,7 @@ public class ManagerIntegrationTests {
         EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGEREMPLOYEE);
         ManagerDto managerDto = new ManagerDto(manager);
 
-        List<Object> Dtos = new ArrayList<>();
+        ArrayList<Object> Dtos = new ArrayList<>();
         Dtos.add(managerDto);
         Dtos.add(employeeDto);
 
@@ -139,7 +139,7 @@ public class ManagerIntegrationTests {
         ManagerDto managerDto = new ManagerDto(manager);
         managerDto.setUserID(managerID);
 
-        List<Object> Dtos = new ArrayList<>();
+        ArrayList<Object> Dtos = new ArrayList<>();
         Dtos.add(managerDto);
         Dtos.add(employeeDto);
 
