@@ -115,6 +115,12 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #0040ff; 
+}
+
 .cart-items {
   margin-bottom: 20px;
 }
@@ -136,6 +142,18 @@ export default {
 
 .item-details {
   flex: 1;
+  color: #444;
+}
+
+.item-details h2 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.item-details p {
+  margin: 5px 0;
+  color: #555;
 }
 
 .item-actions button {
@@ -175,5 +193,9 @@ button:hover {
 button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+p {
+  color: #444; 
 }
 </style>
