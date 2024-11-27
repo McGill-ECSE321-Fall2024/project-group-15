@@ -1,45 +1,47 @@
 <template>
-    <div class="auth-container">
-      <h1>{{ isSignIn ? 'Sign In' : 'Create Account' }}</h1>
-      <form @submit.prevent="handleSubmit">
-        <div class="input-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-        <div class="input-group">
-          <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-        <div v-if="!isSignIn" class="input-group">
-          <label for="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            v-model="confirmPassword"
-            placeholder="Confirm your password"
-            required
-          />
-        </div>
-        <button type="submit">{{ isSignIn ? 'Sign In' : 'Create Account' }}</button>
-        <div class="auth-switch">
-          <p @click="toggleAuthMode" class="switch-link">
-            {{ isSignIn ? 'Create an Account' : 'Already have an account? Sign In' }}
-          </p>
-          <p @click="handleForgotPassword" class="forgot-password-link">Forgot password?</p>
-        </div>
-      </form>
+    <div class="auth-page">
+      <div class="auth-container">
+        <h1>{{ isSignIn ? 'Sign In' : 'Create Account' }}</h1>
+        <form @submit.prevent="handleSubmit">
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              v-model="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              v-model="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <div v-if="!isSignIn" class="input-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              v-model="confirmPassword"
+              placeholder="Confirm your password"
+              required
+            />
+          </div>
+          <button type="submit">{{ isSignIn ? 'Sign In' : 'Create Account' }}</button>
+          <div class="auth-switch">
+            <p @click="toggleAuthMode" class="switch-link">
+              {{ isSignIn ? 'Create an Account' : 'Already have an account? Sign In' }}
+            </p>
+            <p @click="handleForgotPassword" class="forgot-password-link">Forgot password?</p>
+          </div>
+        </form>
+      </div>
     </div>
   </template>
   
@@ -88,6 +90,15 @@
   </script>
   
   <style scoped>
+  .auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; 
+  background-color: #e9ecef; 
+  margin: 0;
+  }
+
   .auth-container {
     max-width: 400px;
     margin: 50px auto;
@@ -95,11 +106,13 @@
     background-color: #f5f5f5;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
   }
   
   h1 {
     text-align: center;
     margin-bottom: 20px;
+    color: black;
   }
   
   .input-group {

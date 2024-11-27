@@ -101,7 +101,7 @@ export default {
         return;
         }
 
-        await axios.post("/api/category", { name: this.newCategory.trim() });
+        await axios.post("/category", { name: this.newCategory.trim() });
         this.categories.push({ name: this.newCategory.trim() }); // Add the new category to the list
         this.newCategory = ""; // Clear the input field
         this.showAddCategoryInput = false;
