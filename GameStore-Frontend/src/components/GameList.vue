@@ -325,7 +325,7 @@ button:hover {
 }
 
 .featured .game-card h3 {
-  color: #ffcc00;
+  color: #000000;
 }
 
 </style>
