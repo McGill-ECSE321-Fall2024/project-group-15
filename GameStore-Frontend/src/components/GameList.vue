@@ -41,11 +41,46 @@ export default {
   data() {
     return {
       games: [
-        { id: 1, title: "Game One", price: 29.99, image: "https://via.placeholder.com/200", rating: "FIVE_STAR", category: "Action" },
-        { id: 2, title: "Game Two", price: 19.99, image: "https://via.placeholder.com/200", rating: "FIVE_STAR", category: "RPG" },
-        { id: 3, title: "Game Three", price: 49.99, image: "https://via.placeholder.com/200", rating: "FOUR_STAR", category: "Adventure" },
-        { id: 4, title: "Game Four", price: 39.99, image: "https://via.placeholder.com/200", rating: "FIVE_STAR", category: "Strategy" },
-        { id: 5, title: "Game Five", price: 59.99, image: "https://via.placeholder.com/200", rating: "THREE_STAR", category: "Action" }
+        {
+          id: 1,
+          title: "The Witcher 3: Wild Hunt",
+          price: 39.99,
+          image: "https://upload.wikimedia.org/wikipedia/commons/1/1c/The_Witcher_3_Wild_Hunt_Logo.svg",
+          rating: "FIVE_STAR",
+          category: "Action"
+        },
+        {
+          id: 2,
+          title: "Red Dead Redemption 2",
+          price: 59.99,
+          image: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Red_Dead_Redemption_2_logo.svg",
+          rating: "FIVE_STAR",
+          category: "RPG"
+        },
+        {
+          id: 3,
+          title: "Cyberpunk 2077",
+          price: 49.99,
+          image: "https://upload.wikimedia.org/wikipedia/commons/a/a1/Cyberpunk_2077_logo.svg",
+          rating: "FOUR_STAR",
+          category: "Adventure"
+        },
+        {
+          id: 4,
+          title: "Assassin's Creed Odyssey",
+          price: 29.99,
+          image: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Assassin%27s_Creed_Odyssey_Logo.svg",
+          rating: "FIVE_STAR",
+          category: "Strategy"
+        },
+        {
+          id: 5,
+          title: "Minecraft",
+          price: 26.95,
+          image: "https://images.app.goo.gl/iAtmrBFPtHCZfyBD7",
+          rating: "THREE_STAR",
+          category: "Action"
+        }
       ],
       filteredGames: [],
       categories: ["Action", "RPG", "Adventure", "Strategy"],
