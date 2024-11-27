@@ -39,7 +39,8 @@ public class PaymentInfoController {
      * @return the created payment information and HTTP Status "CREATED"
      */
     @PostMapping("/paymentInfo")
-    public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto,@RequestBody CustomerDto customerDto) {
+    public ResponseEntity<PaymentInfoDto> createPaymentInfo(@RequestBody PaymentInfoDto paymentInfoDto) {
+            CustomerDto customerDto = paymentInfoDto.getCustomer();
             Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             PaymentInfo createdPaymentInfo = paymentInfoService.createPaymentInfo(
                 paymentInfoDto.getCardNumber(),paymentInfoDto.getExpiryDate(),paymentInfoDto.getCvv(),
@@ -57,7 +58,8 @@ public class PaymentInfoController {
      */
     @PutMapping("/paymentInfo/{paymentInfoId}")
     public ResponseEntity<PaymentInfoDto> updatePaymentInfo(@PathVariable int paymentInfoId,
-            @RequestBody PaymentInfoDto paymentInfoDto, @RequestBody CustomerDto customerDto) {
+            @RequestBody PaymentInfoDto paymentInfoDto) {
+            CustomerDto customerDto = paymentInfoDto.getCustomer();
             Customer customer = customerService.getCustomerByID(customerDto.getUserId());
             PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoDto.getPaymentInfoID());
             PaymentInfo updatedPaymentInfo = paymentInfoService.updatePaymentInfo(paymentInfoId,paymentInfo,customer);
@@ -69,7 +71,7 @@ public class PaymentInfoController {
      * @param paymentInfoId the ID of the payment information to retrieve
      * @return desired payment information and the HTTP status "OK"
      */
-    @GetMapping("/paymentInfo/{paymentInfoId}")
+    @GetMapping("/paymentInfo/id/{paymentInfoId}")
     public ResponseEntity<PaymentInfoDto> getPaymentInfoById(@PathVariable int paymentInfoId) {
         PaymentInfo paymentInfo = paymentInfoService.getPaymentInfoById(paymentInfoId);
         return new ResponseEntity<>(new PaymentInfoDto(paymentInfo), HttpStatus.OK);

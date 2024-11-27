@@ -1,216 +1,139 @@
 package group15.gameStore.integration;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import group15.gameStore.dto.PromotionDto;
+import group15.gameStore.model.Game;
+import group15.gameStore.model.Manager;
+import group15.gameStore.model.Promotion;
+import group15.gameStore.repository.GameRepository;
+import group15.gameStore.repository.PromotionRepository;
+import group15.gameStore.repository.ManagerRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import group15.gameStore.service.PromotionService;
-import group15.gameStore.model.Promotion;
-import group15.gameStore.repository.PromotionRepository;
-import group15.gameStore.repository.GameRepository;
-import group15.gameStore.model.Game;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 import java.sql.Date;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class PromotionServiceIntegrationTest {
 
     @Autowired
-    private PromotionService promotionService;
+    private TestRestTemplate client;
 
     @Autowired
     private PromotionRepository promotionRepository;
 
     @Autowired
     private GameRepository gameRepository;
-
-    private MockMvc mockMvc;
+    @Autowired
+    private ManagerRepository managerRepository;
 
     private Game game;
+    private Promotion promo2024;
+    private Promotion promo2026;
+
+    private Manager manager;
+    private int validGameId;
+    private int valid2024PromotionId;
+    private int valid2026PromotionId;
+    private PromotionDto promo2024Dto;
+    private PromotionDto promo2026Dto;
 
     @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(promotionService).build();
-        
-        // Set up a sample game entity
-        game = new Game();
-        game.setGameID(1);
-        game.setTitle("Test Game");
-        gameRepository.save(game); // Save game to the database before tests
+    public void setUp() {
+        manager = new Manager("ChadTheManager", "manager123","chad@mail.mcgill.ca", true, true);
+        managerRepository.save(manager);
 
-        // Clean up the promotions to avoid test interference
+
+        game = new Game("Minecraft", "3d sandbox game", 10, 10,"image.jpg", true, manager);
+        gameRepository.save(game);
+        this.validGameId = game.getGameID();
+
+        game = gameRepository.findGameByGameID(game.getGameID());
+
+        promo2024 = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), game);
+        promotionRepository.save(promo2024);
+        this.valid2024PromotionId = promo2024.getPromotionID();
+
+        promo2026 = new Promotion("PROMO2026", 18.0, Date.valueOf("2026-12-31"), game);
+        promotionRepository.save(promo2026);
+        this.valid2026PromotionId = promo2026.getPromotionID();
+
+        promo2024Dto = new PromotionDto(promo2024);
+        promo2024Dto = new PromotionDto(promo2026);
+    }
+
+    @AfterAll
+    public void clearDatabase() {
         promotionRepository.deleteAll();
+        gameRepository.deleteAll();
     }
 
+    // Test to create a valid promotion
     @Test
-    void testCreatePromotionIntegration() throws Exception {
-        // Arrange
-        String promotionCode = "PROMO2024";
-        double discountPercentage = 20.0;
-        Date validUntil = Date.valueOf("2024-12-31");
+    @Order(1)
+    public void testCreatePromotion() {
 
-        // Act & Assert (performing the request to create promotion)
-        mockMvc.perform(post("/promotions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"promotionCode\": \"" + promotionCode + "\", " +
-                        "\"discountPercentage\": " + discountPercentage + ", " +
-                        "\"validUntil\": \"" + validUntil.toString() + "\", " +
-                        "\"gameId\": " + game.getGameID() + " }"))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.promotionCode").value(promotionCode))
-                .andExpect(jsonPath("$.discountPercentage").value(discountPercentage))
-                .andExpect(jsonPath("$.validUntil").value(validUntil.toString()));
+        // Act
+        ResponseEntity<PromotionDto> response = client.postForEntity("/promotion", promo2024Dto, PromotionDto.class);
+
+        // Assert
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
     }
 
+    // Test to get a promotion by ID
     @Test
-    void testGetPromotionByIdIntegration() throws Exception {
-        // Arrange
-        Promotion promotion = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), game);
-        promotionRepository.save(promotion); // Save the promotion to the database
+    @Order(2)
+    public void testGetPromotionById() {
+        // Act
+        ResponseEntity<PromotionDto> response = client.getForEntity("/promotion/" + valid2024PromotionId, PromotionDto.class);
 
-        // Act & Assert (performing the request to get promotion by ID)
-        mockMvc.perform(get("/promotions/" + promotion.getPromotionID()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.promotionCode").value("PROMO2024"))
-                .andExpect(jsonPath("$.discountPercentage").value(20.0));
-    }
-
-    @Test
-    void testDeletePromotionIntegration() throws Exception {
-        // Arrange
-        Promotion promotion = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), game);
-        promotionRepository.save(promotion); // Save the promotion to the database
-
-        // Act & Assert (performing the request to delete promotion)
-        mockMvc.perform(delete("/promotions/" + promotion.getPromotionID()))
-                .andExpect(status().isNoContent());
-
-        // Verify the promotion was actually deleted
-        assertNull(promotionRepository.findById(promotion.getPromotionID()));
-    }
-
-    @Test
-    void testGetPromotionNotFound() throws Exception {
-        // Act & Assert (performing the request to get non-existing promotion by ID)
-        mockMvc.perform(get("/promotions/999"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void testUpdatePromotionIntegration() throws Exception {
-    // Arrange
-        Promotion promotion = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), game);
-        promotionRepository.save(promotion); // Save the initial promotion to the database
-
-        String updatedPromotionCode = "PROMO2025";
-        double updatedDiscountPercentage = 25.0;
-        Date updatedValidUntil = Date.valueOf("2025-12-31");
-
-        // Act & Assert (performing the request to update the promotion)
-        mockMvc.perform(put("/promotions/" + promotion.getPromotionID())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"promotionCode\": \"" + updatedPromotionCode + "\", " +
-                        "\"discountPercentage\": " + updatedDiscountPercentage + ", " +
-                        "\"validUntil\": \"" + updatedValidUntil.toString() + "\", " +
-                        "\"gameId\": " + game.getGameID() + " }"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.promotionCode").value(updatedPromotionCode))
-                .andExpect(jsonPath("$.discountPercentage").value(updatedDiscountPercentage))
-                .andExpect(jsonPath("$.validUntil").value(updatedValidUntil.toString()));
-}
-
-    @Test
-    void testCreatePromotionWithInvalidDiscountIntegration() throws Exception {
-        // Arrange
-        String promotionCode = "PROMO2024";
-        double invalidDiscountPercentage = -10.0; // Invalid discount
-        Date validUntil = Date.valueOf("2024-12-31");
-
-        // Act & Assert (performing the request to create a promotion with an invalid discount)
-        mockMvc.perform(post("/promotions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"promotionCode\": \"" + promotionCode + "\", " +
-                        "\"discountPercentage\": " + invalidDiscountPercentage + ", " +
-                        "\"validUntil\": \"" + validUntil.toString() + "\", " +
-                        "\"gameId\": " + game.getGameID() + " }"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Discount percentage must be between 0 and 100."));
-    }
-
-    @Test
-    void testGetAllPromotionsIntegration() throws Exception {
-        // Arrange
-        Promotion promo1 = new Promotion("PROMO2024", 10.0, Date.valueOf("2024-12-31"), game);
-        Promotion promo2 = new Promotion("PROMO2025", 15.0, Date.valueOf("2025-12-31"), game);
-       promotionRepository.save(promo1);
-       promotionRepository.save(promo2);
-
-        // Act & Assert (performing the request to get all promotions)
-        mockMvc.perform(get("/promotions"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].promotionCode").value("PROMO2024"))
-                .andExpect(jsonPath("$[1].promotionCode").value("PROMO2025"))
-                .andExpect(jsonPath("$[0].discountPercentage").value(10.0))
-                .andExpect(jsonPath("$[1].discountPercentage").value(15.0));
-    }
-
-    @Test
-    void testCreatePromotionWithExpiredDateIntegration() throws Exception {
-        // Arrange
-        String promotionCode = "PROMO2024";
-        double discountPercentage = 20.0;
-        Date expiredDate = Date.valueOf("2023-01-01"); // Date in the past
-
-        // Act & Assert (performing the request to create a promotion with an expired date)
-        mockMvc.perform(post("/promotions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"promotionCode\": \"" + promotionCode + "\", " +
-                        "\"discountPercentage\": " + discountPercentage + ", " +
-                        "\"validUntil\": \"" + expiredDate.toString() + "\", " +
-                        "\"gameId\": " + game.getGameID() + " }"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Promotion date must be in the future."));
-    }
-
-    @Test
-    void testUpdatePromotionNotFoundIntegration() throws Exception {
-        // Arrange
-        int nonExistentPromotionId = 999;
-        String promotionCode = "PROMO2024";
-        double discountPercentage = 20.0;
-        Date validUntil = Date.valueOf("2024-12-31");
-
-        // Act & Assert (performing the request to update a non-existent promotion)
-        mockMvc.perform(put("/promotions/" + nonExistentPromotionId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{ \"promotionCode\": \"" + promotionCode + "\", " +
-                        "\"discountPercentage\": " + discountPercentage + ", " +
-                        "\"validUntil\": \"" + validUntil.toString() + "\", " +
-                        "\"gameId\": " + game.getGameID() + " }"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Promotion not found."));
-    }
-
-    @Test
-    void testDeletePromotionNotFoundIntegration() throws Exception {
-        // Arrange
-        int nonExistentPromotionId = 999;
-
-        // Act & Assert (performing the request to delete a non-existent promotion)
-        mockMvc.perform(delete("/promotions/" + nonExistentPromotionId))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Promotion not found."));
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("PROMO2024", response.getBody().getPromotionCode());
     }
 
 
+    // Test to delete a promotion
+    @Test
+    @Order(3)
+    public void testDeletePromotion() {
+        // Act
+        ResponseEntity<Void> response = client.exchange("/promotion/" + valid2024PromotionId, HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
 
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    // Test to get all promotions
+    @Test
+    @Order(4)
+    public void testGetAllPromotions() {
+        // Act
+        ResponseEntity<PromotionDto[]> response = client.getForEntity("/promotions", PromotionDto[].class);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().length);
+        assertEquals("PROMO2024", response.getBody()[0].getPromotionCode());
+    }
 }

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
+import group15.gameStore.model.Manager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -27,7 +28,9 @@ import group15.gameStore.model.Game;
 import group15.gameStore.model.Wishlist;
 import group15.gameStore.repository.CustomerRepository;
 import group15.gameStore.repository.GameRepository;
+import group15.gameStore.repository.ManagerRepository;
 import group15.gameStore.repository.WishlistRepository;
+
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -43,12 +46,14 @@ public class WishlistIntegrationTest {
 	private CustomerRepository customerRepository;
 
     @Autowired
+    private ManagerRepository  managerRepository;
+
+    @Autowired
     private GameRepository gameRepository;
 
     private Game game;
     private Customer customer;
-    private WishlistDto validwishlistDto;
-    private WishlistDto wishlistDto2;
+    private Manager manager;
     private CustomerDto customerDto;
 
     private int validCustomerId;
@@ -56,13 +61,6 @@ public class WishlistIntegrationTest {
     private int validGameId;
 
 
-
-	// private static final String VALID_NAME = "Tim";
-	// private static final String VALID_EMAIL = "tim@yahoo.com";
-	// private static final String VALID_PASSWORD = "abcde";
-	// private int personId;
-    // private Customer customer = new Customer("Joe Smith", "joesmith1234", "joe@gmail.com", "432 Sesami St", "123-456-7891");
-	// private Wishlist wishlistDT = new Wishlist("Joe's Wishlist", customer);
 
 	@BeforeEach
     public void setUp() {
@@ -73,9 +71,11 @@ public class WishlistIntegrationTest {
         customer.setAddress("1234 McGill College");
         customer.setPassword("johndoe123");
         customerRepository.save(customer);
-
         this.validCustomerId = customer.getUserID();
 
+        manager = new Manager("ChadTheManager", "manager123","chad@mail.mcgill.ca", true, true);
+        managerRepository.save(manager);
+        
 
         game = new Game();
         game.setTitle("Test Game");
@@ -87,12 +87,11 @@ public class WishlistIntegrationTest {
         this.validWishlistId = wishlist.getWishListId();
 
         customerDto = new CustomerDto(customer);
-        validwishlistDto = new WishlistDto();
-        wishlistDto2 = new WishlistDto();
     }
 
     @AfterAll
     public void clearDatabase() {
+        wishlistRepository.deleteAll();
         customerRepository.deleteAll();
         gameRepository.deleteAll();
     }
@@ -127,7 +126,7 @@ public class WishlistIntegrationTest {
     @Order(3)
     public void testRemoveGameFromWishlist() {
         // Act
-        ResponseEntity<WishlistDto> response = client.exchange("/wishlist/removegame/1/1", HttpMethod.DELETE, new HttpEntity<>(customerDto), WishlistDto.class);
+        ResponseEntity<WishlistDto> response = client.exchange("/wishlist/removegame/" + validWishlistId+ "/" + validGameId, HttpMethod.DELETE, new HttpEntity<>(customerDto), WishlistDto.class);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -139,14 +138,11 @@ public class WishlistIntegrationTest {
     @Order(4)
     public void testGetWishlistByWishlistId() {
         // Act
-        ResponseEntity<WishlistDto> response = client.getForEntity("/wishlist/byId/1", WishlistDto.class);
+        ResponseEntity<WishlistDto> response = client.getForEntity("/wishlist/byId/" + validWishlistId, WishlistDto.class);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
-
-
-
 
 }

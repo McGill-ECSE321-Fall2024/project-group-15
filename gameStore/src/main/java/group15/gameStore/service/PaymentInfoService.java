@@ -104,7 +104,7 @@ public class PaymentInfoService {
      */
     @Transactional
     public PaymentInfo getPaymentInfoByCardNumber(String cardNumber) {
-        if (cardNumber == null || cardNumber.length() != 16 || !cardNumber.matches("\\d+")) {
+        if (cardNumber == null || cardNumber.length() != 16) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid card number");
         }
         

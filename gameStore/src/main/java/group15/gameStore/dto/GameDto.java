@@ -16,7 +16,7 @@ public class GameDto {
     private Date archivedDate;
     private boolean isApproved;
 
-    private ManagerDto manager;
+//    private ManagerDto manager;
 
     @SuppressWarnings("unused")
     public GameDto(){
@@ -32,7 +32,7 @@ public class GameDto {
         this.image = game.getImage();
         this.archivedDate = game.getArchivedDate();
         this.isApproved = game.isIsApproved();
-        this.manager = new ManagerDto(game.getManager()); 
+//        this.manager = new ManagerDto(game.getManager());
     }
 
     //Generated Getters and Setters
@@ -100,13 +100,13 @@ public class GameDto {
         this.isApproved = isApproved;
     }
 
-    public ManagerDto getManager() {
-        return manager;
-    }
+//    public ManagerDto getManager() {
+//        return manager;
+//    }
 
-    public void setManager(ManagerDto manager) {
-        this.manager = manager;
-    }    
+//    public void setManager(ManagerDto manager) {
+//        this.manager = manager;
+//    }
 
     
 }
