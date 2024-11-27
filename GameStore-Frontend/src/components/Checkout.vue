@@ -127,98 +127,127 @@
   </script>
   
   <style scoped>
-  .checkout-page {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-  }
-  
-  .order-summary {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .order-items {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .order-item {
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
-  }
-  
-  .item-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    margin-right: 20px;
-    border-radius: 5px;
-  }
-  
-  .item-details {
-    text-align: left;
-  }
-  
-  .total {
-    font-size: 18px;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  
-  .proceed-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #0040ff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .proceed-button:hover {
-    background-color: #002080;
-  }
-  
-  .payment-form {
-    margin-top: 30px;
-  }
-  
-  .input-group {
-    margin-bottom: 15px;
-  }
-  
-  .input-group label {
-    font-weight: bold;
-  }
-  
-  .input-group input {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-  }
-  
-  .submit-payment {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .submit-payment:hover {
-    background-color: #218838;
-  }
-  </style>
+.checkout-page {
+  padding: 20px;
+  margin-top: 60px;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh; 
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #0040ff;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.order-summary {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-details h3 {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.total {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: right;
+  color: #333;
+}
+
+.proceed-button {
+  padding: 10px 20px;
+  background-color: #0040ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.proceed-button:hover {
+  background-color: #002080;
+}
+
+.payment-form {
+  margin-top: 30px;
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submit-payment {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.submit-payment:hover {
+  background-color: #218838;
+}
+</style>
+
   
