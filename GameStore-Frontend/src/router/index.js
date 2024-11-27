@@ -8,6 +8,9 @@ import Account from '../components/Account.vue';
 import AddGame from '@/components/AddGame.vue';
 import Category from '../components/Category.vue';
 import Cart from '../components/Cart.vue'; // Cart page
+import Checkout from "@/components/Checkout.vue";
+import Receipt from "@/components/Receipt.vue";
+
 
 const routes = [
   {
@@ -57,6 +60,19 @@ const routes = [
     name: 'SearchResults',
     component: SearchResults,
   },
+
+  {
+    path: "/checkout",
+    name: "Checkout",
+    component: Checkout,
+  },
+
+  {
+    path: '/receipt',
+    name: 'Receipt',
+    component: Receipt,
+  },
+
 ];
 
 const router = createRouter({
