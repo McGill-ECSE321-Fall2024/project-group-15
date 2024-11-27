@@ -25,7 +25,7 @@
           required
         />
       </div>
-      <div v-if="!isSignIn" class="input-group">
+      <div v-if="!isSignIn && !isEmployee" class="input-group">
         <label for="confirmPassword">Confirm Password</label>
         <input
           type="password"
