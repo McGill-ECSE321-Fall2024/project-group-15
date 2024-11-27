@@ -4,7 +4,7 @@
       <p style="color: black;">Welcome to your account settings. You can change your password, email, and username here.</p>
   
       <div class="password-change-form">
-        <h2>Change Password</h2>
+        <h2>Update Password</h2>
         <form @submit.prevent="handlePasswordChange">
           <!-- Current Password Field -->
           <div class="input-group">
@@ -47,7 +47,7 @@
             />
           </div>
   
-          <button type="submit" class="submit-button">Change Password</button>
+          <button type="submit" class="submit-button">Update Password</button>
   
           <!-- Error/Success Messages -->
           <p v-if="passwordErrorMessage" class="error-message">{{ passwordErrorMessage }}</p>
@@ -59,7 +59,7 @@
       <br>
 
       <div class="email-change-form">
-        <h2>Change Email</h2>
+        <h2>Update Email</h2>
         <form @submit.prevent="handleEmailChange">
           <!-- Current Email Field -->
           <div class="input-group">
@@ -99,7 +99,7 @@
             />
           </div>
   
-          <button type="submit" class="submit-button">Change Email</button>
+          <button type="submit" class="submit-button">Update Email</button>
   
           <!-- Error/Success Messages -->
           <p v-if="emailErrorMessage" class="error-message">{{ emailErrorMessage }}</p>
@@ -111,7 +111,7 @@
       <br>
 
       <div class="username-change-form">
-        <h2>Change Username</h2>
+        <h2>Update Username</h2>
         <form @submit.prevent="handleUsernameChange">
           <!-- Current Username Field -->
           <div class="input-group">
@@ -151,7 +151,7 @@
             />
           </div>
   
-          <button type="submit" class="submit-button">Change Username</button>
+          <button type="submit" class="submit-button">Update Username</button>
   
           <!-- Error/Success Messages -->
           <p v-if="usernameErrorMessage" class="error-message">{{ usernameErrorMessage }}</p>

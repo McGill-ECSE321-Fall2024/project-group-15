@@ -41,41 +41,77 @@
   </script>
   
   <style scoped>
-  .receipt-page {
-    text-align: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-  }
-  
-  .receipt-summary {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    margin: 20px auto;
-    text-align: left;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .home-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #0040ff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .home-button:hover {
-    background-color: #002080;
-  }
-  </style>
+.receipt-page {
+  text-align: center;
+  padding: 40px 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333; 
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #0040ff; 
+  margin-bottom: 20px;
+}
+
+.receipt-summary {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  text-align: left; 
+  color: #444;
+}
+
+.receipt-summary h2 {
+  font-size: 1.5rem;
+  color: #333; 
+  margin-bottom: 10px;
+}
+
+.receipt-summary p {
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+.receipt-summary ul {
+  list-style: none;
+  padding: 0;
+}
+
+.receipt-summary ul li {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.home-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #0040ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.home-button:hover {
+  background-color: #002080;
+}
+
+.home-button:active {
+  background-color: #001a66;
+}
+</style>
+
   

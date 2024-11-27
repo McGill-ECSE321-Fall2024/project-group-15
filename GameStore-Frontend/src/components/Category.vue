@@ -160,6 +160,7 @@ export default {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
   margin-top: 60px; /* Ensure content starts below navbar (adjust this as per your navbar height) */
+  min-height: 100vh; 
 }
 
 .category-management-container {

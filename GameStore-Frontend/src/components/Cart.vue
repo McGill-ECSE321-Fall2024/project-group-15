@@ -101,9 +101,10 @@ export default {
 <style scoped>
 .cart-page {
   padding: 20px;
-  margin-top: 80px; /* Adjust for fixed NavBar */
+  margin-top: 60px; /* Adjust for fixed NavBar */
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
+  min-height: 100vh; 
 }
 
 .cart-container {
