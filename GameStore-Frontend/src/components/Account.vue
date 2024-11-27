@@ -292,7 +292,7 @@
 
     /*const axiosClient = axios.create({
       // NOTE: it's baseURL, not baseUrl
-      baseURL: "http://localhost:5173/account"
+      baseURL: "http://localhost:8080/account"
     });*/
     
     name: 'Account',

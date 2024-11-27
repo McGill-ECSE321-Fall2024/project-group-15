@@ -71,7 +71,7 @@ export default {
     // Fetch categories from the backend (for future scalability)
     async fetchCategories() {
       try {
-        const response = axios.get("/categories");
+        const response = await axios.get("/categories");
         console.log("Categories fetched successfully:", response.data);
         this.categories = response.data; // Set categories data
       } catch (error) {
