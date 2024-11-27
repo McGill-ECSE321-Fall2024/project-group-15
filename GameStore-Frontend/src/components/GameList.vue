@@ -6,6 +6,20 @@
       <SearchBar class="search-bar" @search="searchGame" />
     </div>
 
+    <!-- Featured Games Section -->
+    <div class="featured-games-section">
+      <h2 class="centered-header">Featured Games (5-Star Rated)</h2>
+      <div class="game-cards featured">
+        <div v-for="game in featuredGames" :key="game.id" class="game-card">
+          <img :src="game.image" alt="Game Image" class="game-image" />
+          <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
+          <p>${{ game.price.toFixed(2) }}</p>
+          <button @click="addToCart(game)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Games Section -->
     <div class="category-games">
       <h2 class="centered-header">
         {{ selectedCategory ? selectedCategory : "All" }} Games
@@ -80,12 +94,37 @@ export default {
           image: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg",
           rating: "THREE_STAR",
           category: "Action"
-        }
+        },
+        {
+        id: 6,
+        title: "God of War",
+        price: 59.99,
+        image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
+        rating: "FIVE_STAR",
+        category: "Action"
+        },
+        {
+        id: 7,
+        title: "The Last of Us Part II",
+        price: 49.99,
+        image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
+        rating: "FIVE_STAR",
+        category: "Action"
+        },
+        {
+        id: 8,
+        title: "Horizon Zero Dawn",
+        price: 49.99,
+        image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
+        rating: "FOUR_STAR",
+        category: "Adventure"
+       }
       ],
       filteredGames: [],
       categories: ["Action", "RPG", "Adventure", "Strategy"],
       selectedCategory: "",
       cart: [],
+      featuredGames: [], // Array for featured 5-star games
     };
   },
   created() {
@@ -94,8 +133,10 @@ export default {
       this.cart = JSON.parse(savedCart);
     }
     this.filterByCategory();
+    this.setFeaturedGames();
   },
   methods: {
+    // Filter by Category
     filterByCategory() {
       if (this.selectedCategory) {
         this.filteredGames = this.games.filter(
@@ -105,6 +146,12 @@ export default {
         this.filteredGames = [...this.games];
       }
     },
+
+    // Set the featured games (5-star rated games)
+    setFeaturedGames() {
+      this.featuredGames = this.games.filter(game => game.rating === "FIVE_STAR");
+    },
+
     searchGame(query) {
       this.$router.push({ path: "/search-results", query: { query } });
     },
@@ -252,4 +299,33 @@ button:hover {
 .add-to-cart-button:hover {
   background-color: #0056b3;
 }
+
+/* Featured Games Section */
+.featured-games-section {
+  background-color: gold;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 40px;
+}
+
+.featured-games-section h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+}
+
+.featured .game-card {
+  border: 2px solid gold;
+  background-color: #fff8e1;
+}
+
+.featured .game-card img {
+  border-radius: 8px;
+}
+
+.featured .game-card h3 {
+  color: #ffcc00;
+}
+
 </style>
