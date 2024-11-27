@@ -38,7 +38,8 @@ public class PromotionController{
      * @return the created promotion and the HTTP status "CREATED"
      */
     @PostMapping("/promotion")
-    public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto, @RequestBody GameDto gameDto) {
+    public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto) {
+        GameDto gameDto = promotionDto.getGame();
         Game game = gameService.getGameByID(gameDto.getGameID());
         Promotion createdPromotion = promotionService.createPromotion(
             promotionDto.getPromotionCode(),promotionDto.getDiscountPercentage(),
@@ -54,8 +55,8 @@ public class PromotionController{
      * @return the updated promotion information and the HTTP status "OK"
      */
     @PutMapping("/promotion/{promotionId}")
-    public ResponseEntity<PromotionDto> updatePromotion(@PathVariable int promotionId,@RequestBody PromotionDto promotionDto,
-        @RequestBody GameDto gameDto) {
+    public ResponseEntity<PromotionDto> updatePromotion(@PathVariable int promotionId,@RequestBody PromotionDto promotionDto) {
+        GameDto gameDto = promotionDto.getGame();
         Game game = gameService.getGameByID(gameDto.getGameID());
         Promotion existingPromotion = promotionService.getPromotionById(promotionDto.getPromotionID());
         Promotion updatedPromotion = promotionService.updatePromotion(promotionId,existingPromotion,game);

@@ -49,7 +49,7 @@ public class PromotionServiceTest {
 
         Promotion mockPromotion = new Promotion("PROMO2024", 20.0, validUntil, game);
 
-        when(gameRepository.findGameByGameID(1)).thenReturn(game);
+        when(gameRepository.findGameByGameID(anyInt())).thenReturn(game);
         when(promotionRepository.save(any(Promotion.class))).thenReturn(mockPromotion);
 
         // Act
