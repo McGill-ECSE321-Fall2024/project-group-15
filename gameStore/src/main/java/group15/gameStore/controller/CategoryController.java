@@ -2,12 +2,12 @@ package group15.gameStore.controller;
 
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +20,7 @@ import group15.gameStore.dto.CategoryDto;
 import group15.gameStore.model.Category;
 import group15.gameStore.service.CategoryService;
 
+@CrossOrigin(origins = "http://localhost:5173") // Frontend's base URL
 @RestController
 public class CategoryController{
     
@@ -33,6 +34,7 @@ public class CategoryController{
     */
     @PostMapping("/category")
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
+        //System.out.println("Request received to create category: " + categoryDto.getName());
         Category createdCategory = categoryService.createCategory(categoryDto.getName());
         return new ResponseEntity<>(new CategoryDto(createdCategory), HttpStatus.CREATED);
     }
