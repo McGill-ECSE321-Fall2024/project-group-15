@@ -164,11 +164,16 @@
   
   <style scoped>
   .account-page {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin-top: 60px; /* Ensures content is positioned below the navbar */
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Ensures the content spans the full viewport */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5; /* Light background color */
+  color: #333; /* Ensure text is visible */
+}
   
   h1 {
     color: #0040ff;
