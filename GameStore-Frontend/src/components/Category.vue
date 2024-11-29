@@ -46,7 +46,9 @@
 
 <script>
 import NavBar from "./NavBar.vue";
-import axios from "axios";
+import axiosClient from "./axios";
+
+
 
 export default {
   name: "CategoryManagement",
@@ -71,9 +73,11 @@ export default {
     // Fetch categories from the backend (for future scalability)
     async fetchCategories() {
       try {
-        const response = axios.get("/categories");
-        console.log("Categories fetched successfully:", response.data);
+        const response = await axiosClient.get("/categories");
         this.categories = response.data; // Set categories data
+        if(!this.categories){
+            this.categories = [];
+        }
       } catch (error) {
         console.error("Error fetching categories:", error);
         alert("Failed to fetch categories. Check the console for more details.");
@@ -101,7 +105,7 @@ export default {
         return;
         }
 
-        await axios.post("/category", { name: this.newCategory.trim() });
+        await axiosClient.post("/category", { name: this.newCategory.trim() });
         this.categories.push({ name: this.newCategory.trim() }); // Add the new category to the list
         this.newCategory = ""; // Clear the input field
         this.showAddCategoryInput = false;
@@ -120,7 +124,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`/api/game/title/${this.searchQuery}`);
+        const response = await axiosClient.get(`/api/game/title/${this.searchQuery}`);
         this.selectedGame = response.data;
 
         // Fetch categories only when a game is selected
@@ -140,7 +144,7 @@ export default {
       }
 
       try {
-        await axios.post("/api/category/assign", {
+        await axiosClient.post("/api/category/assign", {
           gameId: this.selectedGame.id,
           category: this.selectedCategory,
         });

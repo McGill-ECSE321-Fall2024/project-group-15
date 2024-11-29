@@ -47,7 +47,7 @@
 <script>
 import NavBar from "./NavBar.vue";
 import SearchBar from "./SearchBar.vue";
-import axios from "axios";
+import axios from "./axios";
 
 export default {
   name: "GameList",
