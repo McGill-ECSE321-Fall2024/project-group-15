@@ -24,29 +24,16 @@
           <label for="image">Image URL</label>
           <input type="url" id="image" v-model="image" required />
         </div>
-        
-        <!-- Category Dropdown -->
         <div class="form-group">
-          <label for="category">Category</label>
-          <select v-model="category" id="category" required>
-            <option value="" disabled>Select a category</option>
-            <option v-for="category in categories" :key="category.id" :value="category.id">
-              {{ category.name }}
-            </option>
-          </select>
+          <label for="managerId">Manager ID</label>
+          <input type="number" id="managerId" v-model="managerId" min="0" required />
         </div>
-
-        <!-- Review Dropdown (1-5 Stars) -->
         <div class="form-group">
-          <label for="review">Review (1-5 stars)</label>
-          <select v-model="review" id="review" required>
-            <option value="" disabled>Select a rating</option>
-            <option v-for="n in 5" :key="n" :value="n">
-              {{ n }} Star{{ n > 1 ? 's' : '' }}
-            </option>
-          </select>
+          <label>
+            <span>Is Approved</span>
+            <input type="checkbox" v-model="isApproved" />
+          </label>
         </div>
-
         <div class="form-actions">
           <button type="submit" class="submit-button">Add Game</button>
           <button type="button" class="cancel-button" @click="cancel">Cancel</button>
@@ -73,20 +60,10 @@ export default {
       price: 0,
       stock: 0,
       image: "",
-      review: "",  // Selected review rating (1-5)
-      category: "", // Selected category ID
-      categories: [], // Available categories
-      errorMessage: "", // Error message
+      managerId: null,
+      isApproved: false,
+      errorMessage: "",
     };
-  },
-  async created() {
-    try {
-      const response = await axios.get("http://localhost:8080/categories");
-      this.categories = response.data; // Populate categories from backend
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-      this.errorMessage = "Failed to load categories. Please try again later.";
-    }
   },
   methods: {
     async submitGame() {
@@ -96,27 +73,27 @@ export default {
         price: this.price,
         stock: this.stock,
         image: this.image,
-        categoryId: this.category, // Category ID for selection
-        review: this.review, // Review rating (1-5 stars)
+        managerId: this.managerId,
+        isApproved: this.isApproved,
       };
 
       try {
         const response = await axios.post("http://localhost:8080/game", gameData);
         if (response.status === 201) {
           alert("Game added successfully!");
-          this.$router.push("/games"); // Redirect to the game list page
+          this.$router.push("/games");
         }
       } catch (error) {
         console.error("Error adding game:", error);
         if (error.response && error.response.data) {
-          this.errorMessage = `Failed to add game: ${error.response.data.message || 'Unknown error'}`;
+          this.errorMessage = `Failed to add game: ${error.response.data.message || "Unknown error"}`;
         } else {
           this.errorMessage = "Failed to add game. Please try again.";
         }
       }
     },
     cancel() {
-      this.$router.push("/games"); // Redirect back to the games page
+      this.$router.push("/games");
     },
   },
 };
