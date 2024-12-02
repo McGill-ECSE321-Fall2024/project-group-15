@@ -38,73 +38,71 @@
 
     <!-- Update Employee Section -->
     <div class="employee-section">
-    <h2>Update Employee</h2>
-    <div>
-        <select v-model="selectedEmployeeId" required>
-        <option disabled value="">Select an Employee</option>
-        <option v-for="employee in employees" :key="employee.id" :value="employee.id">
-            {{ employee.username }}
-        </option>
-        </select>
-        <button @click="confirmSelection" class="confirm-button">Confirm</button>
+        <h2>Update Employee</h2>
+        <form @submit.prevent="updateEmployeeById">
+            <input
+                type="number"
+                v-model="employeeToUpdateId"
+                placeholder="Enter Employee ID"
+                required
+            />
+            <button @click="fetchEmployeeById" type="button" class="confirm-button">
+                Confirm ID
+            </button>
+
+            <div v-if="selectedEmployee">
+                <input
+                    type="text"
+                    v-model="selectedEmployee.username"
+                    placeholder="Enter username"
+                    required
+                />
+                <input
+                    type="password"
+                    v-model="selectedEmployee.password"
+                    placeholder="Enter password"
+                    required
+                />
+                <input
+                    type="email"
+                    v-model="selectedEmployee.email"
+                    placeholder="Enter email"
+                    required
+                />
+                <label>
+                    <span>Is a Manager</span>
+                    <input type="checkbox" v-model="selectedEmployee.isManager" />
+                </label>
+                <label>
+                    <span>Is Active</span>
+                    <input type="checkbox" v-model="selectedEmployee.isActive" />
+                </label>
+                <button type="submit" class="submit-button">Update Employee</button>
+            </div>
+        </form>
     </div>
 
-    <form @submit.prevent="updateEmployee" v-if="selectedEmployee">
-        <input
-        type="text"
-        v-model="selectedEmployee.username"
-        placeholder="Enter username"
-        required
-        />
-        <input
-        type="password"
-        v-model="selectedEmployee.password"
-        placeholder="Enter password"
-        required
-        />
-        <input
-        type="email"
-        v-model="selectedEmployee.email"
-        placeholder="Enter email"
-        required
-        />
-        <label>
-        <span>Is a Manager</span>
-        <input type="checkbox" v-model="selectedEmployee.isManager" />
-        </label>
-        <label>
-        <span>Is Active</span>
-        <input type="checkbox" v-model="selectedEmployee.isActive" />
-        </label>
-        <button type="submit" class="submit-button">Update Employee</button>
-    </form>
-
-    <p v-else>Please select an employee and click Confirm to update.</p>
-    </div>
-
-
-
-
-  
-      <!-- Delete Employee Section -->
-      <div class="employee-section">
+     <!-- Delete Employee Section -->
+    <div class="employee-section">
         <h2>Delete Employee</h2>
-        <select v-model="employeeToDelete" required>
-          <option v-for="employee in employees" :key="employee.id" :value="employee.id">
-            {{ employee.username }} - 
-            {{ employee.isManager ? "Manager" : "Staff" }} 
-          </option>
-        </select>
-        <button @click="deleteEmployee" class="delete-button">Delete Employee</button>
-      </div>
-  
+        <form @submit.prevent="deleteEmployeeById">
+            <input
+                type="number"
+                v-model="employeeToDeleteId"
+                placeholder="Enter Employee ID"
+                required
+            />
+            <button type="submit" class="delete-button">Delete Employee</button>
+        </form>
+    </div>
+
       <!-- Employee List -->
       <div class="employee-list">
         <h2>All Employees</h2>
         <ul v-if="employees.length > 0">
             <li v-for="employee in employees" :key="employee.id">
-             {{ employee.username || "No username" }} - 
-            {{ employee.isManager ? "Manager" : "Staff" }} - ({{ employee.isActive ? "Active" : "Not Active" }})
+             ID: {{ employee.userID }} | Username: {{ employee.username || "No username" }} | 
+            {{ employee.isManager ? "Manager" : "Staff" }} | ({{ employee.isActive ? "Active" : "Not Active" }})
             </li>
         </ul>
         <p v-else>No employees found in the system.</p>
@@ -121,14 +119,15 @@ export default {
     return {
       employees: [], // List of all employees
       newEmployee: {
-        name: "",
-        email: "",
         username: "",
+        password: "",
+        email: "",
         isManager: false,
-        isActive: false,
+        isActive: true,
       },
       selectedEmployee: null, // Employee selected for update
-      employeeToDelete: null, // Employee ID to delete
+      employeeToUpdateId: null,
+      employeeToDeleteId: null,
     };
   },
   created() {
@@ -144,6 +143,25 @@ export default {
         alert("Failed to load employees.");
       }
     },
+
+    async fetchEmployeeById() {
+        if (!this.employeeToUpdateId) {
+            alert("Please enter a valid Employee ID.");
+            return;
+        }
+
+        try {
+            const response = await axiosClient.get(`/employee/id/${this.employeeToUpdateId}`);
+            this.selectedEmployee = response.data; // Populate form with employee data
+        } catch (error) {
+            console.error("Error fetching employee by ID:", error.response || error);
+            alert(
+                error.response?.data?.message ||
+                "An error occurred while trying to fetch the employee."
+            );
+        }
+    },
+
     async addEmployee() {
       try {
         const response = await axiosClient.post("/employee", this.newEmployee);
@@ -155,57 +173,55 @@ export default {
         alert("Failed to add employee.");
       }
     },
-    confirmSelection() {
-    // Convert both values to strings for comparison consistency
-    const employee = this.employees.find(
-        (emp) => String(emp.id) === String(this.selectedEmployeeId)
-    );
 
-    if (employee) {
-        this.selectedEmployee = JSON.parse(JSON.stringify(employee)); // Deep copy to avoid mutation
-    } else {
-        alert("Please select a valid employee.");
-    }
+    async updateEmployeeById() {
+        if (!this.selectedEmployee) {
+            alert("No employee selected for update.");
+            return;
+        }
+
+        try {
+            await axiosClient.put(`/employee/update/${this.selectedEmployee.id}`,this.selectedEmployee);
+            console.log("test2")
+            alert("Employee updated successfully.");
+            this.selectedEmployee = null; // Clear form
+        } catch (error) {
+            console.error("Error updating employee:", error.response || error);
+            alert(
+                error.response?.data?.message ||
+                "An error occurred while trying to update the employee."
+            );
+        }
+    },   
+    async deleteEmployeeById() {
+        if (!this.employeeToDeleteId) {
+            alert("Please enter a valid Employee ID.");
+            return;
+        }
+
+        try {
+            await axiosClient.delete(`/employee/delete/${this.employeeToDeleteId}`);
+            this.employees = this.employees.filter(
+                (employee) => employee.id !== parseInt(this.employeeToDeleteId)
+            );
+            alert("Employee deleted successfully.");
+            this.employeeToDeleteId = null; // Reset input
+        } catch (error) {
+            console.error("Error deleting employee:", error.response || error);
+            alert(
+                error.response?.data?.message ||
+                "An error occurred while trying to delete the employee."
+            );
+        }
     },
 
-  async updateEmployee() {
-    if (!this.selectedEmployee) {
-      alert("Please select an employee to update.");
-      return;
-    }
-    try {
-      await axiosClient.put(`/employee/update/${this.selectedEmployee.id}`, this.selectedEmployee);
-      alert("Employee updated successfully!");
-      // Refresh employees list after update
-      this.fetchEmployees();
-    } catch (error) {
-      console.error("Error updating employee:", error.response || error);
-      alert("Failed to update employee.");
-    }
-  },
-    async deleteEmployee() {
-      if (!this.employeeToDelete) {
-        alert("Please select an employee to delete.");
-        return;
-      }
-      try {
-        await axiosClient.delete(`/api/employee/${this.employeeToDelete}`);
-        this.employees = this.employees.filter(
-          (employee) => employee.id !== this.employeeToDelete
-        );
-        this.employeeToDelete = null;
-        alert("Employee deleted successfully!");
-      } catch (error) {
-        console.error("Error deleting employee:", error.response || error);
-        alert("Failed to delete employee.");
-      }
-    },
     resetNewEmployee() {
       this.newEmployee = {
-        name: "",
+        password: "",
         email: "",
         username: "",
         isManager: false,
+        isActive: false,
       };
     },
   },
@@ -281,8 +297,22 @@ button:hover {
   background-color: #0056b3;
 }
 
+.delete-section {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
 .delete-button {
   background-color: #dc3545;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: auto; 
+  transition: background-color 0.3s;
 }
 
 .delete-button:hover {
