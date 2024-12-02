@@ -15,6 +15,9 @@
             </span>
           </p>
           <button @click="addToCart(game)">Add to Cart</button>
+          <button @click="toggleWishlist(game)">
+            {{ isInWishlist(game) ? 'Remove from Wishlist' : 'Add to Wishlist' }}
+          </button>
         </div>
       </div>
 
@@ -37,6 +40,7 @@ export default {
     return {
       game: null,  // To store the game details
       cart: [],
+      wishlist: [], // New data property for the wishlist
       maxStars: 5, // Maximum number of stars (for a 5-star rating)
     };
   },
@@ -47,10 +51,13 @@ export default {
     if (savedCart) {
       this.cart = JSON.parse(savedCart);
     }
+    const savedWishlist = localStorage.getItem('wishlist');
+    if (savedWishlist) {
+      this.wishlist = JSON.parse(savedWishlist);
+    }
   },
   methods: {
     fetchGameDetails(gameId) {
-      // Static list of games for demonstration purposes
       const games = [
         {
           id: 1,
@@ -98,39 +105,36 @@ export default {
           description: "A sandbox game where you can build, explore, and survive in a world made entirely of blocks."
         },
         {
-        id: 6,
-        title: "God of War",
-        price: 59.99,
-        image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
-        rating: "FIVE_STAR",
-        category: "Action",
-        description: "God of War is an action-adventure game set in Norse mythology, where Kratos and his son Atreus face gods and mythical creatures in a journey filled with secrets and epic battles."
+          id: 6,
+          title: "God of War",
+          price: 59.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
+          rating: "FIVE_STAR",
+          category: "Action",
+          description: "God of War is an action-adventure game set in Norse mythology, where Kratos and his son Atreus face gods and mythical creatures in a journey filled with secrets and epic battles."
         },
         {
-        id: 7,
-        title: "The Last of Us Part II",
-        price: 49.99,
-        image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
-        rating: "FIVE_STAR",
-        category: "Action",
-        description: "In The Last of Us Part II, Ellie seeks revenge in a post-apocalyptic world, facing difficult moral choices as she navigates a brutal, unforgiving environment."
+          id: 7,
+          title: "The Last of Us Part II",
+          price: 49.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
+          rating: "FIVE_STAR",
+          category: "Action",
+          description: "In The Last of Us Part II, Ellie seeks revenge in a post-apocalyptic world, facing difficult moral choices as she navigates a brutal, unforgiving environment."
         },
         {
-        id: 8,
-        title: "Horizon Zero Dawn",
-        price: 49.99,
-        image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
-        rating: "FOUR_STAR",
-        category: "Adventure",
-        description: "Horizon Zero Dawn follows Aloy, a hunter in a world dominated by robotic creatures. Players explore the ruins of the old world and fight machines in an effort to uncover the truth."
-      }
-
+          id: 8,
+          title: "Horizon Zero Dawn",
+          price: 49.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
+          rating: "FOUR_STAR",
+          category: "Adventure",
+          description: "Horizon Zero Dawn follows Aloy, a hunter in a world dominated by robotic creatures. Players explore the ruins of the old world and fight machines in an effort to uncover the truth."
+        }
       ];
-      // Find the game that matches the gameId
       this.game = games.find(game => game.id === parseInt(gameId));
     },
     getStarClass(starIndex) {
-      // Map the rating to the number of filled stars
       const ratingMapping = {
         "FIVE_STAR": 5,
         "FOUR_STAR": 4,
@@ -142,26 +146,33 @@ export default {
       return starIndex <= rating ? 'filled-star' : 'empty-star';
     },
     addToCart(game) {
-      // Check if the game is already in the cart
       const existingGame = this.cart.find(item => item.id === game.id);
-      
       if (existingGame) {
-        // If game already in the cart, increment quantity
         existingGame.quantity += 1;
       } else {
-        // If game not in the cart, add it with quantity 1
         this.cart.push({ ...game, quantity: 1 });
       }
-  
-      // Update the cart in localStorage
       localStorage.setItem('cart', JSON.stringify(this.cart));
-  
-      // Provide user feedback
       alert(`${game.title} has been added to your cart! Quantity: ${existingGame ? existingGame.quantity : 1}`);
+    },
+    toggleWishlist(game) {
+      const gameIndex = this.wishlist.findIndex(item => item.id === game.id);
+      if (gameIndex !== -1) {
+        // Remove from wishlist
+        this.wishlist.splice(gameIndex, 1);
+      } else {
+        // Add to wishlist
+        this.wishlist.push(game);
+      }
+      localStorage.setItem('wishlist', JSON.stringify(this.wishlist));
+    },
+    isInWishlist(game) {
+      return this.wishlist.some(item => item.id === game.id);
     }
   }
 };
 </script>
+
 <style scoped>
 .game-details-page {
   padding: 20px;
@@ -171,7 +182,7 @@ export default {
 
 .game-details {
   display: flex;
-  justify-content: space-between; /* Added this for parallel layout */
+  justify-content: space-between;
   align-items: flex-start;
   text-align: left;
 }
@@ -212,6 +223,7 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-right: 10px; /* Added space between buttons */
 }
 
 button:hover {
@@ -227,23 +239,21 @@ button:hover {
 .game-synopsis h3 {
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 10px;
+}
+
+.game-synopsis p {
+  font-size: 1rem;
 }
 
 .star-rating {
-  font-size: 1.5rem;
-  color: #ffcc00; /* Gold color for filled stars */
+  color: gold;
 }
 
 .star-rating .filled-star {
-  color: #ffcc00; /* Gold color */
+  color: gold;
 }
 
 .star-rating .empty-star {
-  color: #ddd; /* Light grey for empty stars */
-}
-
-strong {
-  font-weight: bold;
+  color: lightgray;
 }
 </style>

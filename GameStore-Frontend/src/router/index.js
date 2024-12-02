@@ -12,6 +12,7 @@ import Checkout from "@/components/Checkout.vue";
 import Receipt from "@/components/Receipt.vue";
 import Staff from "@/components/Staff.vue";
 import Employee from '@/components/Employee.vue';
+import WishListPage from '@/components/WishListPage.vue';
 
 
 const routes = [
@@ -85,6 +86,12 @@ const routes = [
     path: "/staff/employees",
     name: "ManageEmployees",
     component: Employee,
+  },
+
+  {
+    path: "/wishlist",
+    name: "Wishlist",
+    component: WishListPage
   }
 
 ];
