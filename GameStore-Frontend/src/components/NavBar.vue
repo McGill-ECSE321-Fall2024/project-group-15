@@ -1,11 +1,14 @@
 <template>
   <div class="nav-bar">
     <nav>
+      <a href="/" class="nav-link">Sign Out</a>
       <a href="/home" class="nav-link">Home</a>
       <a href="/games" class="nav-link">Games</a>
-      <a href="/categories" class="nav-link">Categories</a>
+      <a href="/staff" class="nav-link">Staff</a>
       <a href="/account" class="nav-link">Account</a>
+      <a href="/wishlist" class="nav-link">Wishlist</a> <!-- Added Wishlist -->
       <a href="/cart" class="nav-link">Cart</a>
+      
     </nav>
   </div>
 </template>
@@ -18,7 +21,7 @@ export default {
 
 <style scoped>
 .nav-bar {
-  background: #2c3e50; /* Dark blue-gray background */
+  background: #2c3e50;
   padding: 10px 20px;
   display: flex;
   justify-content: center;
@@ -27,7 +30,7 @@ export default {
   top: 0;
   z-index: 10;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  height: 60px; /* Ensure navbar has a fixed height */
+  height: 60px;
 }
 
 .nav-link {
@@ -41,12 +44,12 @@ export default {
 }
 
 .nav-link:hover {
-  background-color: #1abc9c; /* Green hover background */
-  color: white; /* Ensure text is white */
+  background-color: #1abc9c;
+  color: white;
 }
 
 .nav-link:active {
-  background-color: #16a085; /* Slightly darker green for active state */
+  background-color: #16a085;
 }
 
 @media (max-width: 768px) {

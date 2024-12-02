@@ -6,10 +6,12 @@ import GameList from "@/components/GameList.vue";
 import Home from '../components/Home.vue'; 
 import Account from '../components/Account.vue'; 
 import AddGame from '@/components/AddGame.vue';
-import Category from '../components/Category.vue';
 import Cart from '../components/Cart.vue'; // Cart page
 import Checkout from "@/components/Checkout.vue";
 import Receipt from "@/components/Receipt.vue";
+import Staff from "@/components/Staff.vue";
+import Employee from '@/components/Employee.vue';
+import WishListPage from '@/components/WishListPage.vue';
 
 
 const routes = [
@@ -39,11 +41,7 @@ const routes = [
     name: 'AddGame',
     component: AddGame, 
   },
-  {
-    path: '/categories',
-    name: 'Category',
-    component: Category,
-  },
+ 
   {
     path: '/cart',
     name: 'Cart',
@@ -72,6 +70,24 @@ const routes = [
     name: 'Receipt',
     component: Receipt,
   },
+
+  {
+    path: "/staff",
+    name: "Staff",
+    component: Staff,
+  },
+
+  {
+    path: "/staff/employees",
+    name: "ManageEmployees",
+    component: Employee,
+  },
+
+  {
+    path: "/wishlist",
+    name: "Wishlist",
+    component: WishListPage,
+  }
 
 ];
 

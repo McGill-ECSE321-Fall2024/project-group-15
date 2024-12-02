@@ -6,6 +6,21 @@
       <SearchBar class="search-bar" @search="searchGame" />
     </div>
 
+    <!-- Featured Games Section -->
+    <div class="featured-games-section">
+      <h2 class="centered-header">Featured Games (5-Star Rated)</h2>
+      <div class="game-cards featured">
+        <div v-for="game in featuredGames" :key="game.id" class="game-card">
+          <img :src="game.image" alt="Game Image" class="game-image" />
+          <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
+          <p>${{ game.price.toFixed(2) }}</p>
+          <button @click="addToCart(game)">Add to Cart</button>
+          <button @click="addToWishlist(game)">Add to Wishlist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Games Section -->
     <div class="category-games">
       <h2 class="centered-header">
         {{ selectedCategory ? selectedCategory : "All" }} Games
@@ -24,6 +39,7 @@
           <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
           <p>${{ game.price.toFixed(2) }}</p>
           <button @click="addToCart(game)">Add to Cart</button>
+          <button @click="addToWishlist(game)">Add to Wishlist</button>
         </div>
       </div>
     </div>
@@ -33,7 +49,6 @@
 <script>
 import NavBar from "./NavBar.vue";
 import SearchBar from "./SearchBar.vue";
-import axios from "axios";
 
 export default {
   name: "GameList",
@@ -61,7 +76,7 @@ export default {
           id: 3,
           title: "Cyberpunk 2077",
           price: 49.99,
-          image: "https://image.api.playstation.com/vulcan/ap/rnd/202111/3013/6bAF2VVEamgKclalI0oBnoAe.jpg",       
+          image: "https://image.api.playstation.com/vulcan/ap/rnd/202111/3013/6bAF2VVEamgKclalI0oBnoAe.jpg",
           rating: "FOUR_STAR",
           category: "Adventure"
         },
@@ -80,46 +95,81 @@ export default {
           image: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg",
           rating: "THREE_STAR",
           category: "Action"
+        },
+        {
+          id: 6,
+          title: "God of War",
+          price: 59.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
+          rating: "FIVE_STAR",
+          category: "Action"
+        },
+        {
+          id: 7,
+          title: "The Last of Us Part II",
+          price: 49.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
+          rating: "FIVE_STAR",
+          category: "Action"
+        },
+        {
+          id: 8,
+          title: "Horizon Zero Dawn",
+          price: 49.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
+          rating: "FOUR_STAR",
+          category: "Adventure"
         }
       ],
       filteredGames: [],
       categories: ["Action", "RPG", "Adventure", "Strategy"],
       selectedCategory: "",
       cart: [],
+      wishlist: [],
+      featuredGames: []
     };
   },
   created() {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      this.cart = JSON.parse(savedCart);
-    }
+    const savedCart = localStorage.getItem("cart");
+    const savedWishlist = localStorage.getItem("wishlist");
+    if (savedCart) this.cart = JSON.parse(savedCart);
+    if (savedWishlist) this.wishlist = JSON.parse(savedWishlist);
     this.filterByCategory();
+    this.setFeaturedGames();
   },
   methods: {
     filterByCategory() {
-      if (this.selectedCategory) {
-        this.filteredGames = this.games.filter(
-          (game) => game.category === this.selectedCategory
-        );
-      } else {
-        this.filteredGames = [...this.games];
-      }
+      this.filteredGames = this.selectedCategory
+        ? this.games.filter((game) => game.category === this.selectedCategory)
+        : [...this.games];
     },
-    searchGame(query) {
-      this.$router.push({ path: "/search-results", query: { query } });
+    setFeaturedGames() {
+      this.featuredGames = this.games.filter(
+        (game) => game.rating === "FIVE_STAR"
+      );
     },
     addGame() {
       this.$router.push("/games/add-game");
     },
     addToCart(game) {
-      const existingGame = this.cart.find(item => item.id === game.id);
-      if (existingGame) {
-        existingGame.quantity += 1;
-      } else {
-        this.cart.push({ ...game, quantity: 1 });
-      }
-      localStorage.setItem('cart', JSON.stringify(this.cart));
+      const existingGame = this.cart.find((item) => item.id === game.id);
+      if (existingGame) existingGame.quantity += 1;
+      else this.cart.push({ ...game, quantity: 1 });
+      localStorage.setItem("cart", JSON.stringify(this.cart));
       alert(`${game.title} has been added to your cart!`);
+    },
+    addToWishlist(game) {
+      const existingGame = this.wishlist.find((item) => item.id === game.id);
+      if (!existingGame) {
+        this.wishlist.push(game);
+        localStorage.setItem("wishlist", JSON.stringify(this.wishlist));
+        alert(`${game.title} has been added to your wishlist!`);
+      } else {
+        alert(`${game.title} is already in your wishlist.`);
+      }
+    },
+    searchGame(query) {
+      this.$router.push({ path: "/search-results", query: { query } });
     },
     goToGameDetails(gameId) {
       this.$router.push(`/games/${gameId}`);
@@ -132,6 +182,7 @@ export default {
 .game-list-page {
   padding: 20px;
   background-color: #f5f5f5;
+  color: #333; /* Default text color */
 }
 
 .header-actions {
@@ -161,27 +212,6 @@ export default {
   margin-left: auto;
 }
 
-.category-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.category-header h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: black;
-  margin-bottom: 10px;
-}
-
-.category-header select {
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
 .game-cards {
   display: flex;
   flex-wrap: wrap;
@@ -191,11 +221,12 @@ export default {
 
 .game-card {
   width: 200px;
-  border: 1px solid #ccc;
+  border: 1px solid black; /* Black outline added here */
   border-radius: 10px;
   padding: 10px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: #333; /* Ensures text inside cards is visible */
 }
 
 .game-card img {
@@ -205,24 +236,9 @@ export default {
   border-radius: 5px;
 }
 
-.game-card h3 {
-  font-size: 1.1rem;
-  margin: 10px 0;
-  color: black;
-  cursor: pointer;
-}
-
+.game-card h3,
 .game-card p {
-  font-size: 1rem;
-  color: #333;
-}
-
-.centered-header {
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: black;
-  margin: 20px 0;
+  color: #333; /* Dark text for headings and paragraphs inside cards */
 }
 
 button {
@@ -239,17 +255,43 @@ button:hover {
   background-color: #0056b3;
 }
 
-.add-to-cart-button {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.featured-games-section {
+  background-color: gold;
+  padding: 20px;
+  border-radius: 10px;
+  color: #333; /* Text color for featured section */
 }
 
-.add-to-cart-button:hover {
-  background-color: #0056b3;
+.featured-games-section h3,
+.featured-games-section p {
+  color: #333; /* Ensure headings and text in the featured section are visible */
+}
+
+.centered-header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333; /* Dark color for centered headers */
+}
+
+.filters {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.filters select {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  color: #333; /* Text color for dropdowns */
+}
+
+.wishlist {
+  margin-top: 30px;
+}
+
+.wishlist h3 {
+  text-align: center;
+  color: #333; /* Dark text for wishlist headings */
 }
 </style>

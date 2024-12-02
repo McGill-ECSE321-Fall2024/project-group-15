@@ -44,6 +44,7 @@ public class PromotionService {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Valid until date must be a future date.");
         }
         if (aGame == null || gameRepo.findGameByGameID(aGame.getGameID()) == null) {
+            System.out.println("hihi");
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Game must be valid and exist in the system.");
         }
     

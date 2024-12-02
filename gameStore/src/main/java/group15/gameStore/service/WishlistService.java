@@ -89,8 +89,8 @@ public class WishlistService {
         }
 
         wishlist.addGame(game);
-        wishlistRepo.save(wishlist);
-        return wishlist;
+        
+        return wishlistRepo.save(wishlist);
     }
 
     /**
@@ -117,8 +117,7 @@ public class WishlistService {
         }
 
         wishlist.removeGame(game);
-        wishlistRepo.save(wishlist);
-        return wishlist;
+        return wishlistRepo.save(wishlist);
     }
 
     /**
