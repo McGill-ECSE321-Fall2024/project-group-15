@@ -104,7 +104,8 @@ export default {
   margin-top: 60px; /* Adjust for fixed NavBar */
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
-  min-height: 100vh; 
+  min-height: 100vh;
+  color: #333; /* Default text color for the page */
 }
 
 .cart-container {
@@ -114,12 +115,13 @@ export default {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333; /* Ensures text inside the container is visible */
 }
 
 h1 {
   text-align: center;
   margin-bottom: 20px;
-  color: #0040ff; 
+  color: #0040ff; /* Primary color for headings */
 }
 
 .cart-items {
@@ -143,30 +145,40 @@ h1 {
 
 .item-details {
   flex: 1;
-  color: #444;
+  color: #333; /* Default text color for item details */
 }
 
 .item-details h2 {
   font-size: 1.2rem;
   margin-bottom: 5px;
-  color: #333;
+  color: #333; /* Ensure headings are dark */
 }
 
 .item-details p {
   margin: 5px 0;
-  color: #555;
+  color: #555; /* Slightly lighter for contrast with headings */
 }
 
 .item-actions button {
   margin: 5px;
   padding: 5px 10px;
   font-size: 14px;
+  background-color: #0040ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.item-actions button:hover {
+  background-color: #002080;
 }
 
 .cart-summary {
   text-align: center;
   margin-top: 20px;
+  color: #333; /* Dark text for summary */
 }
 
 .action-buttons {
@@ -197,6 +209,6 @@ button:disabled {
 }
 
 p {
-  color: #444; 
+  color: #444; /* General paragraph text color */
 }
 </style>

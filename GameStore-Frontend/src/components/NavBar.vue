@@ -4,11 +4,11 @@
       <a href="/" class="nav-link">Sign Out</a>
       <a href="/home" class="nav-link">Home</a>
       <a href="/games" class="nav-link">Games</a>
-      <a href="/categories" class="nav-link">Categories</a>
-      <a href="/account" class="nav-link">Account</a>
       <a href="/staff" class="nav-link">Staff</a>
-      <a href="/cart" class="nav-link">Cart</a>
+      <a href="/account" class="nav-link">Account</a>
       <a href="/wishlist" class="nav-link">Wishlist</a> <!-- Added Wishlist -->
+      <a href="/cart" class="nav-link">Cart</a>
+      
     </nav>
   </div>
 </template>
