@@ -86,6 +86,7 @@ export default {
   margin-top: 80px; /* Adjust for fixed NavBar */
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
+  color: #333; /* Default text color */
 }
 
 .wishlist-container {
@@ -95,6 +96,13 @@ export default {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 2rem;
+  color: #333; /* Dark header color */
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .wishlist-items {
@@ -107,6 +115,7 @@ export default {
   margin-bottom: 15px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 15px;
+  color: #333; /* Ensure text inside items is visible */
 }
 
 .item-image {
@@ -118,6 +127,17 @@ export default {
 
 .item-details {
   flex: 1;
+}
+
+.item-details h2 {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  color: #333; /* Dark color for game titles */
+}
+
+.item-details p {
+  font-size: 1rem;
+  color: #555; /* Slightly lighter color for prices */
 }
 
 .item-actions button {
@@ -147,7 +167,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Styling for the 'Add All to Cart' button */
 .add-all-to-cart {
   margin-top: 20px;
   background-color: #28a745;
@@ -160,5 +179,11 @@ button:disabled {
 
 .add-all-to-cart:hover {
   background-color: #218838;
+}
+
+p {
+  font-size: 1rem;
+  color: #333; /* Ensure paragraphs, like empty messages, are visible */
+  text-align: center;
 }
 </style>

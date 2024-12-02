@@ -6,7 +6,6 @@ import GameList from "@/components/GameList.vue";
 import Home from '../components/Home.vue'; 
 import Account from '../components/Account.vue'; 
 import AddGame from '@/components/AddGame.vue';
-import Category from '../components/Category.vue';
 import Cart from '../components/Cart.vue'; // Cart page
 import Checkout from "@/components/Checkout.vue";
 import Receipt from "@/components/Receipt.vue";
@@ -42,11 +41,7 @@ const routes = [
     name: 'AddGame',
     component: AddGame, 
   },
-  {
-    path: '/categories',
-    name: 'Category',
-    component: Category,
-  },
+ 
   {
     path: '/cart',
     name: 'Cart',
@@ -91,7 +86,7 @@ const routes = [
   {
     path: "/wishlist",
     name: "Wishlist",
-    component: WishListPage
+    component: WishListPage,
   }
 
 ];

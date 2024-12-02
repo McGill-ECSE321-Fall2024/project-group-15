@@ -182,6 +182,7 @@ export default {
 .game-list-page {
   padding: 20px;
   background-color: #f5f5f5;
+  color: #333; /* Default text color */
 }
 
 .header-actions {
@@ -220,11 +221,12 @@ export default {
 
 .game-card {
   width: 200px;
-  border: 1px solid black;  /* Black outline added here */
+  border: 1px solid black; /* Black outline added here */
   border-radius: 10px;
   padding: 10px;
   text-align: center;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: #333; /* Ensures text inside cards is visible */
 }
 
 .game-card img {
@@ -232,6 +234,11 @@ export default {
   height: 150px;
   object-fit: cover;
   border-radius: 5px;
+}
+
+.game-card h3,
+.game-card p {
+  color: #333; /* Dark text for headings and paragraphs inside cards */
 }
 
 button {
@@ -252,11 +259,18 @@ button:hover {
   background-color: gold;
   padding: 20px;
   border-radius: 10px;
+  color: #333; /* Text color for featured section */
+}
+
+.featured-games-section h3,
+.featured-games-section p {
+  color: #333; /* Ensure headings and text in the featured section are visible */
 }
 
 .centered-header {
   text-align: center;
   margin-bottom: 20px;
+  color: #333; /* Dark color for centered headers */
 }
 
 .filters {
@@ -269,6 +283,7 @@ button:hover {
   font-size: 16px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  color: #333; /* Text color for dropdowns */
 }
 
 .wishlist {
@@ -277,5 +292,6 @@ button:hover {
 
 .wishlist h3 {
   text-align: center;
+  color: #333; /* Dark text for wishlist headings */
 }
 </style>
