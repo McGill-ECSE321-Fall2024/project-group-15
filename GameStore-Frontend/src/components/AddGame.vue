@@ -46,7 +46,7 @@
 
 <script>
 import NavBar from "./NavBar.vue";
-import axios from "axios";
+import axios from "./axios";
 
 export default {
   name: "AddGame",
@@ -78,7 +78,7 @@ export default {
       };
 
       try {
-        const response = await axios.post("http://localhost:8080/game", gameData);
+        const response = await axios.post("/game", gameData);
         if (response.status === 201) {
           alert("Game added successfully!");
           this.$router.push("/games");

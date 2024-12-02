@@ -10,6 +10,9 @@ import Category from '../components/Category.vue';
 import Cart from '../components/Cart.vue'; // Cart page
 import Checkout from "@/components/Checkout.vue";
 import Receipt from "@/components/Receipt.vue";
+import Staff from "@/components/Staff.vue";
+import Employee from '@/components/Employee.vue';
+import WishListPage from '@/components/WishListPage.vue';
 
 
 const routes = [
@@ -72,6 +75,24 @@ const routes = [
     name: 'Receipt',
     component: Receipt,
   },
+
+  {
+    path: "/staff",
+    name: "Staff",
+    component: Staff,
+  },
+
+  {
+    path: "/staff/employees",
+    name: "ManageEmployees",
+    component: Employee,
+  },
+
+  {
+    path: "/wishlist",
+    name: "Wishlist",
+    component: WishListPage
+  }
 
 ];
 
