@@ -56,7 +56,7 @@ public class CategoryController{
      * @return the desired category information and the HTTP status "OK"
      */
     @GetMapping("/category/name/{name}")
-    public ResponseEntity<List<CategoryDto>> getCategoryByName(@PathVariable("categoryName") String name) {
+    public ResponseEntity<List<CategoryDto>> getCategoryByName(@PathVariable String name) {
         List<Category> categories = categoryService.getCategoryByName(name);
         List<CategoryDto> responseDtoList = categories.stream().map(CategoryDto::new).collect(Collectors.toList());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);

@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.dto.EmployeeDto;
+import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Employee;
 import group15.gameStore.service.EmployeeService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class EmployeeController{
 
@@ -33,7 +36,7 @@ public class EmployeeController{
     @PostMapping("/employee")
     public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto employeeDto) {
         Employee createdEmployee = employeeService.createEmployee(employeeDto.getUsername(), 
-                employeeDto.getPassword(),employeeDto.getEmail(), employeeDto.isActive,employeeDto.isManager);
+                employeeDto.getPassword(),employeeDto.getEmail(), employeeDto.isActive(),employeeDto.isManager());
         return new ResponseEntity<>(new EmployeeDto(createdEmployee), HttpStatus.CREATED);
     }
 
@@ -73,6 +76,25 @@ public class EmployeeController{
     public ResponseEntity<EmployeeDto> getEmployeeByEmail(@PathVariable("email") String email) {
         Employee employee = employeeService.getEmployeeByEmail(email);
         return new ResponseEntity<>(new EmployeeDto(employee), HttpStatus.OK);
+    }
+
+    /**
+     * Check if the logged-in employee is a manager.
+     * @param authentication The authentication object for the current user.
+     * @return True if the employee is a manager, false otherwise.
+     */
+    @GetMapping("/employee/is-manager")
+    public ResponseEntity<Boolean> isManager(Authentication authentication) {
+        try {
+            // Retrieve the username of the logged-in employee
+            String username = authentication.getUsername();
+
+            boolean isManager = employeeService.getIsManager(username);
+
+            return ResponseEntity.ok(isManager);
+        } catch (GameStoreException ex) {
+            return ResponseEntity.status(ex.getStatus()).body(false);
+        }
     }
 
     /**

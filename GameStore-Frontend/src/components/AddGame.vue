@@ -59,7 +59,7 @@
 
 <script>
 import NavBar from "./NavBar.vue";
-import axios from "axios";
+import axios from "./axios";
 
 export default {
   name: "AddGame",
@@ -96,12 +96,12 @@ export default {
         price: this.price,
         stock: this.stock,
         image: this.image,
-        categoryId: this.category, // Category ID for selection
-        review: this.review, // Review rating (1-5 stars)
+        //categoryId: this.category, // Category ID for selection
+        //review: this.review, // Review rating (1-5 stars)
       };
 
       try {
-        const response = await axios.post("http://localhost:8080/game", gameData);
+        const response = await axios.post("/game", gameData);
         if (response.status === 201) {
           alert("Game added successfully!");
           this.$router.push("/games"); // Redirect to the game list page

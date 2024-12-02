@@ -112,6 +112,21 @@ public class EmployeeService {
         return employee;
     }
 
+    /**
+     * Get isManager status for a given employee by username.
+     * @param username The username of the employee.
+     * @return True if the employee is a manager, false otherwise.
+     */
+    @Transactional
+    public boolean getIsManager(String email) {
+        Employee employee = employeeRepo.findByEmail(email);
+        if (employee == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "Employee not found.");
+        }
+
+        return employee.getIsManager();
+    }
+
      /**
      * GetAllEmployees: retrieves all employee records in the system
      * @return a list of all Employee objects
