@@ -20,8 +20,8 @@ public class ManagerDto extends EmployeeDto {
     }
 
     //public ManagerDto(String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager, Employee employee){
-    public ManagerDto(String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager){
-        super(aUsername, aPassword, aEmail, aIsActive, aIsManager);
+    public ManagerDto(String username, String password, String email, boolean isActive, boolean isManager){
+        super(username, password, email, isActive, isManager);
         //this.employee = employee;
     }
 

@@ -38,13 +38,10 @@ public class ManagerController{
      * @return the created manager and HTTP Status "CREATED"
      */
     @PostMapping("/manager")
-    public ResponseEntity<ManagerDto> createManager(@RequestBody ArrayList<Object> Dtos) {
-        ManagerDto managerDto = (ManagerDto) Dtos.get(0);
-        EmployeeDto employeeDto = (EmployeeDto) Dtos.get(1);
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<ManagerDto> createManager(@RequestBody ManagerDto managerDto) {
         Manager createdManager = managerService.createManager(
                 managerDto.getUsername(), managerDto.getPassword(), managerDto.getEmail(), 
-                managerDto.isActive(), employee);
+                managerDto.isActive());
         return new ResponseEntity<>(new ManagerDto(createdManager), HttpStatus.CREATED);
     }
 
@@ -56,12 +53,14 @@ public class ManagerController{
      * @return the updated manager and the HTTP status "OK"
      */
     @PutMapping("/manager/{managerId}")
-    public ResponseEntity<ManagerDto> updateManager(@PathVariable int managerId, @RequestBody ArrayList<Object> Dtos) {
-        ManagerDto managerDto = (ManagerDto) Dtos.get(0);
-        EmployeeDto employeeDto = (EmployeeDto) Dtos.get(1);
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
-        Manager existingManager = managerService.getManagerByID(managerDto.getUserID());
-        Manager updatedManager = managerService.updateManager(managerId, existingManager, employee);
+    public ResponseEntity<ManagerDto> updateManager(@PathVariable int managerId, @RequestBody ManagerDto managerDto) {
+        Manager managerToUpdate = managerService.getManagerByID(managerId);
+        managerToUpdate.setUsername(managerDto.getUsername());
+        managerToUpdate.setEmail(managerDto.getEmail());
+        managerToUpdate.setPassword(managerDto.getPassword());
+        managerToUpdate.setIsActive(managerDto.isActive());
+        managerToUpdate.setIsManager(managerDto.isManager());
+        Manager updatedManager = managerService.updateManager(managerId, managerToUpdate);
         return new ResponseEntity<>(new ManagerDto(updatedManager), HttpStatus.OK);
     }
 
@@ -117,10 +116,9 @@ public class ManagerController{
      * @return HTTP status "NO CONTENT" if the deletion is successful
      */
     @DeleteMapping("/manager/{managerId}")
-    public ResponseEntity<Void> deleteManager(@PathVariable int managerId, @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<Void> deleteManager(@PathVariable int managerId) {
         Manager managerToDelete = managerService.getManagerByID(managerId);
-        managerService.deleteManager(managerToDelete, employee);
+        managerService.deleteManager(managerToDelete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
