@@ -1,6 +1,8 @@
 package group15.gameStore.repository;
 
 import org.springframework.data.repository.CrudRepository;
+
+import group15.gameStore.model.Game;
 import group15.gameStore.model.Promotion;
 
 import java.sql.Date;
@@ -8,7 +10,11 @@ import java.util.List;
 
 public interface PromotionRepository extends CrudRepository<Promotion, Integer> {
     // Find promotions by ID
-    Promotion findById(int Id);
+    Promotion findPromotionByPromotionId(int id);
+    // Promotion findById(int Id);
+
+    // Find promotions by game
+    Promotion findByGame(Game game);
 
     // Find promotions by promotion code
     Promotion findByPromotionCode(String promotionCode);
@@ -18,6 +24,8 @@ public interface PromotionRepository extends CrudRepository<Promotion, Integer> 
 
     // Delete a promotion by promotion code
     void deleteByPromotionCode(String promotionCode);
+
+
 
     // Get all promotions
     @SuppressWarnings("null")

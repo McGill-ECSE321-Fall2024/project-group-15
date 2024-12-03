@@ -12,7 +12,7 @@ public class PromotionDto {
     private double discountPercentage;
     private Date validUntil;
 
-    private GameDto game;
+    private int gameId;
 
     @SuppressWarnings("unused")
     private PromotionDto(){
@@ -24,14 +24,14 @@ public class PromotionDto {
         this.promotionCode = promotionDto.getPromotionCode();
         this.discountPercentage = promotionDto.getDiscountPercentage();
         this.validUntil = promotionDto.getValidUntil();
-        this.game = new GameDto(promotionDto.getGame());
+        this.gameId = promotionDto.getGame().getGameID();
     }
 
-    public PromotionDto(String aPromotionCode, double aDiscountPercentage, Date aValidUntil, Game aGame){
+    public PromotionDto(String aPromotionCode, double aDiscountPercentage, Date aValidUntil, int gameId){
         this.promotionCode = aPromotionCode;
         this.discountPercentage = aDiscountPercentage;
         this.validUntil = aValidUntil;
-        this.game = new GameDto(aGame);
+        this.gameId = gameId;
     }
 
     //Generated Getters and Setters
@@ -67,11 +67,11 @@ public class PromotionDto {
         this.validUntil = validUntil;
     }
 
-    public GameDto getGame() {
-        return game;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setGame(GameDto game) {
-        this.game = game;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 }

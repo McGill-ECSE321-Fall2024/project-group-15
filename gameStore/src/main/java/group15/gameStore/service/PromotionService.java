@@ -63,7 +63,7 @@ public class PromotionService {
      */
     @Transactional
     public Promotion updatePromotion(int promotionId, Promotion updatedPromotion, Game game) {
-        Promotion existingPromotion = promotionRepo.findById(promotionId);
+        Promotion existingPromotion = promotionRepo.findPromotionByPromotionId(promotionId);
         if (existingPromotion == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Promotion with the specified ID does not exist.");
         }
@@ -97,9 +97,30 @@ public class PromotionService {
      */
     @Transactional
     public Promotion getPromotionById(int id) {
-        Promotion promotion = promotionRepo.findById(id);
+        Promotion promotion = promotionRepo.findPromotionByPromotionId(id);
         if (promotion == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "Promotion not found.");
+        }
+        return promotion;
+    }
+
+    //getPromotionByGameId
+
+    /**
+     * GetPromotionByGameId: retrieves a promotion by game ID
+     * @param gameId the ID of the game to retrieve promotions for
+     * @return a list of Promotion objects associated with the specified game ID
+     * @throws GameStoreException if the game is not found or no promotions are found
+     */
+    @Transactional
+    public Promotion getPromotionByGameId(int gameId) {
+        Game game = gameRepo.findGameByGameID(gameId);
+        if (game == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "Game with the specified ID does not exist.");
+        }
+        Promotion promotion = promotionRepo.findByGame(game);
+        if (promotion == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "No promotions found for the specified game.");
         }
         return promotion;
     }

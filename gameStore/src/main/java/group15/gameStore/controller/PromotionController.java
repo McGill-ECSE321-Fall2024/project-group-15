@@ -39,8 +39,7 @@ public class PromotionController{
      */
     @PostMapping("/promotion")
     public ResponseEntity<PromotionDto> createPromotion(@RequestBody PromotionDto promotionDto) {
-        GameDto gameDto = promotionDto.getGame();
-        Game game = gameService.getGameByID(gameDto.getGameID());
+        Game game = gameService.getGameByID(promotionDto.getGameId());
         Promotion createdPromotion = promotionService.createPromotion(
             promotionDto.getPromotionCode(),promotionDto.getDiscountPercentage(),
             promotionDto.getValidUntil(),game);
@@ -56,19 +55,30 @@ public class PromotionController{
      */
     @PutMapping("/promotion/{promotionId}")
     public ResponseEntity<PromotionDto> updatePromotion(@PathVariable int promotionId,@RequestBody PromotionDto promotionDto) {
-        GameDto gameDto = promotionDto.getGame();
-        Game game = gameService.getGameByID(gameDto.getGameID());
+        Game game = gameService.getGameByID(promotionDto.getGameId());
         Promotion existingPromotion = promotionService.getPromotionById(promotionDto.getPromotionID());
         Promotion updatedPromotion = promotionService.updatePromotion(promotionId,existingPromotion,game);
         return new ResponseEntity<>(new PromotionDto(updatedPromotion), HttpStatus.OK); 
     }
 
     /**
+     * GetPromotionByGameId: retrieves a promotion by game ID
+     * @param gameId the ID of the game to retrieve promotions for
+     * @return desired promotion information and the HTTP status "OK"
+     */
+    @GetMapping("/promotion/game/{gameId}")
+    public ResponseEntity<PromotionDto> getPromotionByGameId(@PathVariable int gameId) {
+        Promotion promotions = promotionService.getPromotionByGameId(gameId);
+        PromotionDto responseDto = new PromotionDto(promotions);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK); 
+    }
+    
+    /**
      * GetPromotionById: retrieves a promotion by ID
      * @param promotionId the ID of the promotion to retrieve
      * @return desired promotion information and the HTTP status "OK"
      */
-    @GetMapping("/promotion/{promotionId}")
+    @GetMapping("/promotion/id/{promotionId}")
     public ResponseEntity<PromotionDto> getPromotionById(@PathVariable int promotionId) {
             Promotion promotion = promotionService.getPromotionById(promotionId);
             PromotionDto responseDto = new PromotionDto(promotion);

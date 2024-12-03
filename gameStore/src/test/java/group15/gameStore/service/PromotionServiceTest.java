@@ -198,7 +198,7 @@ void testUpdatePromotion_Success() {
 
     Promotion updatedPromotion = new Promotion("NEWPROMO", 20.0, Date.valueOf("2025-12-31"), game);
 
-    when(promotionRepository.findById(1)).thenReturn(existingPromotion);
+    when(promotionRepository.findById(1));
     when(promotionRepository.save(existingPromotion)).thenReturn(existingPromotion);
 
     // Act
@@ -224,7 +224,7 @@ void testUpdatePromotion_BadRequest() {
     // Invalid updated promotion with empty promotion code and out-of-range discount percentage
     Promotion invalidUpdatedPromotion = new Promotion("", 150.0, Date.valueOf("2025-12-31"), game);
 
-    when(promotionRepository.findById(1)).thenReturn(existingPromotion);
+    when(promotionRepository.findById(1));
 
     // Act & Assert
     GameStoreException exception = assertThrows(GameStoreException.class, () -> {
