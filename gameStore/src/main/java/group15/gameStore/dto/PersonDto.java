@@ -19,6 +19,7 @@ public class PersonDto{
     this.userID = personDto.getUserID();
     this.username = personDto.getUsername();
     this.email = personDto.getEmail();
+    this.password = personDto.getPassword();
  }
 
  public PersonDto(String aUsername, String aPassword, String aEmail){
