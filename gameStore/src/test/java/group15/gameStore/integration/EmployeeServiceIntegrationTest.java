@@ -178,6 +178,7 @@ public class EmployeeServiceIntegrationTest {
         List<Map<String, Object>> employees = response.getBody();
         assertEquals(employeeRequestDto.getUsername(), employees.get(0).get("username"));
         assertEquals(employeeRequestDto.getEmail(), employees.get(0).get("email"));
+        //assertEquals(employeeRequestDto.getPassword(), employees.get(0).get(employees));
         assertEquals(employeeRequestDto2.getUsername(), employees.get(1).get("username"));
         assertEquals(employeeRequestDto2.getEmail(), employees.get(1).get("email"));
     }
