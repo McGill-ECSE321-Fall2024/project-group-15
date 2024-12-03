@@ -3,6 +3,7 @@ package group15.gameStore.dto;
 import java.sql.Date;
 
 import group15.gameStore.model.Game;
+import group15.gameStore.model.Manager;
 
 public class GameDto {
 
@@ -15,6 +16,7 @@ public class GameDto {
     private String image;
     private Date archivedDate;
     private boolean isApproved;
+    private Manager manager;
 
 //    private ManagerDto manager;
 
@@ -32,6 +34,7 @@ public class GameDto {
         this.image = game.getImage();
         this.archivedDate = game.getArchivedDate();
         this.isApproved = game.isIsApproved();
+        this.manager = game.getManager();
 //        this.manager = new ManagerDto(game.getManager());
     }
 
@@ -100,13 +103,13 @@ public class GameDto {
         this.isApproved = isApproved;
     }
 
-//    public ManagerDto getManager() {
-//        return manager;
-//    }
+    public Manager getManager() {
+        return manager;
+    }
 
-//    public void setManager(ManagerDto manager) {
-//        this.manager = manager;
-//    }
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
 
     
 }

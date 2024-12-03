@@ -18,6 +18,7 @@ public class PersonDto{
  public PersonDto(Person personDto){
     this.userID = personDto.getUserID();
     this.username = personDto.getUsername();
+    this.password = personDto.getPassword();
     this.email = personDto.getEmail();
     this.password = personDto.getPassword();
  }

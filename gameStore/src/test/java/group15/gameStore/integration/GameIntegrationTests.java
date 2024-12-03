@@ -7,11 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -31,9 +29,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import group15.gameStore.dto.EmployeeDto;
+import group15.gameStore.dto.ErrorDto;
 import group15.gameStore.dto.GameDto;
 import group15.gameStore.dto.ManagerDto;
-import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Employee;
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
@@ -73,7 +71,6 @@ public class GameIntegrationTests {
     @BeforeAll
     public void setDatabase() {
 		manager = managerRepo.save(VALID_MANAGER);
-        employee = employeeRepo.save(VALID_MANAGER);
 	}
     @AfterAll
 	public void clearDatabase() {
@@ -89,12 +86,7 @@ public class GameIntegrationTests {
         EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGER);
         GameDto game1 = new GameDto(game);
 
-        List<Object> Dtos = new ArrayList<>();
-        Dtos.add(game1);
-        Dtos.add(managerDto);
-        Dtos.add(employeeDto);
-
-        ResponseEntity<GameDto> response = client.postForEntity("/game", Dtos, GameDto.class);
+        ResponseEntity<GameDto> response = client.postForEntity("/game", game1, GameDto.class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -154,11 +146,8 @@ public class GameIntegrationTests {
     @Test
 	@Order(6)
     public void testArchiveValidGame() {
-        EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGER);
-        
-        HttpEntity<EmployeeDto> requestEntity = new HttpEntity<>(employeeDto, null);
 
-        ResponseEntity<GameDto> response = client.exchange(String.format("/game/archive/%d", gameID), HttpMethod.PUT, requestEntity, GameDto.class);
+        ResponseEntity<GameDto> response = client.exchange(String.format("/game/archive/%d", gameID), HttpMethod.PUT, null, GameDto.class);
         
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -170,11 +159,7 @@ public class GameIntegrationTests {
     @Test
 	@Order(7)
     public void testUnarchiveValidGame() {
-        EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGER);
-        
-        HttpEntity<EmployeeDto> requestEntity = new HttpEntity<>(employeeDto, null);
-
-        ResponseEntity<GameDto> response = client.exchange(String.format("/game/unarchive/%d", gameID), HttpMethod.PUT, requestEntity, GameDto.class);
+        ResponseEntity<GameDto> response = client.exchange(String.format("/game/unarchive/%d", gameID), HttpMethod.PUT, null, GameDto.class);
         
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -189,13 +174,8 @@ public class GameIntegrationTests {
         
         game.setImage("newImage");
         GameDto gameDto = new GameDto(game);
-        gameDto.setGameID(gameID);
 
-        List<Object> Dtos = new ArrayList<>();
-        Dtos.add(gameDto);
-        Dtos.add(employeeDto);
-
-        HttpEntity<List<Object>> requestEntity = new HttpEntity<>(Dtos, null);
+        HttpEntity<GameDto> requestEntity = new HttpEntity<>(gameDto, null);
 
         ResponseEntity<GameDto> response = client.exchange(String.format("/game/%d", gameID), HttpMethod.PUT, requestEntity, GameDto.class);
         
@@ -209,15 +189,8 @@ public class GameIntegrationTests {
     @Test
 	@Order(9)
     public void testUpdateValidGameApproval() {
-        EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGER);
 
-        List<Object> Dtos = new ArrayList<>();
-        Dtos.add(false);
-        Dtos.add(employeeDto);
-
-        HttpEntity<List<Object>> requestEntity = new HttpEntity<>(Dtos, null);
-
-        ResponseEntity<GameDto> response = client.exchange(String.format("/game/%d/approval", gameID), HttpMethod.PUT, requestEntity, GameDto.class);
+        ResponseEntity<GameDto> response = client.exchange(String.format("/game/%d/approval?newIsApproved=%b", gameID, false), HttpMethod.PUT, null, GameDto.class);
         
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -229,15 +202,12 @@ public class GameIntegrationTests {
     @Test
 	@Order(10)
     public void testDeleteValidGames() {
-        EmployeeDto employeeDto = new EmployeeDto(VALID_MANAGER);
 
-        HttpEntity<EmployeeDto> requestEntity = new HttpEntity<>(employeeDto, null);
-
-        client.delete(String.format("/game/%d", gameID), requestEntity);
-
-        GameStoreException e = assertThrows(GameStoreException.class,
-		() -> client.getForEntity(String.format("/game/title/%s", gameTitle), GameDto.class));
-
+        client.delete(String.format("/game/%d", gameID));
+        
+        ResponseEntity<ErrorDto> response = client.exchange(String.format("/game/title/%s", gameTitle), HttpMethod.GET, null, ErrorDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(String.format("There is no game with title %s", gameTitle), response.getBody().getErrors().get(0));
     }
 
 }

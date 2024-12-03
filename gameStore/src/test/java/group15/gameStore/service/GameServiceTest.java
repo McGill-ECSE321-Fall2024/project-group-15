@@ -77,7 +77,7 @@ public class GameServiceTest {
         
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-        Game createdGame = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game createdGame = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
 
         assertNotNull(createdGame);
 		    assertEquals(VALID_TITLE, createdGame.getTitle());
@@ -95,7 +95,7 @@ public class GameServiceTest {
     @Test
     public void testCreateInvalidGame() {
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.createGame("", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER, VALID_MANAGER));
+				() -> gameService.createGame("", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid game creation request: missing attributes", e.getMessage());
     }
@@ -103,7 +103,7 @@ public class GameServiceTest {
     @Test
     public void testCreateInvalidGameNegativeStock() {
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, -5, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER, VALID_MANAGER));
+				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, -5, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The price or stock of a game cannot be negative", e.getMessage());
     }
@@ -115,9 +115,9 @@ public class GameServiceTest {
       invalidEmployee.setUserID(0);
 
       GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER, invalidEmployee));
+				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, invalidEmployee));
 		  assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
-		  assertEquals("The employee does not exist", e.getMessage());
+		  assertEquals("The manager does not exist", e.getMessage());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class GameServiceTest {
 
         when(mockGameRepo.findGameByGameID(0)).thenReturn(gameUpdated);
 
-        Game updatedGame = gameService.updateGame(gameToUpdate.getGameID(), gameUpdated, manager);
+        Game updatedGame = gameService.updateGame(gameToUpdate.getGameID(), gameUpdated);
         
         assertNotNull(updatedGame);
 		    assertEquals("newGame1", updatedGame.getTitle());
@@ -155,12 +155,12 @@ public class GameServiceTest {
 
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-        Game gameToUpdate = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager, manager);
+        Game gameToUpdate = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
 
         gameToUpdate.setTitle("");
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.updateGame(gameToUpdate.getGameID(), gameToUpdate, manager));
+				() -> gameService.updateGame(gameToUpdate.getGameID(), gameToUpdate));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid game creation request: missing attributes", e.getMessage());
 
@@ -177,7 +177,7 @@ public class GameServiceTest {
 
         when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToDelete);
 
-        gameService.deleteGame(gameToDelete, manager);
+        gameService.deleteGame(gameToDelete);
 
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> gameService.getAllGames());
@@ -197,7 +197,7 @@ public class GameServiceTest {
         when(mockGameRepo.findGameByGameID(0)).thenReturn(null);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.deleteGame(gameToDelete, manager));
+				() -> gameService.deleteGame(gameToDelete));
 		assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
 		assertEquals("The game to delete does not exist", e.getMessage());
 
@@ -206,7 +206,7 @@ public class GameServiceTest {
     @Test
     public void testDeleteInvalidGameAttributes() {
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.deleteGame(null, manager));
+				() -> gameService.deleteGame(null));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid game creation request: missing attributes", e.getMessage());
 
@@ -342,7 +342,7 @@ public class GameServiceTest {
 
         when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToArchive);
 
-        Game archivedGame = gameService.archiveGame(gameToArchive, VALID_MANAGER);
+        Game archivedGame = gameService.archiveGame(gameToArchive);
 
         assertNotNull(archivedGame);
 		assertEquals(Date.valueOf(LocalDate.now()), archivedGame.getArchivedDate());
@@ -362,7 +362,7 @@ public class GameServiceTest {
         when(mockGameRepo.findGameByGameID(0)).thenReturn(archivedGame);
         
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.archiveGame(archivedGame, manager));
+				() -> gameService.archiveGame(archivedGame));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The game is already archived", e.getMessage());
 
@@ -382,7 +382,7 @@ public class GameServiceTest {
 
         when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToUnarchive);
 
-        Game unarchivedGame = gameService.unarchiveGame(gameToUnarchive, VALID_MANAGER);
+        Game unarchivedGame = gameService.unarchiveGame(gameToUnarchive);
 
         assertNotNull(unarchivedGame);
 		assertEquals(null, unarchivedGame.getArchivedDate());
@@ -400,7 +400,7 @@ public class GameServiceTest {
         when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToUnarchive);
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.unarchiveGame(gameToUnarchive, manager));
+				() -> gameService.unarchiveGame(gameToUnarchive));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The game is already unarchived", e.getMessage());
 
@@ -419,7 +419,7 @@ public class GameServiceTest {
 
         when(mockGameRepo.findGameByGameID(0)).thenReturn(gameToUpdateApproval);
 
-        Game updatedGame = gameService.updateGameApproval(gameToUpdateApproval, true, manager);
+        Game updatedGame = gameService.updateGameApproval(gameToUpdateApproval, true);
 
         assertNotNull(updatedGame);
 		assertEquals(true, updatedGame.getIsApproved());
@@ -434,7 +434,7 @@ public class GameServiceTest {
         gameToUpdateApproval.setTitle("");
 
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.updateGameApproval(gameToUpdateApproval, false, manager));
+				() -> gameService.updateGameApproval(gameToUpdateApproval, false));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid game approval change request: missing attributes", e.getMessage());
 

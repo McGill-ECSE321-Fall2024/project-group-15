@@ -93,16 +93,16 @@ public class GameService {
      * @throws GameStoreException if any required attribute is missing or invalid
      */
     @Transactional
-    public Game createGame(String title, String description, double price, int stock, String image, boolean isApproved, Manager manager, Employee employee) {
-        if (title.isBlank() || description.isBlank() || image.isBlank() || manager == null || employee == null) {
+    public Game createGame(String title, String description, double price, int stock, String image, boolean isApproved, Manager manager) {
+        if (title.isBlank() || description.isBlank() || image.isBlank() || manager == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
         if (price < 0 || stock < 0) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price or stock of a game cannot be negative");
         }
         
-        if (employeeRepo.findByUserID(employee.getUserID()) == null || managerRepo.findManagerByUserID(manager.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND,"The employee does not exist");
+        if (managerRepo.findManagerByUserID(manager.getUserID()) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND,"The manager does not exist");
         }
         Game game = new Game(title, description, price, stock, image, isApproved, manager);
         return gameRepo.save(game);
@@ -115,17 +115,11 @@ public class GameService {
      * @throws GameStoreException if game or employee is missing, or employee is unauthorized
      */
     @Transactional
-    public void deleteGame(Game gameToDelete, Employee employee) {
-        if (gameToDelete == null || employee == null) {
+    public void deleteGame(Game gameToDelete) {
+        if (gameToDelete == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
-        if (!employee.isIsManager() || !gameToDelete.isIsApproved()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "The deletion of the game has not been approved by the manager");
-        }
         //Search game
-        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
-        }
         Game game = gameRepo.findGameByGameID(gameToDelete.getGameID());
         if (game == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND, "The game to delete does not exist");
@@ -141,15 +135,12 @@ public class GameService {
      * @throws GameStoreException if game or employee is missing, or employee is unauthorized
      */
     @Transactional
-    public Game archiveGame(Game gameToArchive, Employee employee) {
-        if (gameToArchive == null || employee == null) {
+    public Game archiveGame(Game gameToArchive) {
+        if (gameToArchive == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game archival request: missing attributes");
         }
-        if (!employee.isIsManager() && !gameToArchive.isIsApproved()) {
+        if (!gameToArchive.isIsApproved()) {
             throw new GameStoreException(HttpStatus.UNAUTHORIZED, "The archival of the game has not been approved by the manager");
-        }
-        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
         }
         //Search game
         Game game = gameRepo.findGameByGameID(gameToArchive.getGameID());
@@ -169,15 +160,9 @@ public class GameService {
      * @throws GameStoreException if game or employee is missing, employee is unauthorized, or game does not exist
      */
     @Transactional
-    public Game unarchiveGame(Game gameToUnarchive, Employee employee) {
-        if (!employee.isIsManager() && !gameToUnarchive.isIsApproved()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "The unarchival of the game has not been approved by the manager");
-        }
-        if (gameToUnarchive == null || employee == null) {
+    public Game unarchiveGame(Game gameToUnarchive) {
+        if (gameToUnarchive == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game unarchival request: missing attributes");
-        }
-        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
         }
         //Search game
         Game game = gameRepo.findGameByGameID(gameToUnarchive.getGameID());
@@ -197,8 +182,8 @@ public class GameService {
      * @throws GameStoreException if the update request is invalid
      */
     @Transactional
-    public Game updateGame(int gameID, Game updatedGame, Employee employee) {
-        if (updatedGame == null || updatedGame.getTitle().isBlank() || updatedGame.getDescription().isBlank() || updatedGame.getImage().isBlank() || updatedGame.getManager() == null ||  employee == null) {
+    public Game updateGame(int gameID, Game updatedGame) {
+        if (updatedGame == null || updatedGame.getTitle().isBlank() || updatedGame.getDescription().isBlank() || updatedGame.getImage().isBlank() || updatedGame.getManager() == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
         Game existingGame = gameRepo.findGameByGameID(gameID);
@@ -222,10 +207,6 @@ public class GameService {
         existingGame.setStock(stock);
         existingGame.setImage(image);
 
-        if (employee.getIsManager()) {
-            existingGame.setArchivedDate(updatedGame.getArchivedDate());
-            existingGame.setIsApproved(updatedGame.getIsApproved());
-        }
         return gameRepo.save(existingGame);
     }
 
@@ -238,15 +219,9 @@ public class GameService {
      * @throws GameStoreException if game or employee is missing, employee is unauthorized, or game does not exist
      */
     @Transactional
-    public Game updateGameApproval(Game gameToUpdate, boolean newIsApproved, Employee employee) {
-        if (gameToUpdate == null || gameToUpdate.getTitle().isBlank() || gameToUpdate.getDescription().isBlank() || gameToUpdate.getImage().isBlank() || gameToUpdate.getManager() == null || employee == null) {
+    public Game updateGameApproval(Game gameToUpdate, Boolean newIsApproved) {
+        if (gameToUpdate == null || gameToUpdate.getTitle().isBlank() || gameToUpdate.getDescription().isBlank() || gameToUpdate.getImage().isBlank() || gameToUpdate.getManager() == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game approval change request: missing attributes");
-        }
-        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
-        }
-        if (!employee.isIsManager()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "The approval update of the game can only be done by the manager");
         }
         //Search game
         Game game = gameRepo.findGameByGameID(gameToUpdate.getGameID());
