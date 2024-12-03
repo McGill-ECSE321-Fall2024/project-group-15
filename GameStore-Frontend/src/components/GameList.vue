@@ -13,7 +13,18 @@
         <div v-for="game in featuredGames" :key="game.id" class="game-card">
           <img :src="game.image" alt="Game Image" class="game-image" />
           <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
-          <p>${{ game.price.toFixed(2) }}</p>
+          
+          <!-- Display the original and promo price if applicable -->
+          <div class="price">
+            <p v-if="game.promoPrice">
+              <span class="original-price">${{ game.price.toFixed(2) }}</span>
+              <span class="promo-price">${{ game.promoPrice.toFixed(2) }}</span>
+            </p>
+            <p v-else>
+              ${{ game.price.toFixed(2) }}
+            </p>
+          </div>
+
           <button @click="addToCart(game)">Add to Cart</button>
           <button @click="addToWishlist(game)">Add to Wishlist</button>
         </div>
@@ -37,7 +48,18 @@
         <div v-for="game in filteredGames" :key="game.id" class="game-card">
           <img :src="game.image" alt="Game Image" class="game-image" />
           <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
-          <p>${{ game.price.toFixed(2) }}</p>
+
+          <!-- Display the original and promo price if applicable -->
+          <div class="price">
+            <p v-if="game.promoPrice">
+              <span class="original-price">${{ game.price.toFixed(2) }}</span>
+              <span class="promo-price">${{ game.promoPrice.toFixed(2) }}</span>
+            </p>
+            <p v-else>
+              ${{ game.price.toFixed(2) }}
+            </p>
+          </div>
+
           <button @click="addToCart(game)">Add to Cart</button>
           <button @click="addToWishlist(game)">Add to Wishlist</button>
         </div>
@@ -45,6 +67,7 @@
     </div>
   </div>
 </template>
+
 
 <script>
 import NavBar from "./NavBar.vue";
@@ -60,6 +83,7 @@ export default {
           id: 1,
           title: "The Witcher 3: Wild Hunt",
           price: 39.99,
+          promoPrice: 29.99,
           image: "https://store-images.s-microsoft.com/image/apps.20648.69531514236615003.534d4f71-03cb-4592-929a-b00a7de28b58.54adf0c7-6e6f-4d36-b639-503087c6fab2?q=90&w=177&h=177",
           rating: "FIVE_STAR",
           category: "Action"
@@ -68,6 +92,7 @@ export default {
           id: 2,
           title: "Red Dead Redemption 2",
           price: 59.99,
+          promoPrice: 49.99,
           image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/44/Red_Dead_Redemption_II.jpg/220px-Red_Dead_Redemption_II.jpg",
           rating: "FIVE_STAR",
           category: "RPG"
@@ -76,6 +101,7 @@ export default {
           id: 3,
           title: "Cyberpunk 2077",
           price: 49.99,
+          promoPrice: null,
           image: "https://image.api.playstation.com/vulcan/ap/rnd/202111/3013/6bAF2VVEamgKclalI0oBnoAe.jpg",
           rating: "FOUR_STAR",
           category: "Adventure"
@@ -84,6 +110,7 @@ export default {
           id: 4,
           title: "Assassin's Creed Odyssey",
           price: 29.99,
+          promoPrice: null,
           image: "https://i.imgur.com/txaFxgA.jpg",
           rating: "FIVE_STAR",
           category: "Strategy"
@@ -92,6 +119,7 @@ export default {
           id: 5,
           title: "Minecraft",
           price: 26.95,
+          promoPrice: null,
           image: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg",
           rating: "THREE_STAR",
           category: "Action"
@@ -100,6 +128,7 @@ export default {
           id: 6,
           title: "God of War",
           price: 59.99,
+          promoPrice: 45.99,
           image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
           rating: "FIVE_STAR",
           category: "Action"
@@ -108,6 +137,7 @@ export default {
           id: 7,
           title: "The Last of Us Part II",
           price: 49.99,
+          promoPrice: null,
           image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
           rating: "FIVE_STAR",
           category: "Action"
@@ -116,6 +146,7 @@ export default {
           id: 8,
           title: "Horizon Zero Dawn",
           price: 49.99,
+          promoPrice: null,
           image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
           rating: "FOUR_STAR",
           category: "Adventure"
@@ -294,4 +325,24 @@ button:hover {
   text-align: center;
   color: #333; /* Dark text for wishlist headings */
 }
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: red;
+  font-size: 14px;
+}
+
+.promo-price {
+  color: green;
+  font-size: 16px;
+  font-weight: bold;
+}
+
 </style>
