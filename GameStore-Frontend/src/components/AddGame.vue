@@ -105,7 +105,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 50px;
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
   min-height: 100vh;

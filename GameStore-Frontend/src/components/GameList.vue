@@ -2,7 +2,6 @@
   <div class="game-list-page">
     <NavBar />
     <div class="header-actions">
-      <button class="add-game-button" @click="addGame">Add Game</button>
       <SearchBar class="search-bar" @search="searchGame" />
     </div>
 
@@ -179,9 +178,7 @@ export default {
         (game) => game.rating === "FIVE_STAR"
       );
     },
-    addGame() {
-      this.$router.push("/games/add-game");
-    },
+
     addToCart(game) {
       const existingGame = this.cart.find((item) => item.id === game.id);
       if (existingGame) existingGame.quantity += 1;
@@ -220,23 +217,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 30px;
   margin-bottom: 20px;
-}
-
-.add-game-button {
-  background-color: #28a745;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.add-game-button:hover {
-  background-color: #218838;
 }
 
 .search-bar {
