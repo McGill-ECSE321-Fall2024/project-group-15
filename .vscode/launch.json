@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ManagerIntegrationTests",
+            "request": "launch",
+            "mainClass": "group15.gameStore.integration.ManagerIntegrationTests",
+            "projectName": "gameStore"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
