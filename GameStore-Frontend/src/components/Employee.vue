@@ -3,11 +3,11 @@
         <NavBar />
         <div v-if="!isVerified" class="verification-section">
         <h1>Employee Management Access</h1>
-        <p>Please enter your Employee ID to access this page:</p>
+        <p>Please enter your Manager ID to access this page:</p>
         <input
             type="number"
             v-model="employeeId"
-            placeholder="Enter your Employee ID"
+            placeholder="Enter your Manager ID"
             required
         />
         <button @click="verifyManager" class="verify-button">Verify</button>
@@ -431,6 +431,10 @@ label {
   gap: 5px; /* Adds space between text and checkbox */
   font-size: 16px; /* Matches other input field font sizes */
   color: #333; /* Matches the text color */
+}
+
+p {
+  color: #444; 
 }
 
 </style>
