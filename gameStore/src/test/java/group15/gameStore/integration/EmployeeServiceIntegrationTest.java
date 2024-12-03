@@ -112,6 +112,12 @@ public class EmployeeServiceIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(id, response.getBody().getUserID());
+        assertEquals("Emp1", response.getBody().getUsername());
+        assertEquals("password089", response.getBody().getPassword());
+        assertEquals("emp1@gmail.com", response.getBody().getEmail());
+        assertEquals(true, response.getBody().isActive());
+        assertEquals(false, response.getBody().isManager());
+
     }
 
     @Test
@@ -129,6 +135,10 @@ public class EmployeeServiceIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(email, response.getBody().getEmail());
+        assertEquals("Emp1", response.getBody().getUsername());
+        assertEquals("password089", response.getBody().getPassword());
+        assertEquals(true, response.getBody().isActive());
+        assertEquals(false, response.getBody().isManager());
     }
 
     @Test
