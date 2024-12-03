@@ -77,6 +77,7 @@ public class EmployeeServiceIntegrationTest {
         assertNotNull(createdEmployee);
         assertEquals("Emp1", createdEmployee.getUsername());
         assertEquals("emp1@gmail.com", createdEmployee.getEmail());
+        assertEquals("password089", createdEmployee.getPassword());
         assertEquals(true, createdEmployee.isActive());
         assertEquals(false, createdEmployee.isManager());
         assertNotNull(createdEmployee.getUserID());
@@ -193,7 +194,7 @@ public class EmployeeServiceIntegrationTest {
     private boolean equals(EmployeeDto employeeResponseDto, EmployeeDto employeeRequestDt2o) {
         return employeeResponseDto.getUsername().equals(employeeRequestDto2.getUsername()) &&
                employeeResponseDto.getEmail().equals(employeeRequestDto2.getEmail()) &&
-               //employeeResponseDto.getPassword().equals(employeeRequestDto2.getPassword()) &&
+               employeeResponseDto.getPassword().equals(employeeRequestDto2.getPassword()) &&
                employeeResponseDto.isActive() == employeeRequestDto2.isActive() &&
                employeeResponseDto.isManager() == employeeRequestDto2.isManager();
     }
