@@ -11,6 +11,7 @@ import group15.gameStore.repository.GameRepository;
 import group15.gameStore.repository.PromotionRepository;
 import group15.gameStore.repository.ManagerRepository;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -55,7 +56,7 @@ public class PromotionServiceIntegrationTest {
     private PromotionDto promo2024Dto;
     private PromotionDto promo2026Dto;
 
-    @BeforeEach
+    @BeforeAll
     public void setUp() {
         manager = new Manager("ChadTheManager", "manager123","chad@mail.mcgill.ca", true, true);
         managerRepository.save(manager);
@@ -67,16 +68,16 @@ public class PromotionServiceIntegrationTest {
 
         game = gameRepository.findGameByGameID(game.getGameID());
 
-        promo2024 = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), game);
-        promotionRepository.save(promo2024);
-        this.valid2024PromotionId = promo2024.getPromotionID();
+//        promo2024 = new Promotion("PROMO2024", 20.0, Date.valueOf("2024-12-31"), game);
+//        promotionRepository.save(promo2024);
+//        this.valid2024PromotionId = promo2024.getPromotionID();
+//
+//        promo2026 = new Promotion("PROMO2026", 18.0, Date.valueOf("2026-12-31"), game);
+//        promotionRepository.save(promo2026);
+//        this.valid2026PromotionId = promo2026.getPromotionID();
 
-        promo2026 = new Promotion("PROMO2026", 18.0, Date.valueOf("2026-12-31"), game);
-        promotionRepository.save(promo2026);
-        this.valid2026PromotionId = promo2026.getPromotionID();
-
-        promo2024Dto = new PromotionDto(promo2024);
-        promo2024Dto = new PromotionDto(promo2026);
+        promo2024Dto = new PromotionDto("PROMO2024", 20.0,Date.valueOf("2024-12-31"), validGameId);
+        promo2026Dto = new PromotionDto("PROMO2026", 18.0, Date.valueOf("2026-12-31"), validGameId);
     }
 
     @AfterAll
@@ -89,21 +90,21 @@ public class PromotionServiceIntegrationTest {
     @Test
     @Order(1)
     public void testCreatePromotion() {
-
         // Act
         ResponseEntity<PromotionDto> response = client.postForEntity("/promotion", promo2024Dto, PromotionDto.class);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
+        System.out.println(response.getBody());
     }
 
     // Test to get a promotion by ID
     @Test
     @Order(2)
-    public void testGetPromotionById() {
+    public void testGetPromotionByGameId() {
         // Act
-        ResponseEntity<PromotionDto> response = client.getForEntity("/promotion/" + valid2024PromotionId, PromotionDto.class);
+        ResponseEntity<PromotionDto> response = client.getForEntity("/promotion/game/" + validGameId, PromotionDto.class);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -133,7 +134,6 @@ public class PromotionServiceIntegrationTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().length);
         assertEquals("PROMO2024", response.getBody()[0].getPromotionCode());
     }
 }

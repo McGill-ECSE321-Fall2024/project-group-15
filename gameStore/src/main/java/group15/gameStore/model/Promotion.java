@@ -32,7 +32,7 @@ public class Promotion
   private Date validUntil;
 
   //Promotion Associations
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne()
   private Game game;
 
   // Hibernate default constructor
