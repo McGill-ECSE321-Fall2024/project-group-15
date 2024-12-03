@@ -47,11 +47,9 @@ public class GameController{
      * @return the created game and HTTP Status "CREATED"
      */
     @PostMapping("/game")
-    public ResponseEntity<GameDto> createGame(@RequestBody GameDto gameDto, @RequestBody ManagerDto managerDto, @RequestBody EmployeeDto employeeDto) {
-        Manager manager = managerService.getManagerByID(managerDto.getUserID());
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<GameDto> createGame(@RequestBody GameDto gameDto) {
         Game createdGame = gameService.createGame(gameDto.getTitle(), gameDto.getDescription(), gameDto.getPrice(),
-            gameDto.getStock(), gameDto.getImage(), gameDto.getIsApproved(), manager, employee);
+            gameDto.getStock(), gameDto.getImage(), gameDto.getIsApproved(), gameDto.getManager());
         
             return new ResponseEntity<>(new GameDto(createdGame), HttpStatus.CREATED);
     }
@@ -64,10 +62,16 @@ public class GameController{
      * @return the updated game and HTTP Status "OK"
      */
     @PutMapping("/game/{gameId}")
-    public ResponseEntity<GameDto> updateGame(@PathVariable int gameId, @RequestBody GameDto gameDto, @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
-        Game existingGame = gameService.getGameByID(gameDto.getGameID());
-        Game updatedGame = gameService.updateGame(gameId,existingGame, employee);
+    public ResponseEntity<GameDto> updateGame(@PathVariable int gameId, @RequestBody GameDto gameDto) {
+        Game gameToUpdate = gameService.getGameByID(gameId);
+        gameToUpdate.setTitle(gameDto.getTitle());
+        gameToUpdate.setDescription(gameDto.getDescription());
+        gameToUpdate.setPrice(gameDto.getPrice());
+        gameToUpdate.setStock(gameDto.getStock());
+        gameToUpdate.setImage(gameDto.getImage());
+        gameToUpdate.setArchivedDate(gameDto.getArchivedDate());
+        gameToUpdate.setIsApproved(gameDto.getIsApproved());
+        Game updatedGame = gameService.updateGame(gameId, gameToUpdate);
         return new ResponseEntity<>(new GameDto(updatedGame), HttpStatus.OK);
     }
 
@@ -79,11 +83,10 @@ public class GameController{
     * @return the updated game with the new approval status and HTTP Status "OK"
     */
     @PutMapping("/game/{gameId}/approval")
-    public ResponseEntity<GameDto> updateGameApproval(@PathVariable int gameId, @RequestParam boolean newIsApproved, @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<GameDto> updateGameApproval(@PathVariable int gameId, @RequestParam Boolean newIsApproved) {
         Game gameToUpdate = gameService.getGameByID(gameId);
         
-        Game updatedGame = gameService.updateGameApproval(gameToUpdate, newIsApproved, employee);
+        Game updatedGame = gameService.updateGameApproval(gameToUpdate, newIsApproved);
         return new ResponseEntity<>(new GameDto(updatedGame), HttpStatus.OK);
     }
 
@@ -139,10 +142,9 @@ public class GameController{
      * @return the archived game and HTTP Status "OK"
      */
     @PutMapping("/game/archive/{gameId}")
-    public ResponseEntity<GameDto> archiveGame(@PathVariable int gameId, @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<GameDto> archiveGame(@PathVariable int gameId) {
         Game gameToArchive = gameService.getGameByID(gameId);
-        Game archivedGame = gameService.archiveGame(gameToArchive, employee);
+        Game archivedGame = gameService.archiveGame(gameToArchive);
         return new ResponseEntity<>(new GameDto(archivedGame), HttpStatus.OK);
     }
 
@@ -153,10 +155,9 @@ public class GameController{
      * @return the unarchived game and HTTP Status "OK"
      */
     @PutMapping("/game/unarchive/{gameId}")
-    public ResponseEntity<GameDto> unarchiveGame(@PathVariable int gameId, @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<GameDto> unarchiveGame(@PathVariable int gameId) {
         Game gameToUnarchive = gameService.getGameByID(gameId);
-        Game unarchivedGame = gameService.unarchiveGame(gameToUnarchive, employee);
+        Game unarchivedGame = gameService.unarchiveGame(gameToUnarchive);
         return new ResponseEntity<>(new GameDto(unarchivedGame), HttpStatus.OK);
     }
 
@@ -167,10 +168,9 @@ public class GameController{
      * @return HTTP Status "NO CONTENT" if the deletion is successful
      */
     @DeleteMapping("/game/{gameId}")
-    public ResponseEntity<Void> deleteGame(@PathVariable int gameId, @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    public ResponseEntity<Void> deleteGame(@PathVariable int gameId) {
         Game gameToDelete = gameService.getGameByID(gameId);
-        gameService.deleteGame(gameToDelete, employee);
+        gameService.deleteGame(gameToDelete);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
