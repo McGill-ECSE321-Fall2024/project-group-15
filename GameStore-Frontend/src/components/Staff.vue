@@ -1,6 +1,20 @@
 <template>
     <div class="staff-page">
       <NavBar />
+      <div v-if="!isVerified" class="verification-section">
+        <h1>Staff Access</h1>
+        <p>Please enter your Employee ID to access this page:</p>
+        <input
+            type="number"
+            v-model="employeeId"
+            placeholder="Enter your Employee ID"
+            required
+        />
+        <button @click="verifyEmployee" class="verify-button">Verify</button>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+        </div>
+
+    <div v-else class="content-section">
       <div class="header-actions">
         <button class="add-game-button" @click="addGame">Add Game</button>
         </div>
@@ -164,18 +178,14 @@
             </div>
             </div>
         </div>
-      </div>
+      
+    </div>
   
       <div class="sub-nav-bar">
         <a href="/reviews" class="sub-nav-link">Access Reviews</a>
-        <!-- v-if="isManager" goes below the <a -->
-        <a
-            href="/staff/employees"
-            class="sub-nav-link"
-        >
-            Manage Employees
-        </a>
+        <a href="/staff/employees" class="sub-nav-link">Manage Employees</a>
         </div>
+    </div>
     </div>
   </template>  
   
@@ -189,41 +199,42 @@ export default {
   components: { NavBar },
   data() {
     return {
-        isManager: false,
+        isVerified: false,
+        employeeId: null,
+        errorMessage: "",
 
-      categories: [],
-      promotions: [],
+        categories: [],
+        promotions: [],
 
-      categorySearchQuery: "",
-      promotionSearchQuery: "",
+        categorySearchQuery: "",
+        promotionSearchQuery: "",
 
-      selectedGameForCategory: null,
-      selectedGameForPromotion: null,
+        selectedGameForCategory: null,
+        selectedGameForPromotion: null,
 
-      selectedCategory: "",
-      selectedPromotion: "",
+        selectedCategory: "",
+        selectedPromotion: "",
 
-      showAddCategoryInput: false,
-      newCategory: "",
+        showAddCategoryInput: false,
+        newCategory: "",
 
-      showAddPromotionInput: false,
-      newPromotionCode: "",
-      newPromotionDiscount: null,
-      newPromotionDateValidUntil: null,
+        showAddPromotionInput: false,
+        newPromotionCode: "",
+        newPromotionDiscount: null,
+        newPromotionDateValidUntil: null,
 
-      showDeleteCategorySection: false,
-      showDeletePromotionSection: false,
-      showAllCategories: false,
-      showAllPromotions: false,
+        showDeleteCategorySection: false,
+        showDeletePromotionSection: false,
+        showAllCategories: false,
+        showAllPromotions: false,
 
-      deleteCategoryId: null,
-      deletePromotionCode: "", // For delete promotion input
+        deleteCategoryId: null,
+        deletePromotionCode: "", // For delete promotion input
     };
   },
   created() {
     this.fetchCategories();
     this.fetchPromotions();
-    this.checkIsManager();
   },
   methods: {
 
@@ -248,15 +259,30 @@ export default {
     this.showAllPromotions = !this.showAllPromotions;
   },
 
-  async checkIsManager() {
-      try {
-        const response = await axiosClient.get("/employee/is-manager");
-        this.isManager = response.data; 
-      } catch (error) {
-        console.error("Error checking manager status:", error.response || error);
-        this.isManager = false; 
-      }
+  async verifyEmployee() {
+    if (!this.employeeId) {
+        this.errorMessage = "Please enter a valid Employee ID.";
+        return;
+    }
+
+    try {
+        const response = await axiosClient.get(`/employee/id/${this.employeeId}`);
+        if (response.data) {
+        this.isVerified = true;
+        this.errorMessage = "";
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+        this.errorMessage = "Employee ID not found.";
+        this.isVerified = false;
+        } else {
+        console.error("Error verifying employee:", error.response || error);
+        this.errorMessage = "An error occurred. Please try again.";
+        this.isVerified = false;
+        }
+    }
     },
+
     // Fetch categories
     async fetchCategories() {
       try {
@@ -451,6 +477,47 @@ export default {
   background-color: #f5f5f5;
   font-family: Arial, sans-serif;
 }
+
+.verification-section {
+  max-width: 500px;
+  margin: auto;
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.verify-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px
+}
+
+.verify-button:hover {
+  background-color: #218838;
+}
+
+.content-section {
+  margin-top: 20px;
+}
+
+h1, h2 {
+  color: #333;
+}
+
 .header-actions {
   display: flex;
   justify-content: space-between;
@@ -692,6 +759,10 @@ input[type="date"]:focus {
 .promotion-item span {
   color: black; /* Ensures each span element is black */
   font-size: 14px;
+}
+
+p {
+  color: #444; 
 }
 
 
