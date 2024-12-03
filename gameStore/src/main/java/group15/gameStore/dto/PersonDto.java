@@ -20,6 +20,7 @@ public class PersonDto{
     this.username = personDto.getUsername();
     this.password = personDto.getPassword();
     this.email = personDto.getEmail();
+    this.password = personDto.getPassword();
  }
 
  public PersonDto(String aUsername, String aPassword, String aEmail){
