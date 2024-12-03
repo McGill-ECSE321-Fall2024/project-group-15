@@ -1,5 +1,19 @@
 <template>
     <div class="employee-management-page">
+        <NavBar />
+        <div v-if="!isVerified" class="verification-section">
+        <h1>Employee Management Access</h1>
+        <p>Please enter your Employee ID to access this page:</p>
+        <input
+            type="number"
+            v-model="employeeId"
+            placeholder="Enter your Employee ID"
+            required
+        />
+        <button @click="verifyManager" class="verify-button">Verify</button>
+        <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+        </div>
+        <div v-else>
       <h1>Employee Management</h1>
   
      <!-- Add Employee Section -->
@@ -108,16 +122,22 @@
         <p v-else>No employees found in the system.</p>
         </div>
     </div>
+    </div>
   </template>
 
 <script>
+import NavBar from "./NavBar.vue";
 import axiosClient from "./axios";
 
 export default {
   name: "EmployeeManagement",
   data() {
     return {
-      employees: [], // List of all employees
+        isVerified: false, 
+        employeeId: null, 
+        errorMessage: "",
+      
+        employees: [], // List of all employees
       newEmployee: {
         username: "",
         password: "",
@@ -134,6 +154,33 @@ export default {
     this.fetchEmployees();
   },
   methods: {
+    async verifyManager() {
+      if (!this.employeeId) {
+        this.errorMessage = "Please enter a valid Employee ID.";
+        return;
+      }
+
+      try {
+        const response = await axiosClient.get(`/employee/id/${this.employeeId}`);
+        const employee = response.data;
+
+        if (employee.isManager) {
+          this.isVerified = true;
+          this.errorMessage = "";
+        } else {
+          this.errorMessage = "Access denied. You are not a manager.";
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          this.errorMessage = "Please enter a valid Employee ID.";
+        } else {
+          this.errorMessage = "An error occurred. Please try again.";
+          console.error("Error verifying manager:", error.response || error);
+        }
+        this.isVerified = false;
+      }
+    },
+    
     async fetchEmployees() {
       try {
         const response = await axiosClient.get("/employees");
@@ -229,6 +276,38 @@ export default {
 </script>
 
 <style scoped>
+.verification-section {
+  max-width: 500px;
+  margin: auto;
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.verify-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px
+}
+
+.verify-button:hover {
+  background-color: #218838;
+}
+
 .employee-management-page {
   padding: 70px;
   background-color: #f5f5f5;
