@@ -2,6 +2,7 @@
   <div class="account-page">
     <header>
       <h1>Account Settings</h1>
+      <button class="review-history-button" @click="fetchPaymentHistory">Review Payment History</button>
     </header>
 
     <div class="form-container">
@@ -146,10 +147,34 @@
         </form>
       </div>
     </div>
+
+    <!-- Payment History Modal -->
+    <div v-if="showPaymentHistory" class="modal-overlay">
+      <div class="modal">
+        <header>
+          <h2>Payment History</h2>
+          <button class="close-button" @click="showPaymentHistory = false">Close</button>
+        </header>
+        <div class="modal-content">
+          <ul v-if="paymentHistory.length">
+            <li v-for="payment in paymentHistory" :key="payment.paymentInfoID" class="order-item">
+              <p><strong>Card Number:</strong> {{ maskCardNumber(payment.cardNumber) }}</p>
+              <p><strong>Expiry Date:</strong> {{ payment.expiryDate }}</p>
+              <p><strong>Billing Address:</strong> {{ payment.billingAddress }}</p>
+              <button @click="deletePaymentInfo(payment.cardNumber)" class="delete-button">Delete</button>
+            </li>
+          </ul>
+          <p v-else>No payment history available.</p>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "Account",
   data() {
@@ -175,6 +200,10 @@ export default {
       confirmUsername: "",
       usernameErrorMessage: "",
       usernameSuccessMessage: "",
+
+      // Payment History
+      showPaymentHistory: false,
+      paymentHistory: [],
     };
   },
   methods: {
@@ -244,7 +273,42 @@ export default {
       this.newUsername = "";
       this.confirmUsername = "";
     },
-  },
+    
+    // Fetch payment history from the backend
+    async fetchPaymentHistory() {
+      try {
+        const response = await axios.get('/paymentInfo'); 
+        this.paymentHistory = response.data;
+        this.showPaymentHistory = true;
+      } catch (error) {
+        console.error("Failed to fetch payment history:", error);
+        alert("Error fetching payment history. Please try again later.");
+      }
+    },
+
+    // Mask the card number for display
+    maskCardNumber(cardNumber) {
+      return `${"*".repeat(12)}${cardNumber.slice(-4)}`;
+    },
+
+    // Delete payment information
+    async deletePaymentInfo(cardNumber) {
+      if (!confirm("Are you sure you want to delete this payment information?")) {
+        return;
+      }
+      try {
+        const customer = { userId: 1 }; // Replace with actual user ID
+        await axios.delete(`/paymentInfo/${cardNumber}`, { data: customer });
+        this.paymentHistory = this.paymentHistory.filter(
+          (payment) => payment.cardNumber !== cardNumber
+        );
+        alert("Payment information deleted successfully.");
+      } catch (error) {
+        console.error("Failed to delete payment information:", error);
+        alert("Error deleting payment information. Please try again later.");
+      }
+    },
+  }
 };
 </script>
 
@@ -261,6 +325,15 @@ header {
 h1 {
   color: #0040ff;
 }
+
+h2 {
+  color: #000000;
+}
+
+label {
+  color: #000000;
+}
+
 .form-container {
   display: flex;
   flex-wrap: wrap;
@@ -315,4 +388,91 @@ button {
   color: green;
   text-align: center;
 }
+
+.review-history-button {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  background-color: #0040ff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.review-history-button:hover {
+  background-color: #002080;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+.modal header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: red;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+.delete-button {
+  background-color: red;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+}
+
+/* .return-button {
+  background-color: red;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.return-button:hover {
+  background-color: darkred;
+} */
+
+.order-item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
 </style>
