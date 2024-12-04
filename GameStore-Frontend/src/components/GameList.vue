@@ -50,7 +50,9 @@
               <span class="promo-price">${{ game.promoPrice.toFixed(2) }}</span>
             </p>
             <p v-else>
+              <div v-if="game && game.price !== undefined">
               ${{ game.price.toFixed(2) }}
+              </div>
             </p>
           </div>
           <button @click="addToCart(game)">Add to Cart</button>
@@ -62,7 +64,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "./axios";
 import NavBar from "./NavBar.vue";
 import SearchBar from "./SearchBar.vue";
 
@@ -73,13 +75,24 @@ export default {
     return {
       games: [],
       filteredGames: [],
-      categories: ["Action", "RPG", "Adventure", "Strategy"],
+      categories: [],
       selectedCategory: "",
       cart: [],
       wishlist: [],
       featuredGames: [],
     };
   },
+
+   // Fetch categories
+   async fetchCategories() {
+      try {
+        const response = await axiosClient.get("/categories");
+        this.categories = response.data || [];
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    },
+    
   async created() {
     try {
       const savedCart = localStorage.getItem("cart");
@@ -88,7 +101,7 @@ export default {
       if (savedWishlist) this.wishlist = JSON.parse(savedWishlist);
 
       // Fetch games from backend
-      const response = await axios.get("http://localhost:8080/api/games");
+      const response = await axios.get("/games");
       this.games = response.data;
       this.filterByCategory();
       this.setFeaturedGames();
