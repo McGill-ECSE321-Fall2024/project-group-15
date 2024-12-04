@@ -138,7 +138,6 @@ export default {
         errorMessage: "",
       
         employees: [], // List of all employees
-        managers: [], // List of all managers
       newEmployee: {
         username: "",
         password: "",
@@ -214,7 +213,7 @@ export default {
       try {
         if (this.newEmployee.isManager === true) {
           const response = await axiosClient.post("/manager", this.newEmployee);
-          this.managers.push(response.data); // Add new employee to the list
+          this.employees.push(response.data); // Add new employee to the list
         }
         else {
           const response = await axiosClient.post("/employee", this.newEmployee);
