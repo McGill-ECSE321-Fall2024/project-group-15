@@ -394,7 +394,7 @@ button {
 .review-history-button {
   position: absolute;
   top: 80px;
-  right: 20px;
+  right: 100px;
   background-color: #0040ff;
   color: white;
   padding: 10px 20px;

@@ -25,6 +25,13 @@
       ></textarea>
       <button @click="submitReview" class="submit-review-button">Submit</button>
     </div>
+
+  <div v-for="review in reviews" :key="review.id" :class="{ response: review.isResponse }">
+    <p><strong>{{ review.isResponse ? `Responding to ${review.responseTo}` : review.username }}:</strong></p>
+    <p>{{ review.description }}</p>
+    <p><strong>Rating:</strong> {{ review.rating }}</p>
+  </div>
+
   </div>
 </template>
 
