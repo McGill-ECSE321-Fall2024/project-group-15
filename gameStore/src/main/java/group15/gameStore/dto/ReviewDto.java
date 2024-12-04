@@ -11,27 +11,27 @@ public class ReviewDto {
     private Rating rating;
     private String description;
 
-    private GameDto game;
-    private CustomerDto customer;
+    private int gameId;
+    private int customerId;
 
     @SuppressWarnings("unused" )
     private ReviewDto(){
     }
 
     //Constructor
-    public ReviewDto(Review reviewDto){
-        this.reviewID = reviewDto.getReviewID();
-        this.rating = reviewDto.getRating();
-        this.description = reviewDto.getDescription();
-        this.game = new GameDto(reviewDto.getGame());
-        this.customer = new CustomerDto(reviewDto.getCustomer());
+    public ReviewDto(Review review){
+        this.reviewID = review.getReviewID();
+        this.rating = review.getRating();
+        this.description = review.getDescription();
+        this.gameId = review.getGame().getGameID();
+        this.customerId = review.getCustomer().getUserID();
     }
 
-    public ReviewDto(Rating aRating, String aDescription, Game aGame, Customer aCustomer){
+    public ReviewDto(Rating aRating, String aDescription, int aGameId, int aCustomerId){
         this.rating = aRating;
         this.description = aDescription;
-        this.game = new GameDto(aGame);
-        this.customer = new CustomerDto(aCustomer);
+        this.gameId = aGameId;
+        this.customerId = aCustomerId;
     }
 
     //Generated Getters and Setters
@@ -59,19 +59,19 @@ public class ReviewDto {
         this.description = description;
     }
 
-    public GameDto getGame() {
-        return game;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setGame(GameDto game) {
-        this.game = game;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
-    public CustomerDto getCustomer() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(CustomerDto customer) {
-        this.customer = customer;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 }
