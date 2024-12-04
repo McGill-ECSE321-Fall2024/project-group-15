@@ -34,10 +34,16 @@ public class CategoryController{
     */
     @PostMapping("/category")
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
-        //System.out.println("Request received to create category: " + categoryDto.getName());
         Category createdCategory = categoryService.createCategory(categoryDto.getName());
         return new ResponseEntity<>(new CategoryDto(createdCategory), HttpStatus.CREATED);
     }
+
+   @PostMapping("/category/assign/{gameId}")
+   public ResponseEntity<String> assignGameToCategory(@PathVariable("gameId") int gameId, @RequestBody CategoryDto categoryDto) {
+        categoryService.assignGameToCategory(gameId, categoryDto.getName());
+        return new ResponseEntity<>("Game successfully assigned to category.", HttpStatus.OK);
+    }
+
 
     /**
      * GetCategoryById: retrieves a category by ID

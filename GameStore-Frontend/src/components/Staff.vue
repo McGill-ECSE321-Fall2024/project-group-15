@@ -37,7 +37,7 @@
             <img :src="selectedGameForCategory.image" alt="Game Image" class="game-image" />
             <select v-model="selectedCategory" class="dropdown">
               <option value="">Select Category</option>
-              <option v-for="category in categories" :key="category.id" :value="category.name">
+              <option v-for="category in categories" :key="category.categoryID" :value="category">
                 {{ category.name }}
               </option>
             </select>
@@ -212,7 +212,7 @@ export default {
         selectedGameForCategory: null,
         selectedGameForPromotion: null,
 
-        selectedCategory: "",
+        selectedCategory: null,       
         selectedPromotion: "",
 
         showAddCategoryInput: false,
@@ -320,20 +320,21 @@ export default {
 
     // Assign game to category
     async assignCategory() {
-      if (!this.selectedCategory || !this.selectedGameForCategory) {
-        alert("Please select a game and a category.");
-        return;
-      }
-      try {
-        await axiosClient.post("/category/assign", {
-          gameId: this.selectedGameForCategory.id,
-          category: this.selectedCategory,
-        });
-        alert("Game assigned to category!");
-      } catch (error) {
-        console.error("Error assigning category:", error);
-      }
-    },
+    if (!this.selectedCategory || !this.selectedGameForCategory) {
+      alert("Please select a game and a category.");
+      return;
+    }
+    try {
+      console.log("Selected Game:", this.selectedGameForCategory);
+      console.log(this.selectedCategory.name)
+      console.log(this.selectedCategory, this.selectedGameForCategory.gameID);
+      await axiosClient.post(`/category/assign/${this.selectedGameForCategory.gameID}`, this.selectedCategory);
+      alert("Game assigned to category!");
+    } catch (error) {
+      console.error("Error assigning category:", error);
+      alert("Failed to assign game to category. Please try again.");
+    }
+  },
 
     // Add category
     toggleAddCategory() {
