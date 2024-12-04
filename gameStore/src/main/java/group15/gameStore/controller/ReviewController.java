@@ -44,10 +44,9 @@ public class ReviewController{
      * @return the created review and the HTTP status "CREATED"
      */
     @PostMapping("/review")
-    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto,@RequestBody GameDto gameDto,
-        @RequestBody CustomerDto customerDto) {
-        Game game = gameService.getGameByID(gameDto.getGameID());
-        Customer customer = customerService.getCustomerByID(customerDto.getUserID());
+    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto) {
+        Game game = gameService.getGameByID(reviewDto.getGameId());
+        Customer customer = customerService.getCustomerByID(reviewDto.getCustomerId());
         Review createdReview = reviewService.createReview(reviewDto.getRating(),
             reviewDto.getDescription(),game,customer);
         ReviewDto responseDto = new ReviewDto(createdReview);
@@ -61,9 +60,8 @@ public class ReviewController{
      * @return the updated review information and the HTTP status "OK"
      */
     @PutMapping("/review/{reviewId}")
-    public ResponseEntity<ReviewDto> updateReview(@PathVariable int reviewId,@RequestBody ReviewDto reviewDto,
-        @RequestBody CustomerDto customerDto) {
-        Customer customer = customerService.getCustomerByID(customerDto.getUserID());
+    public ResponseEntity<ReviewDto> updateReview(@PathVariable int reviewId,@RequestBody ReviewDto reviewDto) {
+        Customer customer = customerService.getCustomerByID(reviewDto.getCustomerId());
         Review existingReview = reviewService.getReviewById(reviewDto.getReviewID());
         Review updatedReview = reviewService.updateReview(reviewId,existingReview,customer);
         return new ResponseEntity<>(new ReviewDto(updatedReview), HttpStatus.OK);  

@@ -42,28 +42,22 @@ public class CategoryService {
     }
 
     @Transactional
-    public void assignGameToCategory(int gameId, String categoryName) {
-        // Validate input
-        if (categoryName == null || categoryName.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Category name is required.");
+    public void assignGameToCategory(int gameId, int categoryId) {
+        //
+        if (gameRepository.findGameByGameID(gameId) == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "Game not found with ID: " + gameId);
         }
-    
         Game game = gameRepository.findGameByGameID(gameId);
-    if (game == null) {
-        throw new GameStoreException(HttpStatus.NOT_FOUND, "Game not found with ID: " + gameId);
-    }
-
-    List<Category> categories = categoryRepo.findByNameContainingIgnoreCase(categoryName);
-    if (categories.isEmpty()) {
-        throw new GameStoreException(HttpStatus.NOT_FOUND, "No category found with name: " + categoryName);
-    }
-
-    Category category = categories.get(0);
-
-    if (!category.addGame(game)) {
-        throw new GameStoreException(HttpStatus.CONFLICT, "Game is already assigned to this category.");
+        if (game == null) {
+            throw new GameStoreException(HttpStatus.NOT_FOUND, "Game not found with ID: " + gameId);
         }
-    categoryRepo.save(category);
+
+        Category category = categoryRepo.findByCategoryID(categoryId);
+
+        if (!category.addGame(game)) {
+            throw new GameStoreException(HttpStatus.CONFLICT, "Game is already assigned to this category.");
+            }
+        categoryRepo.save(category);
     }
 
     /**

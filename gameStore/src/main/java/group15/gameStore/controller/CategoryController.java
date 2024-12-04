@@ -40,7 +40,7 @@ public class CategoryController{
 
    @PostMapping("/category/assign/{gameId}")
    public ResponseEntity<String> assignGameToCategory(@PathVariable("gameId") int gameId, @RequestBody CategoryDto categoryDto) {
-        categoryService.assignGameToCategory(gameId, categoryDto.getName());
+        categoryService.assignGameToCategory(gameId, categoryDto.getCategoryID());
         return new ResponseEntity<>("Game successfully assigned to category.", HttpStatus.OK);
     }
 
