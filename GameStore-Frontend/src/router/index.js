@@ -9,6 +9,7 @@ import AddGame from '@/components/AddGame.vue';
 import Cart from '../components/Cart.vue'; // Cart page
 import Checkout from "@/components/Checkout.vue";
 import Receipt from "@/components/Receipt.vue";
+import Review from '@/components/Review.vue';
 import Staff from "@/components/Staff.vue";
 import Employee from '@/components/Employee.vue';
 import WishListPage from '@/components/WishListPage.vue';
@@ -70,7 +71,13 @@ const routes = [
     name: 'Receipt',
     component: Receipt,
   },
-
+  
+  {
+    path: "/reviews/:gameId",
+    name: "ReviewPage",
+    component: Review,
+  },
+  
   {
     path: "/staff",
     name: "Staff",

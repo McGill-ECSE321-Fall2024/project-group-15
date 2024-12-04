@@ -26,6 +26,9 @@
         <h3>Game Synopsis</h3>
         <p>{{ game.description }}</p>
       </div>
+
+      <!-- Review Access button-->
+      <button @click="navigateToReviews" class="see-reviews-button">See Reviews</button>
     </div>
   </div>
 </template>
@@ -168,6 +171,10 @@ export default {
     },
     isInWishlist(game) {
       return this.wishlist.some(item => item.id === game.id);
+    },
+
+    navigateToReviews() {
+      this.$router.push(`/reviews/${this.$route.params.gameId}`);
     }
   }
 };
@@ -255,5 +262,18 @@ button:hover {
 
 .star-rating .empty-star {
   color: lightgray;
+}
+
+.see-reviews-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.see-reviews-button:hover {
+  background-color: #0056b3;
 }
 </style>

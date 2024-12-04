@@ -147,7 +147,10 @@
         </form>
       </div>
     </div>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     <!-- Payment History Modal -->
     <div v-if="showPaymentHistory" class="modal-overlay">
       <div class="modal">
@@ -169,12 +172,20 @@
       </div>
     </div>
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 export default {
   name: "Account",
   data() {
@@ -201,9 +212,16 @@ export default {
       usernameErrorMessage: "",
       usernameSuccessMessage: "",
 
+<<<<<<< Updated upstream
       // Payment History
       showPaymentHistory: false,
       paymentHistory: [],
+=======
+      //Payment History
+      showPaymentHistory: false,
+      paymentHistory: [],
+
+>>>>>>> Stashed changes
     };
   },
   methods: {
@@ -273,20 +291,34 @@ export default {
       this.newUsername = "";
       this.confirmUsername = "";
     },
+<<<<<<< Updated upstream
     
     // Fetch payment history from the backend
     async fetchPaymentHistory() {
       try {
         const response = await axios.get('/paymentInfo'); 
+=======
+
+    // Fetch payment history from the backend
+    async fetchPaymentHistory() {
+      try {
+        const response = await axios.get('/paymentInfo'); // Adjust API URL as needed
+>>>>>>> Stashed changes
         this.paymentHistory = response.data;
         this.showPaymentHistory = true;
       } catch (error) {
         console.error("Failed to fetch payment history:", error);
         alert("Error fetching payment history. Please try again later.");
       }
+<<<<<<< Updated upstream
     },
 
     // Mask the card number for display
+=======
+
+    },
+
+>>>>>>> Stashed changes
     maskCardNumber(cardNumber) {
       return `${"*".repeat(12)}${cardNumber.slice(-4)}`;
     },
@@ -308,7 +340,11 @@ export default {
         alert("Error deleting payment information. Please try again later.");
       }
     },
+<<<<<<< Updated upstream
   }
+=======
+  },
+>>>>>>> Stashed changes
 };
 </script>
 
@@ -330,6 +366,13 @@ h2 {
   color: #000000;
 }
 
+<<<<<<< Updated upstream
+=======
+p {
+  color: #000000;
+}
+
+>>>>>>> Stashed changes
 label {
   color: #000000;
 }
@@ -388,10 +431,16 @@ button {
   color: green;
   text-align: center;
 }
+<<<<<<< Updated upstream
 
 .review-history-button {
   position: absolute;
   top: 80px;
+=======
+.review-history-button {
+  position: absolute;
+  top: 10px;
+>>>>>>> Stashed changes
   right: 20px;
   background-color: #0040ff;
   color: white;
@@ -400,7 +449,10 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 .review-history-button:hover {
   background-color: #002080;
 }
@@ -416,7 +468,10 @@ button {
   justify-content: center;
   align-items: center;
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 .modal {
   background: white;
   padding: 20px;
@@ -440,6 +495,10 @@ button {
   font-size: 1.2em;
   cursor: pointer;
 }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 .delete-button {
   background-color: red;
   color: white;
@@ -453,6 +512,7 @@ button {
   background-color: darkred;
 }
 
+<<<<<<< Updated upstream
 /* .return-button {
   background-color: red;
   color: white;
@@ -466,6 +526,8 @@ button {
   background-color: darkred;
 } */
 
+=======
+>>>>>>> Stashed changes
 .order-item {
   border-bottom: 1px solid #ddd;
   padding: 10px 0;
@@ -474,5 +536,8 @@ button {
 .order-item:last-child {
   border-bottom: none;
 }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 </style>
