@@ -1,6 +1,7 @@
 package group15.gameStore.dto;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import group15.gameStore.model.Game;
 import group15.gameStore.model.Manager;
@@ -14,9 +15,9 @@ public class GameDto {
     private double price;
     private int stock;
     private String image;
-    private Date archivedDate;
+    private LocalDate archivedDate;
     private boolean isApproved;
-    private Manager manager;
+    private int managerId;
 
 //    private ManagerDto manager;
 
@@ -32,9 +33,11 @@ public class GameDto {
         this.price = game.getPrice();
         this.stock = game.getStock();
         this.image = game.getImage();
-        this.archivedDate = game.getArchivedDate();
+        if (game.getArchivedDate() != null) {
+            this.archivedDate = game.getArchivedDate().toLocalDate();
+        }
         this.isApproved = game.isIsApproved();
-        this.manager = game.getManager();
+        this.managerId = game.getManager().getUserID();
 //        this.manager = new ManagerDto(game.getManager());
     }
 
@@ -87,11 +90,11 @@ public class GameDto {
         this.image = image;
     }
 
-    public Date getArchivedDate() {
+    public LocalDate getArchivedDate() {
         return archivedDate;
     }
 
-    public void setArchivedDate(Date archivedDate) {
+    public void setArchivedDate(LocalDate archivedDate) {
         this.archivedDate = archivedDate;
     }
 
@@ -103,12 +106,12 @@ public class GameDto {
         this.isApproved = isApproved;
     }
 
-    public Manager getManager() {
-        return manager;
+    public int getManagerId() {
+        return managerId;
     }
 
-    public void setManager(Manager manager) {
-        this.manager = manager;
+    public void setManagerId(int managerId) {
+        this.managerId = managerId;
     }
 
     
