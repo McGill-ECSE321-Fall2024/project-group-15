@@ -63,7 +63,7 @@ public class PromotionRepositoryTest {
         int promotionId = promotion.getPromotionID();
 
         // Read back from the database
-        Promotion promotionFromDb = repo.findPromotionByPromotionId(promotionId);
+        Promotion promotionFromDb = repo.findPromotionByPromotionID(promotionId);
 
         // Assertions
         assertNotNull(promotionFromDb);

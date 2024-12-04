@@ -37,7 +37,7 @@ public class ManagerController{
     public ResponseEntity<ManagerDto> createManager(@RequestBody ManagerDto managerDto) {
         Manager createdManager = managerService.createManager(
                 managerDto.getUsername(), managerDto.getPassword(), managerDto.getEmail(), 
-                managerDto.isActive());
+                managerDto.isActive(), managerDto.isManager());
         return new ResponseEntity<>(new ManagerDto(createdManager), HttpStatus.CREATED);
     }
 

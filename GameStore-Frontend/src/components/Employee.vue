@@ -130,8 +130,8 @@ export default {
         username: "",
         password: "",
         email: "",
-        isManager: false,
         isActive: true,
+        isManager: false,
       },
 
       newManager: {
@@ -212,8 +212,14 @@ export default {
 
     async addEmployee() {
       try {
-        const response = await axiosClient.post("/employee", this.newEmployee);
-        this.employees.push(response.data); // Add new employee to the list
+        if (this.newEmployee.isManager === true) {
+          const response = await axiosClient.post("/manager", this.newEmployee);
+          this.employees.push(response.data); // Add new employee to the list
+        }
+        else {
+          const response = await axiosClient.post("/employee", this.newEmployee);
+          this.employees.push(response.data); // Add new employee to the list
+        }
         this.resetNewEmployee();
         alert("Employee added successfully!");
       } catch (error) {

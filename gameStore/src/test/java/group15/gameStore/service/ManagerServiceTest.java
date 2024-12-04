@@ -71,7 +71,7 @@ public class ManagerServiceTest {
 
         when(mockManagerRepo.save(any(Manager.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
         
-        Manager createdManager = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE);
+        Manager createdManager = managerService.createManager(VALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, VALID_ISMANAGER);
         
         assertNotNull(createdManager);
 		assertEquals(VALID_USERNAME, createdManager.getUsername());
@@ -87,7 +87,7 @@ public class ManagerServiceTest {
     @Test
 	public void testCreateInvalidManager() {
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> managerService.createManager(INVALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE));
+				() -> managerService.createManager(INVALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, VALID_ISMANAGER));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid manager creation request: missing attributes", e.getMessage());
     }
