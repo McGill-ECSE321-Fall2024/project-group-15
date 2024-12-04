@@ -19,7 +19,7 @@ import group15.gameStore.dto.ManagerDto;
 import group15.gameStore.model.Manager;
 import group15.gameStore.service.ManagerService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173") // Frontend's base URL
 @RestController
 public class ManagerController{
 

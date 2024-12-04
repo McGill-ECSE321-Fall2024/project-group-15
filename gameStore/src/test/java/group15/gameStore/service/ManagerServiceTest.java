@@ -89,7 +89,7 @@ public class ManagerServiceTest {
         GameStoreException e = assertThrows(GameStoreException.class,
 				() -> managerService.createManager(INVALID_USERNAME, VALID_PASSWORD, VALID_EMAIL, VALID_ISACTIVE, VALID_ISMANAGER));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
-		assertEquals("Invalid manager creation request: missing attributes", e.getMessage());
+		assertEquals("Username is required.", e.getMessage());
     }
 
     @Test
