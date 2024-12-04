@@ -138,12 +138,13 @@ export default {
         errorMessage: "",
       
         employees: [], // List of all employees
+        managers: [], // List of all managers
       newEmployee: {
         username: "",
         password: "",
         email: "",
-        isManager: false,
         isActive: true,
+        isManager: false,
       },
       selectedEmployee: null, // Employee selected for update
       employeeToUpdateId: null,
@@ -211,8 +212,14 @@ export default {
 
     async addEmployee() {
       try {
-        const response = await axiosClient.post("/employee", this.newEmployee);
-        this.employees.push(response.data); // Add new employee to the list
+        if (this.newEmployee.isManager === true) {
+          const response = await axiosClient.post("/manager", this.newEmployee);
+          this.managers.push(response.data); // Add new employee to the list
+        }
+        else {
+          const response = await axiosClient.post("/employee", this.newEmployee);
+          this.employees.push(response.data); // Add new employee to the list
+        }
         this.resetNewEmployee();
         alert("Employee added successfully!");
       } catch (error) {

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import group15.gameStore.model.Manager;
 import group15.gameStore.service.EmployeeService;
 import group15.gameStore.service.ManagerService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class ManagerController{
 
@@ -41,7 +43,7 @@ public class ManagerController{
     public ResponseEntity<ManagerDto> createManager(@RequestBody ManagerDto managerDto) {
         Manager createdManager = managerService.createManager(
                 managerDto.getUsername(), managerDto.getPassword(), managerDto.getEmail(), 
-                managerDto.isActive());
+                managerDto.isActive(), managerDto.isManager());
         return new ResponseEntity<>(new ManagerDto(createdManager), HttpStatus.CREATED);
     }
 

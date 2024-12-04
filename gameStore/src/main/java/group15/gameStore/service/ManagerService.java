@@ -88,16 +88,17 @@ public class ManagerService {
      * @throws GameStoreException if any field is missing or invalid
      */
     @Transactional
-    public Manager createManager(String username, String password, String email, boolean isActive) {
-        if (username == null || password.isBlank() || email.isBlank() || username.isBlank()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
-        }
-        if (password == null || password.length() < 8) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");
-        }
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid email format.");
-        }
+    public Manager createManager(String username, String password, String email, boolean isActive, boolean isManager) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Username is required.");
+         }
+         if (password == null || password.length() < 8) {
+             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");
+         }
+         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid email format.");
+         }
+
         Manager manager = new Manager(username, password, email, isActive, true);
         managerRepo.save(manager);
         return manager;
