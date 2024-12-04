@@ -21,7 +21,7 @@ import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Employee;
 import group15.gameStore.service.EmployeeService;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173") // Frontend's base URL
 @RestController
 public class EmployeeController{
 
