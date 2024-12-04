@@ -37,7 +37,7 @@ const routes = [
     props: true, // Allow route params as props
   },
   {
-    path: '/games/add-game',
+    path: '/staff/add-game',
     name: 'AddGame',
     component: AddGame, 
   },

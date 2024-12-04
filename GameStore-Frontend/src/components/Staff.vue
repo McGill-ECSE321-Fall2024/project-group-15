@@ -304,7 +304,7 @@ export default {
     },
 
     addGame() {
-      this.$router.push("/games/add-game");
+      this.$router.push("/staff/add-game");
     },
 
     // Search for a game for category

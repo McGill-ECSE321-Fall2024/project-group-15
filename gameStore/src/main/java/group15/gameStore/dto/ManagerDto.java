@@ -8,7 +8,7 @@ public class ManagerDto extends EmployeeDto {
     //private Employee employee;
 
     @SuppressWarnings("unused")
-    private ManagerDto(){
+    public ManagerDto(){
     }
 
     //Constructor

@@ -5,9 +5,11 @@
       <h1>Welcome to the Game Store</h1>
       <p>Discover amazing games, explore new releases, and shop for your favorites.</p>
       <SearchBar />
+      <button class="view-all-games-button" @click="redirectToGames">View All Games</button>
     </div>
   </div>
 </template>
+
 
 <script>
 import NavBar from "./NavBar.vue";
@@ -18,6 +20,11 @@ export default {
   components: {
     NavBar,
     SearchBar,
+  },
+  methods: {
+    redirectToGames() {
+      this.$router.push("/games");
+    },
   },
 };
 </script>

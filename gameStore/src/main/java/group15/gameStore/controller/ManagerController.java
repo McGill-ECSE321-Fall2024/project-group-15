@@ -1,12 +1,12 @@
 package group15.gameStore.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,21 +15,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import group15.gameStore.dto.EmployeeDto;
 import group15.gameStore.dto.ManagerDto;
-import group15.gameStore.model.Employee;
 import group15.gameStore.model.Manager;
-import group15.gameStore.service.EmployeeService;
 import group15.gameStore.service.ManagerService;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 public class ManagerController{
 
     @Autowired
     private ManagerService managerService;
 
-    @Autowired
-    private EmployeeService employeeService;
 
     /**
      * CreateManager: creates a new manager
