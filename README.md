@@ -64,4 +64,17 @@ The second deliverable focuses on implementing backend services using RESTful HT
 |  30%   | 20% |  20%  |  15%  |    15%   |  
 
 
+## Deliverable 3:
+The third deliverable focuses on _________.<br/> 
+[Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
+[Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
 
+**To Build System_____:**<br/>
+-> cd gamestore ./gradlew clean build or ./gradlew build
+_______________
+
+
+**Effort Distribution**
+| Jordan | Ben | Jason | Jacob | Yvehenry |
+| ------ | --- | ----- | ----- | -------- |
+|  __%   | __% |  __%  |  __%  |    __%   |  
