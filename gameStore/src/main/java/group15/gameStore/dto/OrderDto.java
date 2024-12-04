@@ -16,8 +16,8 @@ public class OrderDto {
     private Status orderStatus;
     private double price;
 
-    private List<GameDto> games;
-    private CustomerDto customer;
+    private List<Integer> games;
+    private int customerId;
 
     @SuppressWarnings("unused")
     private OrderDto(){
@@ -29,16 +29,16 @@ public class OrderDto {
         this.orderNumber = order.getOrderNumber();
         this.orderStatus = order.getOrderStatus();
         this.price = order.getPrice();
-        this.games = order.getGames().stream().map(GameDto::new).collect(Collectors.toList());
-        this.customer = new CustomerDto(order.getCustomer());
+        this.games = order.getGames().stream().map(game -> game.getGameID()).collect(Collectors.toList());
+        this.customerId = order.getCustomer().getUserID();
     }
     
-    public OrderDto(String aOrderNumber, Status aOrderStatus, double aPrice, Customer aCustomer){
-        orderNumber = aOrderNumber;
-        orderStatus = aOrderStatus;
-        price = aPrice;
-        customer = new CustomerDto(aCustomer);
-        games = new ArrayList<GameDto>();
+    public OrderDto(String aOrderNumber, Status aOrderStatus, double aPrice, int customerId){
+        this.orderNumber = aOrderNumber;
+        this.orderStatus = aOrderStatus;
+        this.price = aPrice;
+        this.customerId = customerId;
+        this.games = new ArrayList<Integer>();
     }
 
     //Generated Getters and Setters
@@ -74,21 +74,20 @@ public class OrderDto {
         this.price = price;
     }
 
-    public List<GameDto> getGames() {
+    public List<Integer> getGames() {
         return games;
     }
 
-    public void setGames(List<GameDto> games) {
+    public void setGames(List<Integer> games) {
         this.games = games;
     }
 
-    public CustomerDto getCustomer() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(CustomerDto customer) {
-        this.customer = customer;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
-
     
 }

@@ -43,8 +43,8 @@ public class OrderController{
      * @return the created order and HTTP Status "CREATED"
      */
     @PostMapping("/order")
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto, @RequestBody CustomerDto customerDto) {
-        Customer customer = customerService.getCustomerByID(customerDto.getUserId());
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto) {
+        Customer customer = customerService.getCustomerByID(orderDto.getCustomerId());
         Order createdOrder = orderService.createOrder(orderDto.getOrderNumber(), orderDto.getOrderStatus(),
                 orderDto.getPrice(), customer);
         return new ResponseEntity<>(new OrderDto(createdOrder), HttpStatus.CREATED);
@@ -57,10 +57,9 @@ public class OrderController{
      * @param employeeDto the EmployeeDto representing the employee making the request
      * @return the updated order and the HTTP status "OK"
      */
-    @PutMapping("/order/{orderId}")
-    public ResponseEntity<OrderDto> updateOrder(@PathVariable int orderId, @RequestBody OrderDto orderDto,
-                                                @RequestBody EmployeeDto employeeDto) {
-        Employee employee = employeeService.getEmployeeById(employeeDto.getUserID());
+    @PutMapping("/order/{orderId}/{employeeId}")
+    public ResponseEntity<OrderDto> updateOrder(@PathVariable int orderId,@PathVariable int employeeId, @RequestBody OrderDto orderDto) {
+        Employee employee = employeeService.getEmployeeById(employeeId);
         Order existingOrder = orderService.getOrderByID(orderDto.getOrderID());
         Order updatedOrder = orderService.updateOrder(orderId, existingOrder, employee);
         return new ResponseEntity<>(new OrderDto(updatedOrder), HttpStatus.OK);

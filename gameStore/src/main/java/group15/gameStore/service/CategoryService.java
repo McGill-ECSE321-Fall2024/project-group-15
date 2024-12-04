@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import group15.gameStore.exception.GameStoreException;
 import group15.gameStore.model.Category;
+import group15.gameStore.model.Game;
 import group15.gameStore.repository.CategoryRepository;
+import group15.gameStore.repository.GameRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -18,6 +20,9 @@ public class CategoryService {
 
     @Autowired
     CategoryRepository categoryRepo;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     /**
      * CreateCategory: creates a new category with a name
@@ -34,6 +39,31 @@ public class CategoryService {
         Category category = new Category(name);
         categoryRepo.save(category);
         return category;
+    }
+
+    @Transactional
+    public void assignGameToCategory(int gameId, String categoryName) {
+        // Validate input
+        if (categoryName == null || categoryName.trim().isEmpty()) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Category name is required.");
+        }
+    
+        Game game = gameRepository.findGameByGameID(gameId);
+    if (game == null) {
+        throw new GameStoreException(HttpStatus.NOT_FOUND, "Game not found with ID: " + gameId);
+    }
+
+    List<Category> categories = categoryRepo.findByNameContainingIgnoreCase(categoryName);
+    if (categories.isEmpty()) {
+        throw new GameStoreException(HttpStatus.NOT_FOUND, "No category found with name: " + categoryName);
+    }
+
+    Category category = categories.get(0);
+
+    if (!category.addGame(game)) {
+        throw new GameStoreException(HttpStatus.CONFLICT, "Game is already assigned to this category.");
+        }
+    categoryRepo.save(category);
     }
 
     /**

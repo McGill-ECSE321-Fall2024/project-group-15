@@ -12,8 +12,6 @@
         <div v-for="game in featuredGames" :key="game.id" class="game-card">
           <img :src="game.image" alt="Game Image" class="game-image" />
           <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
-          
-          <!-- Display the original and promo price if applicable -->
           <div class="price">
             <p v-if="game.promoPrice">
               <span class="original-price">${{ game.price.toFixed(2) }}</span>
@@ -23,7 +21,6 @@
               ${{ game.price.toFixed(2) }}
             </p>
           </div>
-
           <button @click="addToCart(game)">Add to Cart</button>
           <button @click="addToWishlist(game)">Add to Wishlist</button>
         </div>
@@ -47,8 +44,6 @@
         <div v-for="game in filteredGames" :key="game.id" class="game-card">
           <img :src="game.image" alt="Game Image" class="game-image" />
           <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
-
-          <!-- Display the original and promo price if applicable -->
           <div class="price">
             <p v-if="game.promoPrice">
               <span class="original-price">${{ game.price.toFixed(2) }}</span>
@@ -58,7 +53,6 @@
               ${{ game.price.toFixed(2) }}
             </p>
           </div>
-
           <button @click="addToCart(game)">Add to Cart</button>
           <button @click="addToWishlist(game)">Add to Wishlist</button>
         </div>
@@ -67,8 +61,8 @@
   </div>
 </template>
 
-
 <script>
+import axios from "axios";
 import NavBar from "./NavBar.vue";
 import SearchBar from "./SearchBar.vue";
 
@@ -77,95 +71,30 @@ export default {
   components: { NavBar, SearchBar },
   data() {
     return {
-      games: [
-        {
-          id: 1,
-          title: "The Witcher 3: Wild Hunt",
-          price: 39.99,
-          promoPrice: 29.99,
-          image: "https://store-images.s-microsoft.com/image/apps.20648.69531514236615003.534d4f71-03cb-4592-929a-b00a7de28b58.54adf0c7-6e6f-4d36-b639-503087c6fab2?q=90&w=177&h=177",
-          rating: "FIVE_STAR",
-          category: "Action"
-        },
-        {
-          id: 2,
-          title: "Red Dead Redemption 2",
-          price: 59.99,
-          promoPrice: 49.99,
-          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/44/Red_Dead_Redemption_II.jpg/220px-Red_Dead_Redemption_II.jpg",
-          rating: "FIVE_STAR",
-          category: "RPG"
-        },
-        {
-          id: 3,
-          title: "Cyberpunk 2077",
-          price: 49.99,
-          promoPrice: null,
-          image: "https://image.api.playstation.com/vulcan/ap/rnd/202111/3013/6bAF2VVEamgKclalI0oBnoAe.jpg",
-          rating: "FOUR_STAR",
-          category: "Adventure"
-        },
-        {
-          id: 4,
-          title: "Assassin's Creed Odyssey",
-          price: 29.99,
-          promoPrice: null,
-          image: "https://i.imgur.com/txaFxgA.jpg",
-          rating: "FIVE_STAR",
-          category: "Strategy"
-        },
-        {
-          id: 5,
-          title: "Minecraft",
-          price: 26.95,
-          promoPrice: null,
-          image: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg",
-          rating: "THREE_STAR",
-          category: "Action"
-        },
-        {
-          id: 6,
-          title: "God of War",
-          price: 59.99,
-          promoPrice: 45.99,
-          image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
-          rating: "FIVE_STAR",
-          category: "Action"
-        },
-        {
-          id: 7,
-          title: "The Last of Us Part II",
-          price: 49.99,
-          promoPrice: null,
-          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
-          rating: "FIVE_STAR",
-          category: "Action"
-        },
-        {
-          id: 8,
-          title: "Horizon Zero Dawn",
-          price: 49.99,
-          promoPrice: null,
-          image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
-          rating: "FOUR_STAR",
-          category: "Adventure"
-        }
-      ],
+      games: [],
       filteredGames: [],
       categories: ["Action", "RPG", "Adventure", "Strategy"],
       selectedCategory: "",
       cart: [],
       wishlist: [],
-      featuredGames: []
+      featuredGames: [],
     };
   },
-  created() {
-    const savedCart = localStorage.getItem("cart");
-    const savedWishlist = localStorage.getItem("wishlist");
-    if (savedCart) this.cart = JSON.parse(savedCart);
-    if (savedWishlist) this.wishlist = JSON.parse(savedWishlist);
-    this.filterByCategory();
-    this.setFeaturedGames();
+  async created() {
+    try {
+      const savedCart = localStorage.getItem("cart");
+      const savedWishlist = localStorage.getItem("wishlist");
+      if (savedCart) this.cart = JSON.parse(savedCart);
+      if (savedWishlist) this.wishlist = JSON.parse(savedWishlist);
+
+      // Fetch games from backend
+      const response = await axios.get("http://localhost:8080/api/games");
+      this.games = response.data;
+      this.filterByCategory();
+      this.setFeaturedGames();
+    } catch (error) {
+      console.error("Error fetching games:", error);
+    }
   },
   methods: {
     filterByCategory() {
@@ -178,7 +107,6 @@ export default {
         (game) => game.rating === "FIVE_STAR"
       );
     },
-
     addToCart(game) {
       const existingGame = this.cart.find((item) => item.id === game.id);
       if (existingGame) existingGame.quantity += 1;
@@ -201,8 +129,8 @@ export default {
     },
     goToGameDetails(gameId) {
       this.$router.push(`/games/${gameId}`);
-    }
-  }
+    },
+  },
 };
 </script>
 
