@@ -1,5 +1,6 @@
 package group15.gameStore.controller;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,7 +50,7 @@ public class GameController{
     @PostMapping("/game")
     public ResponseEntity<GameDto> createGame(@RequestBody GameDto gameDto) {
         Game createdGame = gameService.createGame(gameDto.getTitle(), gameDto.getDescription(), gameDto.getPrice(),
-            gameDto.getStock(), gameDto.getImage(), gameDto.getIsApproved(), gameDto.getManager());
+            gameDto.getStock(), gameDto.getImage(), gameDto.getIsApproved(), gameDto.getManagerId());
         
             return new ResponseEntity<>(new GameDto(createdGame), HttpStatus.CREATED);
     }
@@ -69,7 +70,9 @@ public class GameController{
         gameToUpdate.setPrice(gameDto.getPrice());
         gameToUpdate.setStock(gameDto.getStock());
         gameToUpdate.setImage(gameDto.getImage());
-        gameToUpdate.setArchivedDate(gameDto.getArchivedDate());
+        if (gameToUpdate.getArchivedDate() != null) {
+            gameToUpdate.setArchivedDate(Date.valueOf(gameDto.getArchivedDate()));
+        }
         gameToUpdate.setIsApproved(gameDto.getIsApproved());
         Game updatedGame = gameService.updateGame(gameId, gameToUpdate);
         return new ResponseEntity<>(new GameDto(updatedGame), HttpStatus.OK);

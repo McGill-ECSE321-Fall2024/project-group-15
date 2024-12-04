@@ -32,11 +32,11 @@ public class EmployeeDto extends PersonDto {
         this.wishlists = employee.getWishlists().stream().map(WishlistDto::new).collect(Collectors.toList());
     }
 
-    public EmployeeDto(String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
+    public EmployeeDto(String username, String password, String email, boolean isActive, boolean isManager)
     {
-      super(aUsername, aPassword, aEmail);
-      isActive = aIsActive;
-      isManager = aIsManager;
+      super(username, password, email);
+      isActive = isActive;
+      isManager = isManager;
       categories = new ArrayList<CategoryDto>();
       orders = new ArrayList<OrderDto>();
       games = new ArrayList<GameDto>();

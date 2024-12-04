@@ -20,13 +20,12 @@ public class PersonDto{
     this.username = personDto.getUsername();
     this.password = personDto.getPassword();
     this.email = personDto.getEmail();
-    this.password = personDto.getPassword();
  }
 
- public PersonDto(String aUsername, String aPassword, String aEmail){
-    this.username = aUsername;
-    this.password = aPassword;
-    this.email = aEmail;
+ public PersonDto(String username, String password, String email){
+    this.username = username;
+    this.password = password;
+    this.email = email;
  }
 
  //Generated Getters and Setters

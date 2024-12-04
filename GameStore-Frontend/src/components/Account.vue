@@ -5,6 +5,13 @@
     </header>
 
     <div class="form-container">
+      <!-- Current User Info Section -->
+      <div class="form-section">
+        <h2>Current User Info</h2>
+        <p><strong>Username:</strong> {{ currentUsername }}</p>
+        <p><strong>Email:</strong> {{ currentEmail }}</p>
+      </div>
+
       <!-- Update Password Section -->
       <div class="form-section">
         <h2>Update Password</h2>
@@ -156,14 +163,14 @@ export default {
       passwordSuccessMessage: "",
 
       // Email fields
-      currentEmail: "",
+      currentEmail: "email@mail.com", // Default current email
       newEmail: "",
       confirmEmail: "",
       emailErrorMessage: "",
       emailSuccessMessage: "",
 
       // Username fields
-      currentUsername: "",
+      currentUsername: "ManagerUsername", // Default current username
       newUsername: "",
       confirmUsername: "",
       usernameErrorMessage: "",
@@ -200,6 +207,7 @@ export default {
       if (this.currentEmail === "email@mail.com") {
         this.emailSuccessMessage = "Your email has been successfully changed!";
         this.emailErrorMessage = "";
+        this.currentEmail = this.newEmail; // Update the current email on success
         this.resetEmailFields();
       } else {
         this.emailErrorMessage = "Current email is incorrect.";
@@ -216,6 +224,7 @@ export default {
       if (this.currentUsername === "ManagerUsername") {
         this.usernameSuccessMessage = "Your username has been successfully changed!";
         this.usernameErrorMessage = "";
+        this.currentUsername = this.newUsername; // Update the current username on success
         this.resetUsernameFields();
       } else {
         this.usernameErrorMessage = "Current username is incorrect.";
@@ -228,12 +237,10 @@ export default {
       this.confirmPassword = "";
     },
     resetEmailFields() {
-      this.currentEmail = "";
       this.newEmail = "";
       this.confirmEmail = "";
     },
     resetUsernameFields() {
-      this.currentUsername = "";
       this.newUsername = "";
       this.confirmUsername = "";
     },

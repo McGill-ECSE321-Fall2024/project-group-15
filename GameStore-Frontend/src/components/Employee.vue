@@ -16,111 +16,98 @@
         <div v-else>
       <h1>Employee Management</h1>
   
-     <!-- Add Employee Section -->
-    <div class="employee-section">
-    <h2>Add Employee</h2>
-    <form @submit.prevent="addEmployee">
-        <input
-        type="text"
-        v-model="newEmployee.username"
-        placeholder="Enter username"
-        required
-        />
-        <input
-        type="password"
-        v-model="newEmployee.password"
-        placeholder="Enter password"
-        required
-        />
-        <input
-        type="email"
-        v-model="newEmployee.email"
-        placeholder="Enter email"
-        required
-        />
-        <label>
-        <span>Is a Manager</span>
-        <input type="checkbox" v-model="newEmployee.isManager" />
-        </label>
-        <label>
-        <span>Is Active</span>
-        <input type="checkbox" v-model="newEmployee.isActive" />
-        </label>
-        <button type="submit" class="submit-button">Add Employee</button>
-    </form>
+      <div class="centered-management-container">
+    <!-- Employee and Manager Sections -->
+    <div class="management-container">
+        <!-- Add Employee Section -->
+        <div class="employee-section">
+        <h2>Add Employee</h2>
+        <form @submit.prevent="addEmployee">
+            <input type="text" v-model="newEmployee.username" placeholder="Enter username" required />
+            <input type="password" v-model="newEmployee.password" placeholder="Enter password" required />
+            <input type="email" v-model="newEmployee.email" placeholder="Enter email" required />
+            <label>
+            <span>Is Active</span>
+            <input type="checkbox" v-model="newEmployee.isActive" />
+            </label>
+            <button type="submit" class="submit-button">Add Employee</button>
+        </form>
+        </div>
+
+        <!-- Add Manager Section -->
+        <div class="manager-section">
+        <h2>Add Manager</h2>
+        <form @submit.prevent="addManager">
+            <input type="text" v-model="newManager.username" placeholder="Enter username" required />
+            <input type="password" v-model="newManager.password" placeholder="Enter password" required />
+            <input type="email" v-model="newManager.email" placeholder="Enter email" required />
+            <label>
+            <span>Is Active</span>
+            <input type="checkbox" v-model="newManager.isActive" />
+            </label>
+            <button type="submit" class="submit-button">Add Manager</button>
+        </form>
+        </div>
     </div>
 
-    <!-- Update Employee Section -->
-    <div class="employee-section">
+    <!-- Update and Delete Employee Sections -->
+    <div class="management-container">
+        <!-- Update Employee Section -->
+        <div class="employee-section">
         <h2>Update Employee</h2>
         <form @submit.prevent="updateEmployeeById">
-            <input
-                type="number"
-                v-model="employeeToUpdateId"
-                placeholder="Enter Employee ID"
-                required
-            />
-            <button @click="fetchEmployeeById" type="button" class="confirm-button">
-                Confirm ID
-            </button>
-
+            <input type="number" v-model="employeeToUpdateId" placeholder="Enter Employee ID" required />
+            <button @click="fetchEmployeeById" type="button" class="confirm-button">Confirm ID</button>
             <div v-if="selectedEmployee">
-                <input
-                    type="text"
-                    v-model="selectedEmployee.username"
-                    placeholder="Enter username"
-                    required
-                />
-                <input
-                    type="password"
-                    v-model="selectedEmployee.password"
-                    placeholder="Enter password"
-                    required
-                />
-                <input
-                    type="email"
-                    v-model="selectedEmployee.email"
-                    placeholder="Enter email"
-                    required
-                />
-                <label>
-                    <span>Is a Manager</span>
-                    <input type="checkbox" v-model="selectedEmployee.isManager" />
-                </label>
-                <label>
-                    <span>Is Active</span>
-                    <input type="checkbox" v-model="selectedEmployee.isActive" />
-                </label>
-                <button type="submit" class="submit-button">Update Employee</button>
+            <input type="text" v-model="selectedEmployee.username" placeholder="Enter username" required />
+            <input type="password" v-model="selectedEmployee.password" placeholder="Enter password" required />
+            <input type="email" v-model="selectedEmployee.email" placeholder="Enter email" required />
+            <label>
+                <span>Is a Manager</span>
+                <input type="checkbox" v-model="selectedEmployee.isManager" />
+            </label>
+            <label>
+                <span>Is Active</span>
+                <input type="checkbox" v-model="selectedEmployee.isActive" />
+            </label>
+            <div class="button-container">
+            <button type="submit" class="submit-button">Update Employee</button>
             </div>
+        </div>
         </form>
-    </div>
+        </div>
 
-     <!-- Delete Employee Section -->
-    <div class="employee-section">
+        <!-- Delete Employee Section -->
+        <div class="employee-section">
         <h2>Delete Employee</h2>
         <form @submit.prevent="deleteEmployeeById">
-            <input
-                type="number"
-                v-model="employeeToDeleteId"
-                placeholder="Enter Employee ID"
-                required
-            />
+            <input type="number" v-model="employeeToDeleteId" placeholder="Enter Employee ID" required />
             <button type="submit" class="delete-button">Delete Employee</button>
         </form>
+        </div>
     </div>
 
-      <!-- Employee List -->
-      <div class="employee-list">
-        <h2>All Employees</h2>
-        <ul v-if="employees.length > 0">
-            <li v-for="employee in employees" :key="employee.id">
-             ID: {{ employee.userID }} | Username: {{ employee.username || "No username" }} | 
-            {{ employee.isManager ? "Manager" : "Staff" }} | ({{ employee.isActive ? "Active" : "Not Active" }})
-            </li>
-        </ul>
-        <p v-else>No employees found in the system.</p>
-        </div>
+    <!-- Employee List -->
+    <div class="employee-list">
+    <h2>All Employees</h2>
+    <div class="button-container">
+        <button @click="toggleViewEmployees">
+        {{ showAllEmployees ? "Hide All Employees" : "View All Employees" }}
+        </button>
+    </div>
+
+    <ul v-if="showAllEmployees && employees.length > 0">
+        <li v-for="employee in employees" :key="employee.id">
+        ID: {{ employee.userID }} | Username: {{ employee.username || "No username" }} | 
+        {{ employee.isManager ? "Manager" : "Staff" }} | ({{ employee.isActive ? "Active" : "Not Active" }})
+        </li>
+    </ul>
+
+    <p v-if="showAllEmployees && employees.length === 0">
+        No employees found in the system.
+    </p>
+    </div>
+    </div>
     </div>
     </div>
   </template>
@@ -138,13 +125,22 @@ export default {
         errorMessage: "",
       
         employees: [], // List of all employees
+        showAllEmployees: false,
       newEmployee: {
         username: "",
         password: "",
         email: "",
+        isActive: true,
         isManager: false,
+      },
+
+      newManager: {
+        username: "",
+        password: "",
+        email: "",
         isActive: true,
       },
+
       selectedEmployee: null, // Employee selected for update
       employeeToUpdateId: null,
       employeeToDeleteId: null,
@@ -154,6 +150,11 @@ export default {
     this.fetchEmployees();
   },
   methods: {
+
+    toggleViewEmployees() {
+      this.showAllEmployees = !this.showAllEmployees;
+    },
+
     async verifyManager() {
       if (!this.employeeId) {
         this.errorMessage = "Please enter a valid Employee ID.";
@@ -211,13 +212,31 @@ export default {
 
     async addEmployee() {
       try {
-        const response = await axiosClient.post("/employee", this.newEmployee);
-        this.employees.push(response.data); // Add new employee to the list
+        if (this.newEmployee.isManager === true) {
+          const response = await axiosClient.post("/manager", this.newEmployee);
+          this.employees.push(response.data); // Add new employee to the list
+        }
+        else {
+          const response = await axiosClient.post("/employee", this.newEmployee);
+          this.employees.push(response.data); // Add new employee to the list
+        }
         this.resetNewEmployee();
         alert("Employee added successfully!");
       } catch (error) {
         console.error("Error adding employee:", error.response || error);
         alert("Failed to add employee.");
+      }
+    },
+
+    async addManager() {
+      try {
+        const response = await axiosClient.post("/manager", this.newManager);
+        this.employees.push(response.data);
+        this.resetNewManager();
+        alert("Manager added successfully!");
+      } catch (error) {
+        console.error("Error adding manager:", error.response || error);
+        alert("Failed to add manager.");
       }
     },
 
@@ -271,6 +290,16 @@ export default {
         isActive: false,
       };
     },
+
+    resetNewManager() {
+      this.newManager = {
+        username: "",
+        password: "",
+        email: "",
+        isManager: true,
+        isActive: true,
+      };
+    },
   },
 };
 </script>
@@ -308,22 +337,52 @@ export default {
   background-color: #218838;
 }
 
+.centered-management-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px; /* Adds spacing between sections */
+  padding: 20px;
+  margin: auto;
+  max-width: 1200px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.management-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
 .employee-management-page {
   padding: 70px;
   background-color: #f5f5f5;
   font-family: Arial, sans-serif;
 }
 
-h1, h2 {
+h1 {
   color: #333;
   text-align: center;
 }
 
-.employee-section {
+h2 {
+  font-size: 30px;
+    color: #333;
+    padding: 20px;
+  text-align: center;
+}
+
+.employee-section,
+.manager-section {
   background-color: #fff;
   padding: 30px;
   border-radius: 10px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  width: 400px;
   margin-bottom: 20px;
 }
 
@@ -370,10 +429,17 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-top: 10px;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .delete-section {

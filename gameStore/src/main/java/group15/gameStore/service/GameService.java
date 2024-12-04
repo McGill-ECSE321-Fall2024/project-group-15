@@ -93,18 +93,18 @@ public class GameService {
      * @throws GameStoreException if any required attribute is missing or invalid
      */
     @Transactional
-    public Game createGame(String title, String description, double price, int stock, String image, boolean isApproved, Manager manager) {
-        if (title.isBlank() || description.isBlank() || image.isBlank() || manager == null) {
+    public Game createGame(String title, String description, double price, int stock, String image, boolean isApproved, int managerId) {
+        if (title.isBlank() || description.isBlank() || image.isBlank()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid game creation request: missing attributes");
         }
         if (price < 0 || stock < 0) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "The price or stock of a game cannot be negative");
         }
         
-        if (managerRepo.findManagerByUserID(manager.getUserID()) == null) {
+        if (managerRepo.findManagerByUserID(managerId) == null) {
             throw new GameStoreException(HttpStatus.NOT_FOUND,"The manager does not exist");
         }
-        Game game = new Game(title, description, price, stock, image, isApproved, manager);
+        Game game = new Game(title, description, price, stock, image, isApproved, managerRepo.findManagerByUserID(managerId));
         return gameRepo.save(game);
     }
     
