@@ -163,14 +163,14 @@ export default {
       passwordSuccessMessage: "",
 
       // Email fields
-      currentEmail: "email@mail.com", // Default current email
+      currentEmail: localStorage.getItem("email") || "",
       newEmail: "",
       confirmEmail: "",
       emailErrorMessage: "",
       emailSuccessMessage: "",
 
       // Username fields
-      currentUsername: "ManagerUsername", // Default current username
+      currentUsername: localStorage.getItem("username") || "",
       newUsername: "",
       confirmUsername: "",
       usernameErrorMessage: "",
@@ -188,9 +188,10 @@ export default {
         return;
       }
 
-      if (this.currentPassword === "password123") {
+      if (this.currentPassword === localStorage.getItem("password")) {
         this.passwordSuccessMessage = "Your password has been successfully changed!";
         this.passwordErrorMessage = "";
+        localStorage.setItem("password", this.newPassword); // Save updated password
         this.resetPasswordFields();
       } else {
         this.passwordErrorMessage = "Current password is incorrect.";
@@ -204,10 +205,11 @@ export default {
         return;
       }
 
-      if (this.currentEmail === "email@mail.com") {
+      if (this.currentEmail === localStorage.getItem("email")) {
         this.emailSuccessMessage = "Your email has been successfully changed!";
         this.emailErrorMessage = "";
         this.currentEmail = this.newEmail; // Update the current email on success
+        localStorage.setItem("email", this.newEmail); // Save updated email
         this.resetEmailFields();
       } else {
         this.emailErrorMessage = "Current email is incorrect.";
@@ -221,10 +223,11 @@ export default {
         return;
       }
 
-      if (this.currentUsername === "ManagerUsername") {
+      if (this.currentUsername === localStorage.getItem("username")) {
         this.usernameSuccessMessage = "Your username has been successfully changed!";
         this.usernameErrorMessage = "";
         this.currentUsername = this.newUsername; // Update the current username on success
+        localStorage.setItem("username", this.newUsername); // Save updated username
         this.resetUsernameFields();
       } else {
         this.usernameErrorMessage = "Current username is incorrect.";
@@ -248,71 +251,96 @@ export default {
 };
 </script>
 
+
 <style scoped>
+/* Ensure there's space below the fixed navbar */
 .account-page {
-  padding-top: 80px; /* Ensures the header is not cut off */
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-top: 80px; /* Adjust the margin-top to ensure content is below navbar */
 }
+
 header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
-h1 {
-  color: #0040ff;
-}
+
 .form-container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
-}
-.form-section {
-  background: white;
+  justify-content: space-between;
   padding: 20px;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 300px;
-  flex: 1;
 }
+
+.form-section {
+  flex: 1 1 calc(33% - 20px); /* Each section takes up roughly 1/3 of the container */
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
 .input-group {
   margin-bottom: 15px;
 }
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
 .input-with-toggle {
   display: flex;
   align-items: center;
 }
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-button {
+
+.input-with-toggle button {
   background: none;
   border: none;
-  color: #0040ff;
+  color: #007bff;
   cursor: pointer;
+  margin-left: 10px;
 }
+
 .submit-button {
-  width: 100%;
-  background-color: #0040ff;
+  background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 10px 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  border-radius: 4px;
+  width: 100%;
 }
+
 .submit-button:hover {
-  background-color: #002080;
+  background-color: #0056b3;
 }
+
 .error-message {
   color: red;
-  text-align: center;
+  font-size: 14px;
 }
+
 .success-message {
   color: green;
-  text-align: center;
+  font-size: 14px;
 }
 </style>
