@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.4'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'jacoco'
 }
 
 group = 'group15'
@@ -9,7 +10,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(23)
 	}
 }
 
@@ -27,4 +28,23 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+		testLogging {
+		exceptionFormat "full"
+		events "passed", "failed"
+ 	}
+	ignoreFailures = true
+	finalizedBy jacocoTestReport
+}
+
+tasks.named('jacocoTestReport') {
+    dependsOn test // tests are required to run before generating the report
+}
+
+jacocoTestReport {
+    dependsOn test // Ensure tests run before generating report
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = file("$buildDir/reports/jacoco")
+    }
 }

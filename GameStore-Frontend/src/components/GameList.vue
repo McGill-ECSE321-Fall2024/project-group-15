@@ -1,0 +1,330 @@
+<template>
+  <div class="game-list-page">
+    <NavBar />
+    <div class="header-actions">
+      <SearchBar class="search-bar" @search="searchGame" />
+    </div>
+
+    <!-- Featured Games Section -->
+    <div class="featured-games-section">
+      <h2 class="centered-header">Featured Games (5-Star Rated)</h2>
+      <div class="game-cards featured">
+        <div v-for="game in featuredGames" :key="game.id" class="game-card">
+          <img :src="game.image" alt="Game Image" class="game-image" />
+          <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
+          
+          <!-- Display the original and promo price if applicable -->
+          <div class="price">
+            <p v-if="game.promoPrice">
+              <span class="original-price">${{ game.price.toFixed(2) }}</span>
+              <span class="promo-price">${{ game.promoPrice.toFixed(2) }}</span>
+            </p>
+            <p v-else>
+              ${{ game.price.toFixed(2) }}
+            </p>
+          </div>
+
+          <button @click="addToCart(game)">Add to Cart</button>
+          <button @click="addToWishlist(game)">Add to Wishlist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Games Section -->
+    <div class="category-games">
+      <h2 class="centered-header">
+        {{ selectedCategory ? selectedCategory : "All" }} Games
+      </h2>
+      <div class="filters">
+        <select v-model="selectedCategory" @change="filterByCategory">
+          <option value="">All Categories</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+      <div class="game-cards">
+        <div v-for="game in filteredGames" :key="game.id" class="game-card">
+          <img :src="game.image" alt="Game Image" class="game-image" />
+          <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
+
+          <!-- Display the original and promo price if applicable -->
+          <div class="price">
+            <p v-if="game.promoPrice">
+              <span class="original-price">${{ game.price.toFixed(2) }}</span>
+              <span class="promo-price">${{ game.promoPrice.toFixed(2) }}</span>
+            </p>
+            <p v-else>
+              ${{ game.price.toFixed(2) }}
+            </p>
+          </div>
+
+          <button @click="addToCart(game)">Add to Cart</button>
+          <button @click="addToWishlist(game)">Add to Wishlist</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<script>
+import NavBar from "./NavBar.vue";
+import SearchBar from "./SearchBar.vue";
+
+export default {
+  name: "GameList",
+  components: { NavBar, SearchBar },
+  data() {
+    return {
+      games: [
+        {
+          id: 1,
+          title: "The Witcher 3: Wild Hunt",
+          price: 39.99,
+          promoPrice: 29.99,
+          image: "https://store-images.s-microsoft.com/image/apps.20648.69531514236615003.534d4f71-03cb-4592-929a-b00a7de28b58.54adf0c7-6e6f-4d36-b639-503087c6fab2?q=90&w=177&h=177",
+          rating: "FIVE_STAR",
+          category: "Action"
+        },
+        {
+          id: 2,
+          title: "Red Dead Redemption 2",
+          price: 59.99,
+          promoPrice: 49.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/44/Red_Dead_Redemption_II.jpg/220px-Red_Dead_Redemption_II.jpg",
+          rating: "FIVE_STAR",
+          category: "RPG"
+        },
+        {
+          id: 3,
+          title: "Cyberpunk 2077",
+          price: 49.99,
+          promoPrice: null,
+          image: "https://image.api.playstation.com/vulcan/ap/rnd/202111/3013/6bAF2VVEamgKclalI0oBnoAe.jpg",
+          rating: "FOUR_STAR",
+          category: "Adventure"
+        },
+        {
+          id: 4,
+          title: "Assassin's Creed Odyssey",
+          price: 29.99,
+          promoPrice: null,
+          image: "https://i.imgur.com/txaFxgA.jpg",
+          rating: "FIVE_STAR",
+          category: "Strategy"
+        },
+        {
+          id: 5,
+          title: "Minecraft",
+          price: 26.95,
+          promoPrice: null,
+          image: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg",
+          rating: "THREE_STAR",
+          category: "Action"
+        },
+        {
+          id: 6,
+          title: "God of War",
+          price: 59.99,
+          promoPrice: 45.99,
+          image: "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
+          rating: "FIVE_STAR",
+          category: "Action"
+        },
+        {
+          id: 7,
+          title: "The Last of Us Part II",
+          price: 49.99,
+          promoPrice: null,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4f/TLOU_P2_Box_Art_2.png/220px-TLOU_P2_Box_Art_2.png",
+          rating: "FIVE_STAR",
+          category: "Action"
+        },
+        {
+          id: 8,
+          title: "Horizon Zero Dawn",
+          price: 49.99,
+          promoPrice: null,
+          image: "https://upload.wikimedia.org/wikipedia/en/thumb/9/93/Horizon_Zero_Dawn.jpg/220px-Horizon_Zero_Dawn.jpg",
+          rating: "FOUR_STAR",
+          category: "Adventure"
+        }
+      ],
+      filteredGames: [],
+      categories: ["Action", "RPG", "Adventure", "Strategy"],
+      selectedCategory: "",
+      cart: [],
+      wishlist: [],
+      featuredGames: []
+    };
+  },
+  created() {
+    const savedCart = localStorage.getItem("cart");
+    const savedWishlist = localStorage.getItem("wishlist");
+    if (savedCart) this.cart = JSON.parse(savedCart);
+    if (savedWishlist) this.wishlist = JSON.parse(savedWishlist);
+    this.filterByCategory();
+    this.setFeaturedGames();
+  },
+  methods: {
+    filterByCategory() {
+      this.filteredGames = this.selectedCategory
+        ? this.games.filter((game) => game.category === this.selectedCategory)
+        : [...this.games];
+    },
+    setFeaturedGames() {
+      this.featuredGames = this.games.filter(
+        (game) => game.rating === "FIVE_STAR"
+      );
+    },
+
+    addToCart(game) {
+      const existingGame = this.cart.find((item) => item.id === game.id);
+      if (existingGame) existingGame.quantity += 1;
+      else this.cart.push({ ...game, quantity: 1 });
+      localStorage.setItem("cart", JSON.stringify(this.cart));
+      alert(`${game.title} has been added to your cart!`);
+    },
+    addToWishlist(game) {
+      const existingGame = this.wishlist.find((item) => item.id === game.id);
+      if (!existingGame) {
+        this.wishlist.push(game);
+        localStorage.setItem("wishlist", JSON.stringify(this.wishlist));
+        alert(`${game.title} has been added to your wishlist!`);
+      } else {
+        alert(`${game.title} is already in your wishlist.`);
+      }
+    },
+    searchGame(query) {
+      this.$router.push({ path: "/search-results", query: { query } });
+    },
+    goToGameDetails(gameId) {
+      this.$router.push(`/games/${gameId}`);
+    }
+  }
+};
+</script>
+
+<style scoped>
+.game-list-page {
+  padding: 20px;
+  background-color: #f5f5f5;
+  color: #333; /* Default text color */
+}
+
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  margin-left: auto;
+}
+
+.game-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.game-card {
+  width: 200px;
+  border: 1px solid black; /* Black outline added here */
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: #333; /* Ensures text inside cards is visible */
+}
+
+.game-card img {
+  max-width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.game-card h3,
+.game-card p {
+  color: #333; /* Dark text for headings and paragraphs inside cards */
+}
+
+button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.featured-games-section {
+  background-color: gold;
+  padding: 20px;
+  border-radius: 10px;
+  color: #333; /* Text color for featured section */
+}
+
+.featured-games-section h3,
+.featured-games-section p {
+  color: #333; /* Ensure headings and text in the featured section are visible */
+}
+
+.centered-header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333; /* Dark color for centered headers */
+}
+
+.filters {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.filters select {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  color: #333; /* Text color for dropdowns */
+}
+
+.wishlist {
+  margin-top: 30px;
+}
+
+.wishlist h3 {
+  text-align: center;
+  color: #333; /* Dark text for wishlist headings */
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: red;
+  font-size: 14px;
+}
+
+.promo-price {
+  color: green;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+</style>
