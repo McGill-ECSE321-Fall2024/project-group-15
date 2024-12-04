@@ -76,7 +76,7 @@ public class GameServiceTest {
         
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-        Game createdGame = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        Game createdGame = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager.getUserID());
 
         assertNotNull(createdGame);
 		    assertEquals(VALID_TITLE, createdGame.getTitle());
@@ -94,7 +94,7 @@ public class GameServiceTest {
     @Test
     public void testCreateInvalidGame() {
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.createGame("", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER));
+				() -> gameService.createGame("", VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER.getUserID()));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("Invalid game creation request: missing attributes", e.getMessage());
     }
@@ -102,7 +102,7 @@ public class GameServiceTest {
     @Test
     public void testCreateInvalidGameNegativeStock() {
         GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, -5, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER));
+				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, -5, VALID_IMAGE, VALID_ISAPPROVED, VALID_MANAGER.getUserID()));
 		assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
 		assertEquals("The price or stock of a game cannot be negative", e.getMessage());
     }
@@ -113,7 +113,7 @@ public class GameServiceTest {
       invalidEmployee.setUserID(0);
 
       GameStoreException e = assertThrows(GameStoreException.class,
-				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, invalidEmployee));
+				() -> gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, invalidEmployee.getUserID()));
 		  assertEquals(HttpStatus.NOT_FOUND, e.getStatus());
 		  assertEquals("The manager does not exist", e.getMessage());
     }
@@ -152,7 +152,7 @@ public class GameServiceTest {
         
         when(mockGameRepo.save(any(Game.class))).thenAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
 
-        Game gameToUpdate = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager);
+        Game gameToUpdate = gameService.createGame(VALID_TITLE, VALID_DESC, VALID_PRICE, VALID_STOCK, VALID_IMAGE, VALID_ISAPPROVED, manager.getUserID());
 
         gameToUpdate.setTitle("");
 

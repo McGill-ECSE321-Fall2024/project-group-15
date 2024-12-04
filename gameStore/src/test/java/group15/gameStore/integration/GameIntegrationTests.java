@@ -153,7 +153,7 @@ public class GameIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertNotNull(response.getBody().getArchivedDate());
-        assertEquals(Date.valueOf(LocalDate.now()), response.getBody().getArchivedDate());
+        assertEquals(LocalDate.now(), response.getBody().getArchivedDate());
         }
 
     @Test
