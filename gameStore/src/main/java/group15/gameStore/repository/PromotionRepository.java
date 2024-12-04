@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface PromotionRepository extends CrudRepository<Promotion, Integer> {
     // Find promotions by ID
-    Promotion findPromotionByPromotionId(int id);
+    Promotion findByPromotionID(int promotionID);
+
     // Promotion findById(int Id);
 
     // Find promotions by game
