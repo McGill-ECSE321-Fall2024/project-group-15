@@ -9,9 +9,9 @@
     <div class="featured-games-section">
       <h2 class="centered-header">Featured Games (5-Star Rated)</h2>
       <div class="game-cards featured">
-        <div v-for="game in featuredGames" :key="game.id" class="game-card">
+        <div v-for="game in featuredGames" :key="game.gameID" class="game-card">
           <img :src="game.image" alt="Game Image" class="game-image" />
-          <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
+          <h3 @click="goToGameDetails(game)">{{ game.title }}</h3>
           <div class="price">
             <p v-if="game.promoPrice">
               <span class="original-price">${{ game.price.toFixed(2) }}</span>
@@ -30,20 +30,24 @@
     <!-- Category Games Section -->
     <div class="category-games">
       <h2 class="centered-header">
-        {{ selectedCategory ? selectedCategory : "All" }} Games
+        {{ selectedCategory ? selectedCategory.name : "All" }} Games
       </h2>
       <div class="filters">
         <select v-model="selectedCategory" @change="filterByCategory">
           <option value="">All Categories</option>
-          <option v-for="category in categories" :key="category" :value="category">
-            {{ category }}
+          <option
+            v-for="category in categories"
+            :key="category.categoryID"
+            :value="category"
+          >
+            {{ category.name }}
           </option>
         </select>
       </div>
       <div class="game-cards">
-        <div v-for="game in filteredGames" :key="game.id" class="game-card">
+        <div v-for="game in filteredGames" :key="game.gameID" class="game-card">
           <img :src="game.image" alt="Game Image" class="game-image" />
-          <h3 @click="goToGameDetails(game.id)">{{ game.title }}</h3>
+          <h3 @click="goToGameDetails(game.gameID)">{{ game.title }}</h3>
           <div class="price">
             <p v-if="game.promoPrice">
               <span class="original-price">${{ game.price.toFixed(2) }}</span>
@@ -82,16 +86,6 @@ export default {
       featuredGames: [],
     };
   },
-
-   // Fetch categories
-   async fetchCategories() {
-      try {
-        const response = await axiosClient.get("/categories");
-        this.categories = response.data || [];
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    },
     
   async created() {
     try {
@@ -104,12 +98,23 @@ export default {
       const response = await axios.get("/games");
       this.games = response.data;
       this.filterByCategory();
+      await this.fetchCategories();
       this.setFeaturedGames();
     } catch (error) {
       console.error("Error fetching games:", error);
     }
   },
   methods: {
+     // Fetch categories
+   async fetchCategories() {
+      try {
+        const response = await axios.get("/categories");
+        this.categories = response.data || [];
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    },
+
     filterByCategory() {
       this.filteredGames = this.selectedCategory
         ? this.games.filter((game) => game.category === this.selectedCategory)
@@ -140,8 +145,9 @@ export default {
     searchGame(query) {
       this.$router.push({ path: "/search-results", query: { query } });
     },
-    goToGameDetails(gameId) {
-      this.$router.push(`/games/${gameId}`);
+    goToGameDetails(gameID) {
+      console.log(gameID)
+      this.$router.push(`/games/${gameID}`);
     },
   },
 };
