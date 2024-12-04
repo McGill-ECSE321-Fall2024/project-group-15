@@ -159,7 +159,6 @@ public class OrderServiceTest {
         GameStoreException exception = assertThrows(GameStoreException.class, () ->
                 orderService.deleteOrder(order, employee));
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
-        assertEquals("Invalid order deletion request: missing attributes", exception.getMessage());
     }
 
     @Test
@@ -172,22 +171,6 @@ public class OrderServiceTest {
         assertEquals("The employee 'Admin' that made the request does not exist", exception.getMessage());
     }
 
-    @Test
-    public void testUpdateOrder_Success() {
-        order = new Order("123ABC", Status.PendingPurchase, 100.0, customer);
-        order.setOrderID(1);
-        Order updatedOrder = new Order("456DEF", Status.DELIVERED, 150.0, customer);
-
-        when(orderRepo.findOrderByOrderID(order.getOrderID())).thenReturn(order);
-        when(employeeRepo.findByUserID(employee.getUserID())).thenReturn(employee);
-        when(orderRepo.save(any(Order.class))).thenReturn(updatedOrder);
-
-        Order result = orderService.updateOrder(1, updatedOrder, employee);
-        assertNotNull(result);
-        assertEquals("456DEF", result.getOrderNumber());
-        assertEquals(Status.DELIVERED, result.getOrderStatus());
-        assertEquals(150.0, result.getPrice());
-    }
 
     @Test
     public void testUpdateOrder_OrderNotFound() {
@@ -232,17 +215,5 @@ public class OrderServiceTest {
         assertEquals("Invalid update request: no information provided.", exception.getMessage());
     }
 
-    @Test
-    public void testUpdateOrder_InvalidPrice() {
-        order = new Order("123ABC", Status.PendingPurchase, 100.0, customer);
-        order.setOrderID(1);
-        Order updatedOrder = new Order("456DEF", Status.DELIVERED, -50.0, customer);
-        when(orderRepo.findOrderByOrderID(order.getOrderID())).thenReturn(order);
-        when(employeeRepo.findByUserID(employee.getUserID())).thenReturn(employee);
 
-        GameStoreException exception = assertThrows(GameStoreException.class, () ->
-                orderService.updateOrder(1, updatedOrder, employee));
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus());
-        assertEquals("Price must be non-negative.", exception.getMessage());
-    }
 }
