@@ -88,22 +88,17 @@ public class ManagerService {
      * @throws GameStoreException if any field is missing or invalid
      */
     @Transactional
-    public Manager createManager(String username, String password, String email, boolean isActive, Employee employee) {
-        if (username.isBlank() || password.isBlank() || email.isBlank() || employee == null || username == null || username.trim().isEmpty()) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
-        }
-        if (password == null || password.length() < 8) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");
-        }
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid email format.");
-        }
-        if (employee == null || employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, "The employee making the request does not exist.");
-        }
-        if (!employee.isIsManager()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can create a manager account.");
-        }
+    public Manager createManager(String username, String password, String email, boolean isActive, boolean isManager) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Username is required.");
+         }
+         if (password == null || password.length() < 8) {
+             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Password must be at least 8 characters long.");
+         }
+         if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid email format.");
+         }
+
         Manager manager = new Manager(username, password, email, isActive, true);
         managerRepo.save(manager);
         return manager;
@@ -116,15 +111,9 @@ public class ManagerService {
      * @throws GameStoreException if the manager to delete or employee is invalid, or employee is unauthorized
      */
     @Transactional
-    public void deleteManager(Manager managerToDelete, Employee employee) {
-        if (managerToDelete == null || employee == null) {
+    public void deleteManager(Manager managerToDelete) {
+        if (managerToDelete == null) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
-        }
-        if (employeeRepo.findByUserID(employee.getUserID()) == null) {
-            throw new GameStoreException(HttpStatus.NOT_FOUND, String.format("The employee '%s' that made the request does not exist", employee.getUsername()));
-        }
-        if (!employee.isIsManager()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can delete a manager account");
         }
         managerRepo.delete(managerToDelete);
     }
@@ -138,17 +127,9 @@ public class ManagerService {
      * @throws GameStoreException if the update request is invalid or unauthorized
      */
     @Transactional
-    public Manager updateManager(int managerID, Manager updatedManager, Employee employee) {
-        if (updatedManager == null || updatedManager.getUsername().isBlank() || updatedManager.getPassword().isBlank() || updatedManager.getEmail().isBlank() || employee == null) {
+    public Manager updateManager(int managerID, Manager updatedManager) {
+        if (updatedManager == null || updatedManager.getUsername().isBlank() || updatedManager.getPassword().isBlank() || updatedManager.getEmail().isBlank()) {
             throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid manager creation request: missing attributes");
-        }
-        if (updatedManager == null || employee == null) {
-            throw new GameStoreException(HttpStatus.BAD_REQUEST, "Invalid update request: missing manager or employee information.");
-        }
-        Employee existingEmployee = employeeRepo.findByUserID(employee.getUserID());
-        
-        if (!existingEmployee.getIsManager()) {
-            throw new GameStoreException(HttpStatus.UNAUTHORIZED, "Only a manager can update manager accounts.");
         }
         Manager existingManager = managerRepo.findManagerByUserID(managerID);
         if (existingManager == null) {

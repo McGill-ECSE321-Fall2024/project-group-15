@@ -1,11 +1,8 @@
 package group15.gameStore.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import group15.gameStore.dto.CategoryDto;
 import group15.gameStore.dto.CustomerDto;
 import group15.gameStore.model.Customer;
 import group15.gameStore.service.CustomerService;

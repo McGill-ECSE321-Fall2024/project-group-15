@@ -18,7 +18,7 @@ public class Manager extends Employee
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  private Manager() {
+  public Manager() {
   }
 
   //------------------------
@@ -28,6 +28,7 @@ public class Manager extends Employee
   public Manager(String aUsername, String aPassword, String aEmail, boolean aIsActive, boolean aIsManager)
   {
     super(aUsername, aPassword, aEmail, aIsActive, aIsManager);
+    
   }
 
   //------------------------

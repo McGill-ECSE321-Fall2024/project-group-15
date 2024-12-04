@@ -25,9 +25,25 @@
           <input type="url" id="image" v-model="image" required />
         </div>
         <div class="form-group">
-          <label for="managerId">Manager ID</label>
-          <input type="number" id="managerId" v-model="managerId" min="0" required />
+        <label for="managerId">Manager ID</label>
+        <div class="manager-input-container">
+          <input
+            type="number"
+            id="managerId"
+            v-model="managerId"
+            min="0"
+            required
+          />
+          <button
+            type="button"
+            class="confirm-button"
+            @click="verifyManagerId"
+          >
+            Confirm
+          </button>
         </div>
+        <p v-if="managerErrorMessage" class="error-message">{{ managerErrorMessage }}</p>
+      </div>
         <div class="form-group">
           <label>
             <span>Is Approved</span>
@@ -62,11 +78,46 @@ export default {
       image: "",
       managerId: null,
       isApproved: false,
+      managerErrorMessage: "",
+      isManagerConfirmed: false,
       errorMessage: "",
     };
   },
   methods: {
+    async verifyManagerId() {
+      if (!this.managerId) {
+        this.managerErrorMessage = "Please enter a valid Manager ID.";
+        return;
+      }
+
+      try {
+        const response = await axios.get(`/employee/id/${this.managerId}`);
+        const manager = response.data;
+
+        if (manager.isManager) {
+          this.managerErrorMessage = "";
+          this.isManagerConfirmed = true;
+          alert("Manager ID confirmed.");
+        } else {
+          this.managerErrorMessage = "The entered ID does not belong to a manager.";
+          this.isManagerConfirmed = false;
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          this.managerErrorMessage = "No employee found with this ID.";
+        } else {
+          this.managerErrorMessage = "An error occurred while verifying the manager.";
+        }
+        this.isManagerConfirmed = false;
+      }
+    },
+    
     async submitGame() {
+      if (!this.isManagerConfirmed) {
+      alert("Please confirm a valid Manager ID before submitting.");
+      return;
+    }
+
       const gameData = {
         title: this.title,
         description: this.description,
@@ -192,5 +243,25 @@ export default {
   margin-top: 20px;
   color: red;
   font-size: 1rem;
+}
+
+.manager-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.confirm-button {
+  background-color:#28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-button:hover {
+  background-color: #218838;
 }
 </style>

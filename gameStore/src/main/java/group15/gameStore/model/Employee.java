@@ -56,7 +56,7 @@ public class Employee extends Person
 
   // Hibernate default constructor
   @SuppressWarnings("unused")
-  protected Employee() {
+  public Employee() {
   }
 
   //------------------------
