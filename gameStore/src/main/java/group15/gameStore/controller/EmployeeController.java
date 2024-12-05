@@ -50,7 +50,12 @@ public class EmployeeController{
     public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("employeeId") int employeeId, 
             @RequestBody EmployeeDto employeeDto) {
         
-        Employee existingEmployee = employeeService.getEmployeeById(employeeDto.getUserID());
+        Employee existingEmployee = employeeService.getEmployeeById(employeeId);
+        existingEmployee.setUsername(employeeDto.getUsername());
+        existingEmployee.setEmail(employeeDto.getEmail());
+        existingEmployee.setPassword(employeeDto.getPassword());
+        existingEmployee.setIsActive(employeeDto.isActive());
+        existingEmployee.setIsManager(employeeDto.isManager());
         Employee updatedEmployee = employeeService.updateEmployee(employeeId, existingEmployee);
         
         return new ResponseEntity<>(new EmployeeDto(updatedEmployee), HttpStatus.OK);

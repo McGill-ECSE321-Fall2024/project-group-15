@@ -58,14 +58,10 @@
         <form @submit.prevent="updateEmployeeById">
             <input type="number" v-model="employeeToUpdateId" placeholder="Enter Employee ID" required />
             <button @click="fetchEmployeeById" type="button" class="confirm-button">Confirm ID</button>
-            <div v-if="selectedEmployee">
+            <div v-if="selectedEmployee.username">
             <input type="text" v-model="selectedEmployee.username" placeholder="Enter username" required />
             <input type="password" v-model="selectedEmployee.password" placeholder="Enter password" required />
             <input type="email" v-model="selectedEmployee.email" placeholder="Enter email" required />
-            <label>
-                <span>Is a Manager</span>
-                <input type="checkbox" v-model="selectedEmployee.isManager" />
-            </label>
             <label>
                 <span>Is Active</span>
                 <input type="checkbox" v-model="selectedEmployee.isActive" />
@@ -141,7 +137,14 @@ export default {
         isActive: true,
       },
 
-      selectedEmployee: null, // Employee selected for update
+      selectedEmployee: {
+        userID: 0,
+        username: "",
+        password: "",
+        email: "",
+        isActive: true,
+        isManager: false,
+      }, // Employee selected for update
       employeeToUpdateId: null,
       employeeToDeleteId: null,
     };
@@ -200,7 +203,15 @@ export default {
 
         try {
             const response = await axiosClient.get(`/employee/id/${this.employeeToUpdateId}`);
-            this.selectedEmployee = response.data; // Populate form with employee data
+            // Populate form with employee data
+            this.selectedEmployee = { 
+              userID: response.data.userID,
+              username: response.data.username,
+              password: response.data.password,
+              email: response.data.email,
+              isActive: !!response.data.isActive,  // Ensure boolean
+              isManager: !!response.data.isManager // Ensure boolean
+            };
         } catch (error) {
             console.error("Error fetching employee by ID:", error.response || error);
             alert(
@@ -246,11 +257,15 @@ export default {
             return;
         }
         try {
-            console.log(this.selectedEmployee.userID);
-            await axiosClient.put(`/employee/update/${this.selectedEmployee.userID}`,this.selectedEmployee);
-            console.log("test2");
+
+            if (this.selectedEmployee.isManager === true) {
+              await axiosClient.put(`/manager/${this.selectedEmployee.userID}`,this.selectedEmployee);
+            }
+            else {
+              await axiosClient.put(`/employee/update/${this.selectedEmployee.userID}`,this.selectedEmployee);
+            }
             alert("Employee updated successfully.");
-            this.selectedEmployee = null; // Clear form
+            this.selectedEmployee.username = ""; // Clear form
         } catch (error) {
             console.error("Error updating employee:", error.response || error);
             alert(
