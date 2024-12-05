@@ -22,10 +22,10 @@ public class CustomerDto extends PersonDto {
         this.phoneNumber = customer.getPhoneNumber();
     }
 
-    public CustomerDto(String aUsername, String aPassword, String aEmail, String aAddress, String aPhoneNumber){
-        super(aUsername, aPassword, aEmail);
-        address = aAddress;
-        phoneNumber = aPhoneNumber;
+    public CustomerDto(String username, String password, String email, String address, String phoneNumber){
+        super(username, password, email);
+        address = address;
+        phoneNumber = phoneNumber;
     }
 
 

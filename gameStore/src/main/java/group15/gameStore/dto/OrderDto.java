@@ -33,10 +33,10 @@ public class OrderDto {
         this.customerId = order.getCustomer().getUserID();
     }
     
-    public OrderDto(String aOrderNumber, Status aOrderStatus, double aPrice, int customerId){
-        this.orderNumber = aOrderNumber;
-        this.orderStatus = aOrderStatus;
-        this.price = aPrice;
+    public OrderDto(String orderNumber, Status orderStatus, double price, int customerId){
+        this.orderNumber = orderNumber;
+        this.orderStatus = orderStatus;
+        this.price = price;
         this.customerId = customerId;
         this.games = new ArrayList<Integer>();
     }
