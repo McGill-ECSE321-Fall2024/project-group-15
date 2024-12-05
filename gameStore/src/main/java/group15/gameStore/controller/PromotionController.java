@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.dto.GameDto;
@@ -138,10 +139,10 @@ public class PromotionController{
      * @return HTTP status "NO CONTENT"
      */
     @DeleteMapping("/promotion/{promotionCode}")
-    public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode,
-        @RequestBody GameDto gameDto) {
-
-        Game game = gameService.getGameByID(gameDto.getGameID());
+    public ResponseEntity<Void> deletePromotion(@PathVariable String promotionCode) {
+        
+        Promotion promotion = promotionService.getByPromotionCode(promotionCode);
+        Game game = gameService.getGameByID(promotion.getGame().getGameID());
         promotionService.deletePromotion(promotionCode, game);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
