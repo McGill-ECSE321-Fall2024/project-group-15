@@ -164,7 +164,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
+  margin-top: 70px;
   margin-bottom: 20px;
 }
 

@@ -20,23 +20,35 @@ export default {
 </script>
 
 <style scoped>
+/* Root styles for global font consistency */
+:root {
+  font-family: 'Arial', sans-serif; /* Replace with your desired font */
+}
+
 .nav-bar {
   background: #2c3e50;
   padding: 10px 20px;
   display: flex;
   justify-content: center;
+  align-items: center; 
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 10;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  height: 60px;
+  height: 50px; 
+}
+
+nav {
+  display: flex;
+  align-items: center;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
   font-size: 18px;
+  font-family: inherit; 
   margin: 0 15px;
   padding: 8px 15px;
   border-radius: 5px;

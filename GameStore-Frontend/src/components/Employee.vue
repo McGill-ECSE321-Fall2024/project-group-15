@@ -256,8 +256,8 @@ export default {
             alert("No employee selected for update.");
             return;
         }
-
         try {
+
             if (this.selectedEmployee.isManager === true) {
               await axiosClient.put(`/manager/${this.selectedEmployee.userID}`,this.selectedEmployee);
             }
