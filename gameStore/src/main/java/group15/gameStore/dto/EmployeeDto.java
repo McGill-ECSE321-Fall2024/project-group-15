@@ -35,12 +35,12 @@ public class EmployeeDto extends PersonDto {
     public EmployeeDto(String username, String password, String email, boolean isActive, boolean isManager)
     {
       super(username, password, email);
-      isActive = isActive;
-      isManager = isManager;
-      categories = new ArrayList<CategoryDto>();
-      orders = new ArrayList<OrderDto>();
-      games = new ArrayList<GameDto>();
-      wishlists = new ArrayList<WishlistDto>();
+      this.isActive = isActive;
+      this.isManager = isManager;
+      this.categories = new ArrayList<CategoryDto>();
+      this.orders = new ArrayList<OrderDto>();
+      this.games = new ArrayList<GameDto>();
+      this.wishlists = new ArrayList<WishlistDto>();
     }
 
     //Generated Getters and Setters
