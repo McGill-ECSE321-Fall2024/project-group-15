@@ -76,7 +76,7 @@ export default {
     async submitReview() {
       try {
         // Fetch the gameID using the game title
-        const gameResponse = await axios.get(`/games?title=${encodeURIComponent(this.gameTitle)}`);
+        const gameResponse = await axios.get(`/game/title/${encodeURIComponent(this.gameTitle)}`);
         if (!gameResponse.data || gameResponse.data.length === 0) {
           this.errorMessage = "Game not found. Please check the game title.";
           return;
