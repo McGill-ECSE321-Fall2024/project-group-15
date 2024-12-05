@@ -23,6 +23,7 @@
           </div>
           <button @click="addToCart(game)">Add to Cart</button>
           <button @click="addToWishlist(game)">Add to Wishlist</button>
+          <button @click="seeReviews(game.gameID)">See Reviews</button>
         </div>
       </div>
     </div>
@@ -61,6 +62,7 @@
           </div>
           <button @click="addToCart(game)">Add to Cart</button>
           <button @click="addToWishlist(game)">Add to Wishlist</button>
+          <button @click="seeReviews(game.gameID)">See Reviews</button>
         </div>
       </div>
     </div>
@@ -148,6 +150,9 @@ export default {
     goToGameDetails(gameID) {
       console.log(gameID)
       this.$router.push(`/games/${gameID}`);
+    },
+    seeReviews(gameID) {
+      this.$router.push(`/reviews/${gameID}`);
     },
   },
 };
