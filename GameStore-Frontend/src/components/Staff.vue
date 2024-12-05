@@ -34,7 +34,7 @@
           <!-- Game Search Result for Category -->
           <div v-if="selectedGameForCategory" class="game-search-result">
             <h3>{{ selectedGameForCategory.title }}</h3>
-            <img :src="selectedGameForCategory.image" alt="Game Image" class="game-image" />
+            <img :src="selectedGameForCategory.image" alt="Game Image" class="game-image-small" />
             <select v-model="selectedCategory" class="dropdown">
               <option value="">Select Category</option>
               <option v-for="category in categories" :key="category.categoryID" :value="category">
@@ -138,7 +138,7 @@
                 <!-- Game Search Result -->
                 <div v-if="selectedGameForPromotion" class="game-search-result">
                     <h3>Selected Game: {{ selectedGameForPromotion.title }}</h3>
-                    <img :src="selectedGameForPromotion.image" alt="Game Image" class="game-image" />
+                    <img :src="selectedGameForPromotion.image" alt="Game Image" class="game-image-small" />
                 </div>
 
                 <button @click="addPromotion" class="submit-button">Submit Promotion</button>
@@ -473,6 +473,17 @@ export default {
 </script>
 
 <style scoped>
+.game-image-small {
+  max-width: 150px; /* Adjust width as needed */
+  max-height: 150px; /* Adjust height as needed */
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 10px auto; /* Center the image horizontally */
+  border-radius: 5px; /* Optional: Add rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for better visibility */
+}
+
 .staff-page {
   padding: 40px;
   background-color: #f5f5f5;
