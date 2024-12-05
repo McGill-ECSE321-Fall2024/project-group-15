@@ -13,7 +13,7 @@ import Review from '@/components/Review.vue';
 import Staff from "@/components/Staff.vue";
 import Employee from '@/components/Employee.vue';
 import WishListPage from '@/components/WishListPage.vue';
-import StaffReview from '@/components/Staff Review.vue';
+import StaffReview from '@/components/StaffReview.vue';
 
 
 const routes = [
