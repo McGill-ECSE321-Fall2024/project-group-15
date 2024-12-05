@@ -133,6 +133,8 @@
                     <button @click="searchGameForPromotion" class="search-button">Search</button>
                 </div>
 
+                <br>
+
                 <!-- Game Search Result -->
                 <div v-if="selectedGameForPromotion" class="game-search-result">
                     <h3>Selected Game: {{ selectedGameForPromotion.title }}</h3>
@@ -326,7 +328,7 @@ export default {
     }
     try {
       console.log("Selected Game:", this.selectedGameForCategory);
-      console.log(this.selectedCategory.name)
+      console.log(this.selectedCategory);
       console.log(this.selectedCategory, this.selectedGameForCategory.gameID);
       await axiosClient.post(`/category/assign/${this.selectedGameForCategory.gameID}`, this.selectedCategory);
       alert("Game assigned to category!");
@@ -380,7 +382,7 @@ export default {
       try {
         await axiosClient.post("/promotion", {
           promotionCode: this.selectedPromotion,
-          gameId: this.selectedGameForPromotion.id,
+          gameId: this.selectedGameForPromotion.gameID,
         });
         alert("Game assigned to promotion!");
       } catch (error) {
@@ -405,10 +407,8 @@ export default {
       await axiosClient.post("/promotion", {
         promotionCode: this.newPromotionCode.trim(),
         discountPercentage: this.newPromotionDiscount,
-        dateValidUntil: this.newPromotionDateValidUntil,
-        game: {
-          gameID: this.selectedGameForPromotion.id, // Pass the selected game ID
-        },
+        validUntil: this.newPromotionDateValidUntil,
+        gameId: this.selectedGameForPromotion.gameID, // Pass the selected game ID
       });
 
       // Update local promotions list

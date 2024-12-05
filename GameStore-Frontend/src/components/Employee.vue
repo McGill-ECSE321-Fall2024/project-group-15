@@ -245,10 +245,10 @@ export default {
             alert("No employee selected for update.");
             return;
         }
-
         try {
-            await axiosClient.put(`/employee/update/${this.selectedEmployee.id}`,this.selectedEmployee);
-            console.log("test2")
+            console.log(this.selectedEmployee.userID);
+            await axiosClient.put(`/employee/update/${this.selectedEmployee.userID}`,this.selectedEmployee);
+            console.log("test2");
             alert("Employee updated successfully.");
             this.selectedEmployee = null; // Clear form
         } catch (error) {

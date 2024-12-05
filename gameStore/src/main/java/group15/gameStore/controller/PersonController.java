@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import group15.gameStore.model.Person;
 import group15.gameStore.dto.PersonDto;
 import group15.gameStore.service.PersonService;
 
+@CrossOrigin(origins = "http://localhost:5173") // Frontend's base URL
 @RestController
 public class PersonController {
 
