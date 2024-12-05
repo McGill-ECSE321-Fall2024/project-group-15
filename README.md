@@ -65,16 +65,36 @@ The second deliverable focuses on implementing backend services using RESTful HT
 
 
 ## Deliverable 3:
-The third deliverable focuses on _________.<br/> 
+The third deliverable focuses on the implementation of the Web Frontend using HTML, CSS, and JS technology. There was also a focus on the integration of the Frontend with Backend services by issuing asynchronous calls via the systems RESTful API.<br/> 
 [Key Design Decisions](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Class-Diagram-&-Design-Decision-Rationale)<br/>
 [Meeting Minutes](https://github.com/McGill-ECSE321-Fall2024/project-group-15/wiki/Project-Meeting-Minutes)<br/>
 
-**To Build System_____:**<br/>
--> cd gamestore ./gradlew clean build or ./gradlew build
-_______________
+**To Run and Deploy Backend:**<br/>
+In terminal: <br/>
+-> gameStore % ./gradlew bootRun <br/>
+
+* This will start executing until it reaches 80% (Intended value)
+
+In any browser (Chrome, Safari, etc..): <br/>
+-> [localhost:8080](http://localhost:8080) <br/>
+
+* Provides access to SpringBoot
+
+
+
+**To Run and Deploy Frontend:**<br/>
+In terminal: <br/>
+->  GameStore-Frontend % npm run dev <br/>
+
+* This will start the front end and provide a link (listed below) to where it is deployed too <br/>
+
+In any browser (Chrome, Safari, etc..):<br/>
+-> [localhost:5173](http://localhost:5173) <br/>
+
+* Provides access to Web application
 
 
 **Effort Distribution**
 | Jordan | Ben | Jason | Jacob | Yvehenry |
 | ------ | --- | ----- | ----- | -------- |
-|  __%   | __% |  __%  |  __%  |    __%   |  
+|  20%   | 20% |  20%  |  20%  |    20%   |  
