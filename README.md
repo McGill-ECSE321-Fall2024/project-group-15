@@ -71,7 +71,7 @@ The third deliverable focuses on the implementation of the Web Frontend using HT
 
 **To Run and Deploy Backend:**<br/>
 In terminal: <br/>
--> cd gamestore ./gradlew bootRun <br/>
+-> cd gameStore ./gradlew bootRun <br/>
 
 * This will start executing until it reaches 80% (Intended value)
 
@@ -81,9 +81,10 @@ In any browser (Chrome, Safari, etc..): <br/>
 * Provides access to SpringBoot
 
 
+
 **To Run and Deploy Frontend:**<br/>
 In terminal: <br/>
--> cd gamestore-Frontend npm run dev <br/>
+-> cd GameStore-Frontend npm run dev <br/>
 
 * This will start the front end and provide a link (listed below) to where it is deployed too <br/>
 
