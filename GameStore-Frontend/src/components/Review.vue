@@ -1,152 +1,173 @@
 <template>
   <div class="review-page">
-    <h1>Reviews for {{ gameTitle }}</h1>
-    <div v-if="reviews.length > 0" class="reviews-list">
-      <div v-for="review in reviews" :key="review.id" class="review-item">
-        <p><strong>Rating:</strong> {{ review.rating }}</p>
-        <p><strong>Description:</strong> {{ review.description }}</p>
+    <h1>Add a Review</h1>
+    <form @submit.prevent="submitReview">
+      <!-- Game Title -->
+      <div class="form-group">
+        <label for="game-title">Game Title</label>
+        <input
+          type="text"
+          id="game-title"
+          v-model="gameTitle"
+          placeholder="Enter the game title"
+          required
+        />
       </div>
-    </div>
-    <div v-else>
-      <p>No reviews available for this game.</p>
-    </div>
-    <button @click="toggleAddReviewForm" class="add-review-button">Add Review</button>
-    
-    <div v-if="showAddReviewForm" class="add-review-form">
-      <label for="rating">Rating:</label>
-      <select v-model="newReview.rating">
-        <option v-for="rating in ratings" :key="rating" :value="rating">
-          {{ rating }}
-        </option>
-      </select>
-      <textarea
-        v-model="newReview.description"
-        placeholder="Write your review..."
-      ></textarea>
-      <button @click="submitReview" class="submit-review-button">Submit</button>
-    </div>
 
-  <div v-for="review in reviews" :key="review.id" :class="{ response: review.isResponse }">
-    <p><strong>{{ review.isResponse ? `Responding to ${review.responseTo}` : review.username }}:</strong></p>
-    <p>{{ review.description }}</p>
-    <p><strong>Rating:</strong> {{ review.rating }}</p>
-  </div>
+      <!-- Customer ID -->
+      <div class="form-group">
+        <label for="customer-id">Customer ID</label>
+        <input
+          type="text"
+          id="customer-id"
+          v-model="customerID"
+          placeholder="Enter your customer ID"
+          required
+        />
+      </div>
 
+      <!-- Rating -->
+      <div class="form-group">
+        <label for="rating">Rating (1-5)</label>
+        <select id="rating" v-model="rating" required>
+          <option value="" disabled>Select a rating</option>
+          <option v-for="star in 5" :key="star" :value="star">{{ star }}</option>
+        </select>
+      </div>
+
+      <!-- Review Text -->
+      <div class="form-group">
+        <label for="review-text">Review</label>
+        <textarea
+          id="review-text"
+          v-model="reviewText"
+          placeholder="Write your review here"
+          rows="5"
+          required
+        ></textarea>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-button">Add Review</button>
+    </form>
+
+    <!-- Error Message -->
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
   </div>
 </template>
 
 <script>
-import axiosClient from "./axios";
+import axios from "./axios";
 
 export default {
+  name: "Review",
   data() {
     return {
-      gameTitle: "",
-      reviews: [],
-      showAddReviewForm: false,
-      newReview: {
-        rating: "",
-        description: "",
-      },
-      ratings: ["ONE_STAR", "TWO_STAR", "THREE_STAR", "FOUR_STAR", "FIVE_STAR"],
+      gameTitle: "", // Game title input by the user
+      customerID: "", // Customer ID input
+      rating: "", // Rating input (1-5)
+      reviewText: "", // Review text input
+      errorMessage: "", // Error message for displaying any issues
     };
   },
-  created() {
-    this.fetchReviews();
-    this.fetchGameDetails();
-  },
   methods: {
-    async fetchReviews() {
-      try {
-        const response = await axiosClient.get(`/review/game/${this.$route.params.gameId}`);
-        this.reviews = response.data;
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-      }
-    },
-    async fetchGameDetails() {
-      try {
-        const response = await axiosClient.get(`/game/${this.$route.params.gameId}`);
-        this.gameTitle = response.data.title;
-      } catch (error) {
-        console.error("Error fetching game details:", error);
-      }
-    },
-    toggleAddReviewForm() {
-      this.showAddReviewForm = !this.showAddReviewForm;
-    },
     async submitReview() {
       try {
-        const reviewData = {
-          rating: this.newReview.rating,
-          description: this.newReview.description,
-          game: { gameID: this.$route.params.gameId },
+        // Fetch the gameID using the game title
+        const gameResponse = await axios.get(`/games?title=${encodeURIComponent(this.gameTitle)}`);
+        if (!gameResponse.data || gameResponse.data.length === 0) {
+          this.errorMessage = "Game not found. Please check the game title.";
+          return;
+        }
+
+        const gameID = gameResponse.data[0].gameID;
+
+        // Prepare the review payload
+        const reviewPayload = {
+          gameID,
+          customerID: this.customerID,
+          rating: this.rating,
+          review: this.reviewText,
         };
-        await axiosClient.post("/review", reviewData);
+
+        // Submit the review to the backend
+        await axios.post("/reviews", reviewPayload);
+
+        // Clear form and show success message
         alert("Review added successfully!");
-        this.newReview = { rating: "", description: "" };
-        this.showAddReviewForm = false;
-        this.fetchReviews(); // Refresh reviews list
+        this.gameTitle = "";
+        this.customerID = "";
+        this.rating = "";
+        this.reviewText = "";
+        this.errorMessage = "";
       } catch (error) {
-        console.error("Error adding review:", error);
-        alert("Failed to add review.");
+        console.error("Error submitting review:", error);
+        this.errorMessage = "An error occurred while submitting your review. Please try again.";
       }
     },
   },
 };
 </script>
 
-<style>
+<style scoped>
 .review-page {
+  max-width: 600px;
+  margin: 20px auto;
   padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.reviews-list {
-  margin-top: 20px;
+h1 {
+  text-align: center;
+  color: #333;
 }
 
-.review-item {
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-h1{
-  color: #000000
+textarea {
+  resize: none;
 }
 
-p{
-  color: #000000
-}
-
-label{
-  color: #000000
-}
-
-.add-review-button {
-  margin-top: 20px;
+.submit-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
   background-color: #28a745;
   color: white;
-  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.add-review-button:hover {
+.submit-button:hover {
   background-color: #218838;
 }
 
-.add-review-form {
-  margin-top: 20px;
-}
-
-.submit-review-button {
+.error-message {
+  color: red;
   margin-top: 10px;
-  background-color: #0040ff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+  text-align: center;
 }
 </style>
