@@ -14,6 +14,7 @@
       </div>
 
       <!-- Update Password Section -->
+      <!-- Existing password update form -->
       <div class="form-section">
         <h2>Update Password</h2>
         <form @submit.prevent="handlePasswordChange">
@@ -62,6 +63,7 @@
       </div>
 
       <!-- Update Email Section -->
+      <!-- Existing email update form -->
       <div class="form-section">
         <h2>Update Email</h2>
         <form @submit.prevent="handleEmailChange">
@@ -105,6 +107,7 @@
       </div>
 
       <!-- Update Username Section -->
+      <!-- Existing username update form -->
       <div class="form-section">
         <h2>Update Username</h2>
         <form @submit.prevent="handleUsernameChange">
@@ -147,34 +150,44 @@
         </form>
       </div>
     </div>
-    <!-- Payment History Modal -->
-    <div v-if="showPaymentHistory" class="modal-overlay">
-      <div class="modal">
-        <header>
-          <h2>Payment History</h2>
-          <button class="close-button" @click="showPaymentHistory = false">Close</button>
-        </header>
-        <div class="modal-content">
-          <ul v-if="paymentHistory.length">
-            <li v-for="payment in paymentHistory" :key="payment.paymentInfoID" class="order-item">
-              <p><strong>Card Number:</strong> {{ maskCardNumber(payment.cardNumber) }}</p>
-              <p><strong>Expiry Date:</strong> {{ payment.expiryDate }}</p>
-              <p><strong>Billing Address:</strong> {{ payment.billingAddress }}</p>
-              <button @click="deletePaymentInfo(payment.cardNumber)" class="delete-button">Delete</button>
-            </li>
-          </ul>
-          <p v-else>No payment history available.</p>
+
+    <!-- Order History Modal -->
+    <div v-if="showOrderHistory" class="modal-overlay">
+        <div class="modal">
+          <header>
+            <h2>Order History</h2>
+            <button class="close-button" @click="showOrderHistory = false">Close</button>
+          </header>
+          <div class="modal-content">
+            <div class="input-group">
+              <label for="userId">Enter User ID:</label>
+              <input
+                type="number"
+                v-model="userID"
+                id="userId"
+                placeholder="Enter your user ID"
+              />
+              <button @click="fetchOrderHistory" class="submit-button">Fetch Orders</button>
+            </div>
+            <ul v-if="orders.length">
+              <li v-for="order in orders" :key="order.orderID" class="order-item">
+                <p><strong>Order Number:</strong> {{ order.orderNumber }}</p>
+                <p><strong>Status:</strong> {{ order.orderStatus }}</p>
+                <p><strong>Price:</strong> ${{ order.price.toFixed(2) }}</p>
+                <button @click="returnOrder(order.orderID)" class="return-button">Return</button>
+              </li>
+            </ul>
+            <p v-else>No orders found for this user ID.</p>
+          </div>
         </div>
       </div>
     </div>
-
-  </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
+
 export default {
-  name: "Account",
   data() {
     return {
       // Password fields
@@ -200,8 +213,9 @@ export default {
       usernameSuccessMessage: "",
 
       // Payment History
-      showPaymentHistory: false,
-      paymentHistory: [],
+      showOrderHistory: false,
+      username: "",
+      orders: [],
     };
   },
   methods: {
@@ -272,38 +286,35 @@ export default {
       this.confirmUsername = "";
     },
     
-    // Fetch payment history from the backend
-    async fetchPaymentHistory() {
-      try {
-        const response = await axios.get('/paymentInfo'); 
-        this.paymentHistory = response.data;
-        this.showPaymentHistory = true;
-      } catch (error) {
-        console.error("Failed to fetch payment history:", error);
-        alert("Error fetching payment history. Please try again later.");
-      }
-
+    fetchPaymentHistory() {
+      this.showOrderHistory = true;
     },
 
-    maskCardNumber(cardNumber) {
-      return `${"*".repeat(12)}${cardNumber.slice(-4)}`;
-    },
-
-    // Delete payment information
-    async deletePaymentInfo(cardNumber) {
-      if (!confirm("Are you sure you want to delete this payment information?")) {
+    async fetchOrderHistory() {
+      if (!this.userID) {
+        alert("Please enter a valid user ID.");
         return;
       }
       try {
-        const customer = { userId: 1 }; // Replace with actual user ID
-        await axios.delete(`/paymentInfo/${cardNumber}`, { data: customer });
-        this.paymentHistory = this.paymentHistory.filter(
-          (payment) => payment.cardNumber !== cardNumber
-        );
-        alert("Payment information deleted successfully.");
+        const response = await axios.get(`/orders?userID=${this.userID}`);
+        this.orders = response.data;
       } catch (error) {
-        console.error("Failed to delete payment information:", error);
-        alert("Error deleting payment information. Please try again later.");
+        console.error("Error fetching orders:", error);
+        alert("Failed to fetch order history.");
+      }
+    },
+
+    async returnOrder(orderID) {
+      if (!confirm("Are you sure you want to return this order?")) {
+        return;
+      }
+      try {
+        await axios.post(`/orders/${orderID}/return`);
+        alert("Order returned successfully!");
+        this.orders = this.orders.filter((order) => order.orderID !== orderID);
+      } catch (error) {
+        console.error("Error returning order:", error);
+        alert("Failed to return the order.");
       }
     },
   },
@@ -394,7 +405,7 @@ button {
 .review-history-button {
   position: absolute;
   top: 80px;
-  right: 100px;
+  right: 1000px;
   background-color: #0040ff;
   color: white;
   padding: 10px 20px;
@@ -453,7 +464,7 @@ button {
   background-color: darkred;
 }
 
-/* .return-button {
+.return-button {
   background-color: red;
   color: white;
   padding: 5px 10px;
@@ -464,7 +475,7 @@ button {
 
 .return-button:hover {
   background-color: darkred;
-} */
+}
 
 .order-item {
   border-bottom: 1px solid #ddd;

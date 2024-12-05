@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import group15.gameStore.dto.CustomerDto;
@@ -86,6 +87,25 @@ public class OrderController{
         List<OrderDto> responseDtoList = orders.stream().map(OrderDto::new).collect(Collectors.toList());
         return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
     }
+
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderDto>> getOrdersByUserID(@RequestParam(required = false) int userID) {
+        List<Order> orders;
+        if (userID != 0 ) {
+            orders = orderService.getOrdersByUserID(userID);
+        } else {
+            orders = orderService.getAllOrders();
+        }
+        List<OrderDto> responseDtoList = orders.stream().map(OrderDto::new).collect(Collectors.toList());
+        return new ResponseEntity<>(responseDtoList, HttpStatus.OK);
+    }
+
+    @PostMapping("/orders/{orderId}/return")
+    public ResponseEntity<Void> returnOrder(@PathVariable int orderId) {
+        orderService.returnOrder(orderId); 
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     /**
      * DeleteOrder: deletes an order by ID
