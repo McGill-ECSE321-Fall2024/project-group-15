@@ -89,7 +89,7 @@ const routes = [
     path: "/staff/reviews",
     name: "Reviews",
     component: StaffReview
-  }
+  },
 
   {
     path: "/staff/employees",
