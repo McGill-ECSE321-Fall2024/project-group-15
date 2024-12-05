@@ -33,7 +33,7 @@ export default {
 
         // Redirect to the game details page
         if (game && game.gameID) {
-          this.$router.push(`/games/${game.id}`);
+          this.$router.push(`/games/${game.gameID}`);
         } else {
           alert("Game not found. Please try a different title.");
         }
