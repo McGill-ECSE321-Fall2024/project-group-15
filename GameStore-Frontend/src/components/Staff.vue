@@ -184,7 +184,7 @@
     </div>
   
       <div class="sub-nav-bar">
-        <button @click="navigateToGroupedReviews" class="sub-nav-link">Access Reviews</button>
+        <a href="/staff/reviews" class="sub-nav-link">Access Reviews</a>
         <a href="/staff/employees" class="sub-nav-link">Manage Employees</a>
         </div>
     </div>

@@ -13,6 +13,7 @@ import Review from '@/components/Review.vue';
 import Staff from "@/components/Staff.vue";
 import Employee from '@/components/Employee.vue';
 import WishListPage from '@/components/WishListPage.vue';
+import StaffReview from '@/components/Staff Review.vue';
 
 
 const routes = [
@@ -83,6 +84,12 @@ const routes = [
     name: "Staff",
     component: Staff,
   },
+
+  {
+    path: "/staff/reviews",
+    name: "Reviews",
+    component: StaffReview
+  }
 
   {
     path: "/staff/employees",
