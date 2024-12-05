@@ -9,9 +9,11 @@ import AddGame from '@/components/AddGame.vue';
 import Cart from '../components/Cart.vue'; // Cart page
 import Checkout from "@/components/Checkout.vue";
 import Receipt from "@/components/Receipt.vue";
+import Review from '@/components/Review.vue';
 import Staff from "@/components/Staff.vue";
 import Employee from '@/components/Employee.vue';
 import WishListPage from '@/components/WishListPage.vue';
+import StaffReview from '@/components/StaffReview.vue';
 
 
 const routes = [
@@ -70,12 +72,24 @@ const routes = [
     name: 'Receipt',
     component: Receipt,
   },
-
+  
+  {
+    path: "/reviews/:gameId",
+    name: "ReviewPage",
+    component: Review,
+  },
+  
   {
     path: "/staff",
     name: "Staff",
     component: Staff,
   },
+
+  {
+    path: "/staff/reviews",
+    name: "Reviews",
+    component: StaffReview
+  }
 
   {
     path: "/staff/employees",

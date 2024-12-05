@@ -184,7 +184,7 @@
     </div>
   
       <div class="sub-nav-bar">
-        <a href="/reviews" class="sub-nav-link">Access Reviews</a>
+        <a href="/staff/reviews" class="sub-nav-link">Access Reviews</a>
         <a href="/staff/employees" class="sub-nav-link">Manage Employees</a>
         </div>
     </div>
@@ -468,6 +468,10 @@ export default {
         alert("Failed to delete promotion.");
       }
     },
+
+    navigateToGroupedReviews() {
+    this.$router.push("/staff/reviews");
+  },
   },
 };
 </script>
@@ -645,7 +649,7 @@ h2 {
   background-color: #a71d2a;
 }
 
- h3 {
+h3 {
   font-size: 18px;
   color: #333; /* Dark color for visibility */
   margin-bottom: 5px; /* Add spacing below the heading */

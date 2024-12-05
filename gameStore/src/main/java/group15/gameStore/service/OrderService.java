@@ -133,4 +133,19 @@ public class OrderService {
         return orderRepo.save(existingOrder);
     }
 
+    public List<Order> getOrdersByUserID(int userID) {
+        Customer customer = customerRepo.findByUserID(userID);
+        //customerService.getCustomerByUsername(username);
+        return orderRepo.findByCustomer(customer);
+    }
+    
+    public void returnOrder(int orderId) {
+        Order order = orderRepo.findOrderByOrderID(orderId);
+        if (order != null) {
+            order.setOrderStatus(Status.RETURNED);
+            orderRepo.save(order);
+        }
+    }
+    
+
 }

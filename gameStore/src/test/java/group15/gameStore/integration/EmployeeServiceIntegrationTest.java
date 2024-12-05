@@ -112,6 +112,12 @@ public class EmployeeServiceIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(id, response.getBody().getUserID());
+        assertEquals("Emp1", response.getBody().getUsername());
+        assertEquals("password089", response.getBody().getPassword());
+        assertEquals("emp1@gmail.com", response.getBody().getEmail());
+        assertEquals(true, response.getBody().isActive());
+        assertEquals(false, response.getBody().isManager());
+
     }
 
     @Test
@@ -129,6 +135,10 @@ public class EmployeeServiceIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(email, response.getBody().getEmail());
+        assertEquals("Emp1", response.getBody().getUsername());
+        assertEquals("password089", response.getBody().getPassword());
+        assertEquals(true, response.getBody().isActive());
+        assertEquals(false, response.getBody().isManager());
     }
 
     @Test
@@ -168,6 +178,7 @@ public class EmployeeServiceIntegrationTest {
         List<Map<String, Object>> employees = response.getBody();
         assertEquals(employeeRequestDto.getUsername(), employees.get(0).get("username"));
         assertEquals(employeeRequestDto.getEmail(), employees.get(0).get("email"));
+        //assertEquals(employeeRequestDto.getPassword(), employees.get(0).get(employees));
         assertEquals(employeeRequestDto2.getUsername(), employees.get(1).get("username"));
         assertEquals(employeeRequestDto2.getEmail(), employees.get(1).get("email"));
     }
