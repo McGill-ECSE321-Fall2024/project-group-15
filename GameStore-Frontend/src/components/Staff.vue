@@ -328,7 +328,7 @@ export default {
     }
     try {
       console.log("Selected Game:", this.selectedGameForCategory);
-      console.log(this.selectedCategory.name)
+      console.log(this.selectedCategory);
       console.log(this.selectedCategory, this.selectedGameForCategory.gameID);
       await axiosClient.post(`/category/assign/${this.selectedGameForCategory.gameID}`, this.selectedCategory);
       alert("Game assigned to category!");
