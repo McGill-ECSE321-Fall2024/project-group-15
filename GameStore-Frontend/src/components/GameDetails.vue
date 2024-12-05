@@ -8,8 +8,8 @@
           <img :src="game.image" alt="Game Image" class="game-image" />
           <div class="game-info-text">
             <h2>{{ game.title }}</h2>
+            <p><strong>Stock:</strong> {{ game.stock }}</p>
             <p><strong>Price:</strong> ${{ game.price.toFixed(2) }}</p>
-
             <button @click="addToCart(game)">Add to Cart</button>
             <button @click="toggleWishlist(game)">
               {{ isInWishlist(game) ? 'Remove from Wishlist' : 'Add to Wishlist' }}
