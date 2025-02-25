@@ -1,0 +1,88 @@
+package group15.gearUp.dto;
+
+import group15.gearUp.model.Customer;
+
+public class CustomerDto extends PersonDto {
+
+    //Customer attributes
+    private String address;
+    private String phoneNumber;
+
+    @SuppressWarnings("unused")
+    public CustomerDto(){
+    } 
+    
+    // Constructor
+    public CustomerDto(Customer customer) {
+        this.userID = customer.getUserID();
+        this.username = customer.getUsername();
+        this.password = customer.getPassword();
+        this.email = customer.getEmail();
+        this.address = customer.getAddress();
+        this.phoneNumber = customer.getPhoneNumber();
+    }
+
+    public CustomerDto(String username, String password, String email, String address, String phoneNumber){
+        super(username, password, email);
+        address = address;
+        phoneNumber = phoneNumber;
+    }
+
+
+
+    // Getters and Setters
+    public int getUserId() {
+        return userID;
+    }
+
+    public void setUserId(int userId) {
+        this.userID = userId;
+    }
+
+    
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public CustomerDto(String address, String phoneNumber) {
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
+
+}
